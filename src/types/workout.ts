@@ -21,7 +21,7 @@ export interface WorkoutPlan {
   description: string;
   primaryPillar: WorkoutPillarFocus;
   targetMuscles: string[];
-  totalDurationSeconds: number; // Strictly 900 seconds (15 minutes)
+  totalDurationSeconds: number; // Duration of workout session (seconds)
   steps: WorkoutStep[];
 }
 

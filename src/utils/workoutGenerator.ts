@@ -18,7 +18,7 @@ function buildStep(exercise: Exercise, phase: 'warmup' | 'main' | 'cooldown', ro
     exercise,
     phase,
     round,
-    workDurationSeconds: isMain ? 60 : stepIdx % 2 === 0 ? 38 : 37,
+    workDurationSeconds: isMain ? 60 : 30,
     restDurationSeconds: 0,
     targetReps: exercise.type === 'reps' ? (exercise.defaultReps ?? 12) : undefined,
   };
@@ -40,7 +40,7 @@ export function createWorkoutFromExercises(
 
   const steps: WorkoutStep[] = [];
 
-  // Phase 1: 4 Warm-up movements (4 * 37.5s = 150s)
+  // Phase 1: 4 Warm-up movements (4 * 30s = 120s)
   warmupExercises.slice(0, 4).forEach((ex, idx) => {
     steps.push(buildStep(ex, 'warmup', undefined, idx));
   });
@@ -52,7 +52,7 @@ export function createWorkoutFromExercises(
     });
   }
 
-  // Phase 3: 4 Cool-down stretches (4 * 37.5s = 150s)
+  // Phase 3: 4 Cool-down stretches (4 * 30s = 120s)
   cooldownExercises.slice(0, 4).forEach((ex, idx) => {
     steps.push(buildStep(ex, 'cooldown', undefined, idx));
   });
@@ -61,6 +61,8 @@ export function createWorkoutFromExercises(
     new Set(steps.flatMap((s) => s.exercise.primaryMuscles))
   );
 
+  const totalDurationSeconds = steps.reduce((acc, s) => acc + s.workDurationSeconds, 0);
+
   return {
     id,
     title,
@@ -68,7 +70,7 @@ export function createWorkoutFromExercises(
     description,
     primaryPillar,
     targetMuscles,
-    totalDurationSeconds: 900, // Exactly 15 minutes
+    totalDurationSeconds,
     steps,
   };
 }

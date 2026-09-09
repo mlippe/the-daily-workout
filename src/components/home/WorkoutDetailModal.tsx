@@ -75,7 +75,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
           <div>
             <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-2 border-b border-neutral-900">
               <span>Phase 1 • Warm-Up</span>
-              <span>2.5 Min</span>
+              <span>2 Min</span>
             </div>
             <div className="divide-y divide-neutral-900/60">
               {warmupSteps.map((step, idx) => renderExerciseRow(step, idx))}
@@ -97,7 +97,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
           <div>
             <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-2 border-b border-neutral-900">
               <span>Phase 3 • Cool-Down</span>
-              <span>2.5 Min</span>
+              <span>2 Min</span>
             </div>
             <div className="divide-y divide-neutral-900/60">
               {cooldownSteps.map((step, idx) => renderExerciseRow(step, idx))}
