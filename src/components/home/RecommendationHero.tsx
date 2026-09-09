@@ -1,4 +1,4 @@
-import { Play, List, Sparkles, RotateCcw } from 'lucide-react';
+import { Play, List, Sparkles, RotateCcw, Minus, Plus, TrendingUp } from 'lucide-react';
 import type { WorkoutPlan } from '../../types/workout';
 
 interface RecommendationHeroProps {
@@ -6,6 +6,8 @@ interface RecommendationHeroProps {
   isRecommended: boolean;
   reason: string;
   recommendedWorkoutTitle?: string;
+  targetReps: number;
+  onUpdateTargetReps: (reps: number) => void;
   onResetToRecommended?: () => void;
   onStart: (workout: WorkoutPlan) => void;
   onPreview: (workout: WorkoutPlan) => void;
@@ -16,6 +18,8 @@ export function RecommendationHero({
   isRecommended,
   reason,
   recommendedWorkoutTitle,
+  targetReps,
+  onUpdateTargetReps,
   onResetToRecommended,
   onStart,
   onPreview,
@@ -77,6 +81,51 @@ export function RecommendationHero({
         </p>
       )}
 
+      {/* Target Reps Progression Bar with Manual Stepper Override */}
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-neutral-800/80 bg-neutral-900/40 p-3 sm:px-4 sm:py-3 max-w-lg">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
+            <TrendingUp className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs sm:text-sm font-semibold text-white">Target Reps</span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded px-1.5 py-0.5 font-medium">
+                +1 on completion
+              </span>
+            </div>
+            <p className="text-[11px] sm:text-xs text-neutral-400">
+              Standard set volume • Auto-advances each session
+            </p>
+          </div>
+        </div>
+
+        {/* Manual Stepper Controls */}
+        <div className="flex items-center gap-1.5 bg-neutral-950 border border-neutral-800/90 rounded-xl p-1 shrink-0">
+          <button
+            type="button"
+            onClick={() => onUpdateTargetReps(Math.max(1, targetReps - 1))}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all active:scale-90 cursor-pointer"
+            title="Decrease target reps"
+            aria-label="Decrease target reps"
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </button>
+          <span className="font-mono text-sm sm:text-base font-bold text-white tabular-nums px-2 min-w-[2.5rem] text-center">
+            {targetReps}
+          </span>
+          <button
+            type="button"
+            onClick={() => onUpdateTargetReps(Math.min(100, targetReps + 1))}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-all active:scale-90 cursor-pointer"
+            title="Increase target reps"
+            aria-label="Increase target reps"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+
       {/* Curated Collection of 3 Signature Exercises */}
       <div className="mt-8">
         <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 mb-3">
@@ -110,7 +159,7 @@ export function RecommendationHero({
                   {step.exercise.name}
                 </h4>
                 <p className="text-[11px] font-mono text-neutral-400 truncate mt-0.5">
-                  {step.exercise.primaryMuscles[0] || 'Core'} • {step.workDurationSeconds}s
+                  {step.exercise.primaryMuscles[0] || 'Core'} • {step.exercise.type === 'reps' ? `${step.targetReps ?? targetReps} reps` : `${step.workDurationSeconds}s`}
                 </p>
               </div>
             </div>

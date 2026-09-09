@@ -5,6 +5,7 @@ interface CompletionScreenProps {
   workout: WorkoutPlan;
   streak: number;
   totalCompleted: number;
+  nextTargetReps?: number;
   onReturnHome: () => void;
 }
 
@@ -12,6 +13,7 @@ export function CompletionScreen({
   workout,
   streak,
   totalCompleted,
+  nextTargetReps,
   onReturnHome,
 }: CompletionScreenProps) {
   return (
@@ -35,7 +37,11 @@ export function CompletionScreen({
         </p>
 
         {/* Minimal stats block */}
-        <div className="mt-8 grid grid-cols-2 divide-x divide-neutral-900 border-y border-neutral-900 py-4 font-mono text-center">
+        <div
+          className={`mt-8 grid ${
+            nextTargetReps ? 'grid-cols-3' : 'grid-cols-2'
+          } divide-x divide-neutral-900 border-y border-neutral-900 py-4 font-mono text-center`}
+        >
           <div>
             <div className="text-xl font-semibold text-white">{streak}</div>
             <div className="text-[11px] text-neutral-400 uppercase tracking-wider mt-0.5">
@@ -48,7 +54,24 @@ export function CompletionScreen({
               Total Done
             </div>
           </div>
+          {nextTargetReps && (
+            <div>
+              <div className="text-xl font-semibold text-emerald-400 flex items-center justify-center gap-1">
+                <span>{nextTargetReps}</span>
+                <span className="text-[11px] text-emerald-500/80 font-normal">(+1)</span>
+              </div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider mt-0.5">
+                Next Reps
+              </div>
+            </div>
+          )}
         </div>
+
+        {nextTargetReps && (
+          <div className="mt-3 inline-flex items-center gap-1.5 font-mono text-xs text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3.5 py-1">
+            <span>Progression auto-advanced to {nextTargetReps} reps for next session!</span>
+          </div>
+        )}
 
         {/* Muscles line */}
         <div className="mt-6 text-xs text-neutral-400">

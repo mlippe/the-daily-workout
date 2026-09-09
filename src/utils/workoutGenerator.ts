@@ -141,3 +141,14 @@ export function getWorkoutById(id: string): WorkoutPlan {
   const found = ALL_WORKOUT_PLANS.find((w) => w.id === id);
   return found || WORKOUT_FULL_BODY;
 }
+
+export function applyTargetRepsToWorkout(workout: WorkoutPlan, targetReps: number): WorkoutPlan {
+  return {
+    ...workout,
+    steps: workout.steps.map((step) => ({
+      ...step,
+      targetReps: step.exercise.type === 'reps' ? targetReps : undefined,
+    })),
+  };
+}
+

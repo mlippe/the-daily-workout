@@ -5,6 +5,7 @@ interface RoutineListProps {
   workouts: WorkoutPlan[];
   activeWorkoutId: string;
   recommendedWorkoutId: string;
+  repTargets?: Record<string, number>;
   onSelect: (workout: WorkoutPlan) => void;
   onStart: (workout: WorkoutPlan) => void;
 }
@@ -13,6 +14,7 @@ export function RoutineList({
   workouts,
   activeWorkoutId,
   recommendedWorkoutId,
+  repTargets,
   onSelect,
   onStart,
 }: RoutineListProps) {
@@ -76,7 +78,9 @@ export function RoutineList({
               </div>
 
               <div className='flex items-center gap-3 shrink-0'>
-                <span className='font-mono text-xs text-neutral-400'>15m</span>
+                <span className='font-mono text-xs text-neutral-400'>
+                  15m • {repTargets?.[w.id] ?? 12} reps
+                </span>
                 <button
                   type='button'
                   onClick={() => onStart(w)}

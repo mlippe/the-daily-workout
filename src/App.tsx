@@ -1,8 +1,15 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { WorkoutPlan } from './types/workout';
-import { ALL_WORKOUT_PLANS } from './utils/workoutGenerator';
+import { ALL_WORKOUT_PLANS, applyTargetRepsToWorkout } from './utils/workoutGenerator';
 import { getDailyRecommendation } from './utils/recommendation';
-import { getStreakStats, saveWorkoutCompletion } from './utils/storage';
+import {
+  getStreakStats,
+  saveWorkoutCompletion,
+  getWorkoutTargetReps,
+  saveWorkoutTargetReps,
+  incrementWorkoutTargetReps,
+  getAllWorkoutTargetReps,
+} from './utils/storage';
 import { StreakHeader } from './components/home/StreakHeader';
 import { RecommendationHero } from './components/home/RecommendationHero';
 import { RoutineList } from './components/home/RoutineList';
@@ -17,6 +24,7 @@ export default function App() {
   const [activeWorkout, setActiveWorkout] = useState<WorkoutPlan | null>(null);
   const [previewWorkout, setPreviewWorkout] = useState<WorkoutPlan | null>(null);
   const [completedWorkout, setCompletedWorkout] = useState<WorkoutPlan | null>(null);
+  const [nextTargetReps, setNextTargetReps] = useState<number | undefined>(undefined);
 
   // Selected routine to display in the hero (defaults to daily recommendation)
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutPlan | null>(null);
@@ -34,18 +42,50 @@ export default function App() {
     return getDailyRecommendation();
   }, [statsVersion]);
 
+  const allRepTargets = useMemo(() => {
+    void statsVersion;
+    return getAllWorkoutTargetReps();
+  }, [statsVersion]);
+
   // Current hero routine (either selected by user, or today's recommendation)
-  const heroWorkout = selectedWorkout || recommendation.workout;
-  const isRecommended = heroWorkout.id === recommendation.workout.id;
+  const baseHeroWorkout = selectedWorkout || recommendation.workout;
+  const isRecommended = baseHeroWorkout.id === recommendation.workout.id;
+
+  const heroTargetReps = useMemo(() => {
+    void statsVersion;
+    return getWorkoutTargetReps(baseHeroWorkout.id);
+  }, [baseHeroWorkout.id, statsVersion]);
+
+  const heroWorkout = useMemo(() => {
+    return applyTargetRepsToWorkout(baseHeroWorkout, heroTargetReps);
+  }, [baseHeroWorkout, heroTargetReps]);
 
   const heroReason = isRecommended
     ? recommendation.reason
     : `Selected routine: ${heroWorkout.subtitle}`;
 
+  // Manual override handler from the hero
+  const handleUpdateTargetReps = useCallback(
+    (newReps: number) => {
+      saveWorkoutTargetReps(baseHeroWorkout.id, newReps);
+      setStatsVersion((v) => v + 1);
+    },
+    [baseHeroWorkout.id]
+  );
+
   // Start workout action
   const handleStartWorkout = useCallback((workout: WorkoutPlan) => {
-    setActiveWorkout(workout);
+    const targetReps = getWorkoutTargetReps(workout.id);
+    const workoutWithReps = applyTargetRepsToWorkout(workout, targetReps);
+    setActiveWorkout(workoutWithReps);
     setView('running');
+  }, []);
+
+  // Preview workout action
+  const handlePreviewWorkout = useCallback((workout: WorkoutPlan) => {
+    const targetReps = getWorkoutTargetReps(workout.id);
+    const workoutWithReps = applyTargetRepsToWorkout(workout, targetReps);
+    setPreviewWorkout(workoutWithReps);
   }, []);
 
   // Completion action
@@ -57,6 +97,10 @@ export default function App() {
       completed: true,
       totalTimeSeconds: summary.totalTimeSeconds,
     });
+
+    // Automatic progression: automatically increment target reps by +1 for the next session
+    const nextReps = incrementWorkoutTargetReps(summary.workout.id, 1);
+    setNextTargetReps(nextReps);
 
     setCompletedWorkout(summary.workout);
     setStatsVersion((v) => v + 1);
@@ -86,6 +130,7 @@ export default function App() {
         workout={completedWorkout}
         streak={stats.currentStreak}
         totalCompleted={stats.totalCompleted}
+        nextTargetReps={nextTargetReps}
         onReturnHome={handleReturnHome}
       />
     );
@@ -106,9 +151,11 @@ export default function App() {
           isRecommended={isRecommended}
           reason={heroReason}
           recommendedWorkoutTitle={recommendation.workout.title}
+          targetReps={heroTargetReps}
+          onUpdateTargetReps={handleUpdateTargetReps}
           onResetToRecommended={() => setSelectedWorkout(null)}
           onStart={handleStartWorkout}
-          onPreview={(w) => setPreviewWorkout(w)}
+          onPreview={handlePreviewWorkout}
         />
 
         {/* Routine Selector List */}
@@ -116,6 +163,7 @@ export default function App() {
           workouts={ALL_WORKOUT_PLANS}
           activeWorkoutId={heroWorkout.id}
           recommendedWorkoutId={recommendation.workout.id}
+          repTargets={allRepTargets}
           onSelect={(w) => setSelectedWorkout(w)}
           onStart={handleStartWorkout}
         />

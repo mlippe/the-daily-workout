@@ -145,3 +145,46 @@ export function getStreakStats(): { currentStreak: number; lastWorkoutDate: stri
     totalCompleted: history.length,
   };
 }
+
+// Workout Rep Targets & Progression
+const STORAGE_KEY_REP_TARGETS = 'the_daily_workout_rep_targets_v1';
+export const DEFAULT_TARGET_REPS = 12;
+
+export function getAllWorkoutTargetReps(): Record<string, number> {
+  if (!isStorageAvailable()) return {};
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY_REP_TARGETS);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export function getWorkoutTargetReps(workoutId: string): number {
+  const all = getAllWorkoutTargetReps();
+  if (typeof all[workoutId] === 'number' && all[workoutId] > 0) {
+    return all[workoutId];
+  }
+  return DEFAULT_TARGET_REPS;
+}
+
+export function saveWorkoutTargetReps(workoutId: string, reps: number): number {
+  const clamped = Math.max(1, Math.min(100, Math.round(reps)));
+  if (!isStorageAvailable()) return clamped;
+  try {
+    const all = getAllWorkoutTargetReps();
+    all[workoutId] = clamped;
+    window.localStorage.setItem(STORAGE_KEY_REP_TARGETS, JSON.stringify(all));
+  } catch (err) {
+    console.error('Failed to save workout target reps:', err);
+  }
+  return clamped;
+}
+
+export function incrementWorkoutTargetReps(workoutId: string, amount: number = 1): number {
+  const current = getWorkoutTargetReps(workoutId);
+  return saveWorkoutTargetReps(workoutId, current + amount);
+}
+
