@@ -7,7 +7,6 @@ import {
   Volume2,
   VolumeX,
   X,
-  ShieldCheck,
   CheckCircle2,
   Info,
 } from 'lucide-react';
@@ -43,7 +42,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
   const quickSteps = useMemo(() => getQuickSteps(currentStep.exercise), [currentStep.exercise]);
 
   // Keep screen awake while workout is active and not paused
-  const { isLocked, isSupported: isWakeLockSupported } = useWakeLock(!isPaused);
+  useWakeLock(!isPaused);
 
   // Sound unlock on mount
   useEffect(() => {
@@ -312,19 +311,12 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                 </div>
               </div>
 
-              {/* 3-Step Process Card */}
-              <div className="w-full max-w-xl md:max-w-2xl rounded-2xl bg-neutral-900/60 border border-neutral-800/80 p-5 sm:p-6 text-left shadow-xl backdrop-blur-sm">
-                <div className="flex items-center justify-between mb-4 border-b border-neutral-800/70 pb-3">
-                  <span className="font-mono text-xs uppercase tracking-widest text-neutral-400 font-semibold">
-                    How To Do It • 3 Key Steps
-                  </span>
-                  <span className="font-mono text-[11px] text-neutral-500 uppercase tracking-wider">Form Focus</span>
-                </div>
-
+              {/* Floating 3-Step Process */}
+              <div className="w-full max-w-xl md:max-w-2xl text-left">
                 <ol className="space-y-4">
                   {quickSteps.map((stepText, idx) => (
                     <li key={idx} className="flex items-start gap-3.5">
-                      <span className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-neutral-800 border border-neutral-700/80 font-mono text-xs sm:text-sm font-bold text-neutral-200 mt-0.5">
+                      <span className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 border border-neutral-800 font-mono text-xs sm:text-sm font-bold text-neutral-300 mt-0.5">
                         {idx + 1}
                       </span>
                       <p className="text-base sm:text-lg md:text-xl font-medium text-neutral-100 leading-relaxed">
@@ -334,18 +326,15 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                   ))}
                 </ol>
 
-                {/* Details Button below the steps */}
-                <div className="mt-5 pt-3.5 border-t border-neutral-800/80 flex items-center justify-between">
-                  <span className="font-mono text-xs text-neutral-400">
-                    Need complete technique instructions?
-                  </span>
+                {/* Details Button */}
+                <div className="mt-4 flex justify-center sm:justify-start">
                   <button
                     type="button"
                     onClick={() => {
                       setIsPaused(true);
                       setShowDetailsModal(true);
                     }}
-                    className="inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-200 hover:text-white bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-300 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer"
                   >
                     <Info className="h-4 w-4 text-neutral-400" />
                     <span>Details</span>
@@ -454,17 +443,6 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
           >
             <SkipForward className="h-5 w-5" />
           </button>
-        </div>
-
-        {/* Status Indicators: WakeLock */}
-        <div className="mt-2 flex items-center justify-center gap-4 text-[11px] text-neutral-500 font-mono">
-          {isWakeLockSupported && (
-            <span className={`inline-flex items-center gap-1 ${isLocked ? 'text-emerald-500' : 'text-neutral-500'}`}>
-              <ShieldCheck className="h-3 w-3" />
-              {isLocked ? 'Screen Kept Awake' : 'Wake Lock Inactive'}
-            </span>
-          )}
-          <span>Space: Pause/Play</span>
         </div>
       </footer>
 
