@@ -61,15 +61,15 @@ export function ExerciseVisual({
         />
       )}
 
-      {/* Looping frame indicator moved to top right */}
-      <div className="absolute top-3 right-3 flex gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-sm z-10">
+      {/* Looping frame indicator in bottom right corner */}
+      <div className="absolute bottom-2.5 right-3.5 flex gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-sm z-10">
         <span
-          className={`h-1.5 w-3.5 rounded-full transition-all duration-300 ${
+          className={`h-1.5 w-3 rounded-full transition-all duration-300 ${
             frameIndex === 0 ? 'bg-white' : 'bg-white/30'
           }`}
         />
         <span
-          className={`h-1.5 w-3.5 rounded-full transition-all duration-300 ${
+          className={`h-1.5 w-3 rounded-full transition-all duration-300 ${
             frameIndex === 1 ? 'bg-white' : 'bg-white/30'
           }`}
         />

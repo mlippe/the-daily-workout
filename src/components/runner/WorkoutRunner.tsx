@@ -6,7 +6,6 @@ import {
   SkipBack,
   Volume2,
   VolumeX,
-  X,
   CheckCircle2,
   Info,
 } from 'lucide-react';
@@ -17,6 +16,12 @@ import { getQuickSteps } from '../../utils/exerciseSteps';
 import { ExerciseVisual } from './ExerciseVisual';
 import { ProgressBar } from './ProgressBar';
 import { ExerciseDetailsModal } from './ExerciseDetailsModal';
+
+const formatTime = (secs: number) => {
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};
 
 interface WorkoutRunnerProps {
   workout: WorkoutPlan;
@@ -182,40 +187,14 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-between bg-black text-white select-none">
-      {/* Top Bar: Progress, WakeLock status, Controls */}
-      <header className="border-b border-neutral-900 bg-black/80 px-4 py-3 backdrop-blur-md">
-        <div className="mx-auto flex max-w-3xl lg:max-w-4xl items-center justify-between gap-4">
-          <button
-            type="button"
-            onClick={() => setShowExitModal(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors"
-            title="Exit Workout"
-            aria-label="Exit Workout"
-          >
-            <X className="h-5 w-5" />
-          </button>
-
-          <div className="flex-1">
-            <ProgressBar
-              workout={workout}
-              currentStepIndex={currentStepIndex}
-              totalElapsedSeconds={totalElapsedSeconds}
-              currentStep={currentStep}
-              subState={subState}
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleToggleMute}
-            className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-              isMuted ? 'text-neutral-500 hover:text-neutral-300' : 'text-neutral-200 hover:text-white'
-            }`}
-            title={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
-            aria-label={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
-          >
-            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-          </button>
+      {/* Standalone Status Bar: 2-stage progress has its own dedicated space */}
+      <header className="border-b border-neutral-900/80 bg-black/90 px-4 sm:px-6 pt-3 pb-2.5 backdrop-blur-md">
+        <div className="mx-auto max-w-2xl md:max-w-3xl">
+          <ProgressBar
+            workout={workout}
+            currentStep={currentStep}
+            subState={subState}
+          />
         </div>
       </header>
 
@@ -225,8 +204,8 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
           {subState === 'work' ? (
             /* WORK STATE */
             <div className="flex w-full flex-col items-center">
-              {/* Merged Hero: Full-width animation with title at bottom edge */}
-              <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl aspect-[3/2] max-h-[44vh] relative shrink-0 sm:rounded-3xl sm:mt-1 overflow-hidden bg-black">
+              {/* Merged Hero: Full-width animation with top controls overlay and title */}
+              <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl aspect-[3/2] max-h-[44vh] relative shrink-0 sm:rounded-3xl sm:mt-2 overflow-hidden bg-black">
                 <ExerciseVisual
                   key={currentStep.exercise.id}
                   exercise={currentStep.exercise}
@@ -234,6 +213,32 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                   overlayGradient={true}
                   className="h-full w-full"
                 >
+                  {/* Top Controls Overlay on image: give up (left), timer (center), mute (right) */}
+                  <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between pointer-events-none">
+                    <button
+                      type="button"
+                      onClick={() => setShowExitModal(true)}
+                      className="pointer-events-auto rounded-full bg-black/60 hover:bg-black/90 px-3 py-1 font-mono text-[11px] sm:text-xs font-medium text-neutral-300 hover:text-rose-400 border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm"
+                    >
+                      give up
+                    </button>
+
+                    <div className="pointer-events-auto rounded-full bg-black/60 px-3 py-1 font-mono text-xs font-semibold text-neutral-200 border border-neutral-800/80 backdrop-blur-md tabular-nums tracking-wider shadow-sm">
+                      {formatTime(totalElapsedSeconds)}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleToggleMute}
+                      className="pointer-events-auto flex h-7 w-7 sm:h-7.5 sm:w-7.5 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 text-neutral-300 hover:text-white border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm"
+                      title={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
+                      aria-label={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
+                    >
+                      {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                    </button>
+                  </div>
+
+                  {/* Title & metadata at bottom edge */}
                   <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-2 pt-6 text-center flex flex-col items-center justify-end">
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                       {currentStep.exercise.name}
@@ -341,6 +346,31 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
           ) : (
             /* REST & TRANSITION STATE */
             <div className="my-auto flex h-full w-full flex-col items-center justify-center gap-6 p-4 sm:p-6 text-center">
+              {/* Top controls in rest state */}
+              <div className="flex w-full max-w-md items-center justify-between px-2">
+                <button
+                  type="button"
+                  onClick={() => setShowExitModal(true)}
+                  className="rounded-full bg-neutral-900 hover:bg-neutral-800 px-3 py-1 font-mono text-[11px] sm:text-xs font-medium text-neutral-300 hover:text-rose-400 border border-neutral-800 transition-all active:scale-95 cursor-pointer shadow-sm"
+                >
+                  give up
+                </button>
+
+                <div className="rounded-full bg-neutral-900 px-3 py-1 font-mono text-xs font-semibold text-neutral-200 border border-neutral-800 tabular-nums tracking-wider shadow-sm">
+                  {formatTime(totalElapsedSeconds)}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleToggleMute}
+                  className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 items-center justify-center rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition-all active:scale-95 cursor-pointer shadow-sm"
+                  title={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
+                  aria-label={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
+                >
+                  {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                </button>
+              </div>
+
               <div>
                 <span className="inline-block rounded-full bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 text-xs font-mono uppercase tracking-widest text-amber-400">
                   Rest & Prepare
