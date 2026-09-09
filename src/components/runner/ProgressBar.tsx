@@ -2,10 +2,7 @@ import type { WorkoutPlan, WorkoutStep } from '../../types/workout';
 
 interface ProgressBarProps {
   workout: WorkoutPlan;
-  currentStepIndex?: number;
-  totalElapsedSeconds?: number;
   currentStep: WorkoutStep;
-  subState: 'work' | 'rest';
 }
 
 const PHASES = [
@@ -17,7 +14,6 @@ const PHASES = [
 export function ProgressBar({
   workout,
   currentStep,
-  subState,
 }: ProgressBarProps) {
   const currentPhase = currentStep.phase;
   const phaseOrder = ['warmup', 'main', 'cooldown'] as const;
@@ -85,10 +81,7 @@ export function ProgressBar({
                 ? 'bg-sky-400'
                 : 'bg-purple-400';
           } else if (isCurrent) {
-            segmentClass =
-              subState === 'rest'
-                ? 'bg-amber-400 animate-pulse'
-                : 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]';
+            segmentClass = 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]';
           }
 
           return (

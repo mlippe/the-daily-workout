@@ -7,8 +7,8 @@ export interface WorkoutStep {
   exercise: Exercise;
   phase: WorkoutPhase;
   round?: number; // Round 1 or 2 for main circuit
-  workDurationSeconds: number; // 30s for warmup/cooldown, 45s for main
-  restDurationSeconds: number; // 7.5s for warmup/cooldown, 15s for main
+  workDurationSeconds: number; // Duration of active exercise
+  restDurationSeconds?: number;
   targetReps?: number;
 }
 

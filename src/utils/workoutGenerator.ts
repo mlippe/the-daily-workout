@@ -18,8 +18,8 @@ function buildStep(exercise: Exercise, phase: 'warmup' | 'main' | 'cooldown', ro
     exercise,
     phase,
     round,
-    workDurationSeconds: isMain ? 45 : 30,
-    restDurationSeconds: isMain ? 15 : 7.5,
+    workDurationSeconds: isMain ? 60 : stepIdx % 2 === 0 ? 38 : 37,
+    restDurationSeconds: 0,
     targetReps: exercise.type === 'reps' ? (exercise.defaultReps ?? 12) : undefined,
   };
 }
