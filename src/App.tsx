@@ -4,8 +4,8 @@ import { ALL_WORKOUT_PLANS } from './utils/workoutGenerator';
 import { getDailyRecommendation } from './utils/recommendation';
 import { getStreakStats, saveWorkoutCompletion } from './utils/storage';
 import { StreakHeader } from './components/home/StreakHeader';
-import { RecommendationCard } from './components/home/RecommendationCard';
-import { WorkoutCard } from './components/home/WorkoutCard';
+import { RecommendationHero } from './components/home/RecommendationHero';
+import { RoutineList } from './components/home/RoutineList';
 import { WorkoutDetailModal } from './components/home/WorkoutDetailModal';
 import { WorkoutRunner } from './components/runner/WorkoutRunner';
 import { CompletionScreen } from './components/home/CompletionScreen';
@@ -17,13 +17,14 @@ export default function App() {
   const [activeWorkout, setActiveWorkout] = useState<WorkoutPlan | null>(null);
   const [previewWorkout, setPreviewWorkout] = useState<WorkoutPlan | null>(null);
   const [completedWorkout, setCompletedWorkout] = useState<WorkoutPlan | null>(null);
-  const [selectedPillarFilter, setSelectedPillarFilter] = useState<string>('all');
 
-  // Stats & recommendation from storage
+  // Selected routine to display in the hero (defaults to daily recommendation)
+  const [selectedWorkout, setSelectedWorkout] = useState<WorkoutPlan | null>(null);
+
+  // Stats & recommendation from local storage
   const [statsVersion, setStatsVersion] = useState(0);
 
   const stats = useMemo(() => {
-    // Re-evaluate when statsVersion changes
     void statsVersion;
     return getStreakStats();
   }, [statsVersion]);
@@ -32,6 +33,14 @@ export default function App() {
     void statsVersion;
     return getDailyRecommendation();
   }, [statsVersion]);
+
+  // Current hero routine (either selected by user, or today's recommendation)
+  const heroWorkout = selectedWorkout || recommendation.workout;
+  const isRecommended = heroWorkout.id === recommendation.workout.id;
+
+  const heroReason = isRecommended
+    ? recommendation.reason
+    : `Selected routine: ${heroWorkout.subtitle}`;
 
   // Start workout action
   const handleStartWorkout = useCallback((workout: WorkoutPlan) => {
@@ -61,12 +70,6 @@ export default function App() {
     setView('home');
   }, []);
 
-  // Filtered workout plans for grid
-  const filteredWorkouts = useMemo(() => {
-    if (selectedPillarFilter === 'all') return ALL_WORKOUT_PLANS;
-    return ALL_WORKOUT_PLANS.filter((w) => w.primaryPillar === selectedPillarFilter);
-  }, [selectedPillarFilter]);
-
   if (view === 'running' && activeWorkout) {
     return (
       <WorkoutRunner
@@ -89,77 +92,33 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-indigo-500 selection:text-white">
-      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Header with Streak and 14-day balance */}
+    <div className="min-h-screen bg-black text-neutral-100 antialiased selection:bg-neutral-800 selection:text-white">
+      <div className="mx-auto max-w-2xl px-6 py-6 sm:px-8 sm:py-10">
+        {/* Minimal header */}
         <StreakHeader
           currentStreak={stats.currentStreak}
           totalCompleted={stats.totalCompleted}
-          pillarBreakdown={recommendation.pillarBreakdown}
         />
 
-        {/* Daily Recommendation Hero Card */}
-        <section className="mt-6 sm:mt-8">
-          <RecommendationCard
-            workout={recommendation.workout}
-            reason={recommendation.reason}
-            onStart={handleStartWorkout}
-            onPreview={(w) => setPreviewWorkout(w)}
-          />
-        </section>
+        {/* Hero Section: Today's 15-Minute Session */}
+        <RecommendationHero
+          workout={heroWorkout}
+          reason={heroReason}
+          onStart={handleStartWorkout}
+          onPreview={(w) => setPreviewWorkout(w)}
+        />
 
-        {/* Workout Library Grid */}
-        <section className="mt-10 sm:mt-12">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800/80 pb-4">
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-white">All 15-Minute Routines</h2>
-              <p className="text-xs text-neutral-400">Strictly 15 minutes. Pick any focus for today.</p>
-            </div>
+        {/* Routine Selector List */}
+        <RoutineList
+          workouts={ALL_WORKOUT_PLANS}
+          activeWorkoutId={heroWorkout.id}
+          onSelect={(w) => setSelectedWorkout(w)}
+          onStart={handleStartWorkout}
+        />
 
-            {/* Filter pills */}
-            <div className="flex flex-wrap gap-1.5 text-xs">
-              {[
-                { id: 'all', label: 'All Routines' },
-                { id: 'pull_back', label: 'Back & Posture' },
-                { id: 'push', label: 'Push' },
-                { id: 'legs', label: 'Legs' },
-                { id: 'core', label: 'Core' },
-                { id: 'full_body', label: 'Full Body' },
-              ].map((filter) => (
-                <button
-                  key={filter.id}
-                  type="button"
-                  onClick={() => setSelectedPillarFilter(filter.id)}
-                  className={`rounded-full px-3 py-1 transition-colors ${
-                    selectedPillarFilter === filter.id
-                      ? 'bg-white font-semibold text-neutral-950'
-                      : 'bg-neutral-900 text-neutral-400 hover:bg-neutral-800 hover:text-white'
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredWorkouts.map((workout) => (
-              <WorkoutCard
-                key={workout.id}
-                workout={workout}
-                isRecommended={workout.id === recommendation.workout.id}
-                onStart={handleStartWorkout}
-                onPreview={(w) => setPreviewWorkout(w)}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* Bottom Philosophy Info Bar */}
-        <footer className="mt-14 border-t border-neutral-900 pt-8 pb-12 text-center text-xs text-neutral-500">
-          <p className="max-w-md mx-auto leading-relaxed">
-            The Daily Workout is 100% private and runs entirely in your browser. No accounts, no subscriptions, and no analytics.
-          </p>
+        {/* Minimal footer */}
+        <footer className="pt-8 pb-12 text-center text-xs font-mono text-neutral-400">
+          15 minutes • Bodyweight only • 100% private
         </footer>
       </div>
 
