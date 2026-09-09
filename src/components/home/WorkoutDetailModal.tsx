@@ -33,7 +33,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
             {index + 1}. {step.exercise.name}
           </span>
           <span className="font-mono text-xs text-neutral-400 shrink-0 pl-2">
-            {step.workDurationSeconds}s
+            {step.exercise.type === 'reps' ? `${step.targetReps ?? 12} reps` : `${step.workDurationSeconds}s`}
           </span>
         </div>
         <div className="text-xs text-neutral-400 truncate">

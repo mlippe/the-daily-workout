@@ -105,6 +105,11 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
     advanceRef.current = advance;
   }, [advance]);
 
+  const currentStepRef = useRef(currentStep);
+  useEffect(() => {
+    currentStepRef.current = currentStep;
+  }, [currentStep]);
+
   useEffect(() => {
     if (isPaused) return;
 
@@ -114,7 +119,8 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
       setSecondsRemaining((prev) => {
         const next = prev - 1;
 
-        if (next <= 5 && next >= 1) {
+        // Sound pips only for time-based isometric/hold exercises like Plank
+        if (currentStepRef.current.exercise.type === 'time' && next <= 5 && next >= 1) {
           soundEngine.playPip(next === 1 ? 520 : 440, 0.1);
         }
 
@@ -146,12 +152,15 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
       } else if (e.key.toLowerCase() === 'm') {
         e.preventDefault();
         handleToggleMute();
+      } else if (e.code === 'Enter' && currentStep.exercise.type === 'reps') {
+        e.preventDefault();
+        advance();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleSkipForward, handleSkipBack, handleToggleMute, showExitModal, showDetailsModal]);
+  }, [handleSkipForward, handleSkipBack, handleToggleMute, advance, currentStep, showExitModal, showDetailsModal]);
 
   const maxDuration = currentStep.workDurationSeconds;
   const strokePercent = maxDuration > 0 ? (secondsRemaining / maxDuration) * 100 : 0;
@@ -220,65 +229,82 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
               </ExerciseVisual>
             </div>
 
-            {/* Central Timer & Reps */}
-            <div
-              onClick={() => {
-                if (currentStep.exercise.type === 'reps') {
-                  advance();
-                }
-              }}
-              className={`flex flex-col items-center justify-center cursor-pointer transition-transform shrink-0 my-4 sm:my-5 ${
-                currentStep.exercise.type === 'reps' ? 'active:scale-95' : ''
-              }`}
-            >
-              <div className="relative flex h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 items-center justify-center">
-                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="44"
-                    className="stroke-neutral-800"
-                    strokeWidth="6"
-                    fill="transparent"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="44"
-                    className={`transition-all duration-300 ${
-                      secondsRemaining <= 5
-                        ? 'stroke-rose-500'
-                        : currentStep.phase === 'warmup'
-                        ? 'stroke-emerald-400'
-                        : currentStep.phase === 'main'
-                        ? 'stroke-sky-400'
-                        : 'stroke-purple-400'
-                    }`}
-                    strokeWidth="6"
-                    strokeDasharray={276.46}
-                    strokeDashoffset={276.46 * (1 - strokePercent / 100)}
-                    strokeLinecap="round"
-                    fill="transparent"
-                  />
-                </svg>
+            {/* Central Display: Standard Set with Reps vs Timed Progress Ring (Plank/Holds) */}
+            {currentStep.exercise.type === 'reps' ? (
+              <div className="flex flex-col items-center justify-center shrink-0 my-4 sm:my-5">
+                {/* Standard Set Indicator Badge */}
+                <div className="mb-2">
+                  <span className="rounded-full bg-sky-500/10 border border-sky-500/30 px-3.5 py-1 font-mono text-xs uppercase tracking-widest text-sky-400 font-semibold shadow-sm">
+                    {currentStep.round ? `Set ${currentStep.round} of 2` : 'Standard Set'}
+                  </span>
+                </div>
 
-                <div className="absolute flex flex-col items-center">
-                  <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-black tabular-nums tracking-tighter">
-                    {secondsRemaining}
-                  </span>
-                  <span className="text-[10px] sm:text-xs uppercase font-semibold tracking-wider text-neutral-400 mt-0.5">
-                    {currentStep.exercise.type === 'reps' ? 'Sec' : 'Seconds'}
-                  </span>
+                {/* Big Reps Count Display */}
+                <div
+                  onClick={advance}
+                  className="group flex flex-col items-center justify-center rounded-3xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 px-8 sm:px-10 py-4 transition-all duration-200 active:scale-95 cursor-pointer shadow-lg hover:border-neutral-700"
+                  title="Tap to complete set"
+                >
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-tighter text-white group-hover:text-emerald-400 transition-colors">
+                      {currentStep.targetReps ?? 12}
+                    </span>
+                    <span className="font-mono text-lg sm:text-xl font-bold uppercase tracking-wider text-neutral-400 group-hover:text-neutral-300 transition-colors">
+                      Reps
+                    </span>
+                  </div>
+
+                  <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+                    <CheckCircle2 className="h-4 w-4 stroke-[2.5]" />
+                    <span>Tap to Complete Set</span>
+                  </div>
                 </div>
               </div>
+            ) : (
+              /* Timed Progress Ring (Plank, Stretches, Isometric Holds) */
+              <div className="flex flex-col items-center justify-center shrink-0 my-4 sm:my-5">
+                <div className="relative flex h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 items-center justify-center">
+                  <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      className="stroke-neutral-800"
+                      strokeWidth="6"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      className={`transition-all duration-300 ${
+                        secondsRemaining <= 5
+                          ? 'stroke-rose-500'
+                          : currentStep.phase === 'warmup'
+                          ? 'stroke-emerald-400'
+                          : currentStep.phase === 'main'
+                          ? 'stroke-sky-400'
+                          : 'stroke-purple-400'
+                      }`}
+                      strokeWidth="6"
+                      strokeDasharray={276.46}
+                      strokeDashoffset={276.46 * (1 - strokePercent / 100)}
+                      strokeLinecap="round"
+                      fill="transparent"
+                    />
+                  </svg>
 
-              {currentStep.exercise.type === 'reps' && (
-                <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-3.5 py-1.5 text-xs font-semibold text-neutral-200 border border-neutral-800 shadow-md">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span>Target: {currentStep.targetReps} reps • <span className="text-neutral-400">Tap when done</span></span>
+                  <div className="absolute flex flex-col items-center">
+                    <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-black tabular-nums tracking-tighter">
+                      {secondsRemaining}
+                    </span>
+                    <span className="text-[10px] sm:text-xs uppercase font-semibold tracking-wider text-neutral-400 mt-0.5">
+                      Seconds
+                    </span>
+                  </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Floating 3-Step Process */}
             <div className="w-full max-w-xl md:max-w-2xl px-5 sm:px-0 text-left">
