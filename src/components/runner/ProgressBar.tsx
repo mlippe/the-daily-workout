@@ -8,33 +8,33 @@ interface ProgressBarProps {
 const PHASES = [
   { key: 'warmup', label: 'warmup' },
   { key: 'main', label: 'main' },
-  { key: 'cooldown', label: 'cooling' },
+  { key: 'cooldown', label: 'cooldown' },
 ] as const;
 
-export function ProgressBar({
-  workout,
-  currentStep,
-}: ProgressBarProps) {
+export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
   const currentPhase = currentStep.phase;
   const phaseOrder = ['warmup', 'main', 'cooldown'] as const;
   const activePhaseIndex = phaseOrder.indexOf(currentPhase);
 
   // Exercises in the current active phase
-  const currentPhaseSteps = workout.steps.filter((s) => s.phase === currentPhase);
+  const currentPhaseSteps = workout.steps.filter(
+    (s) => s.phase === currentPhase,
+  );
   const currentStepInPhaseIndex = Math.max(
     0,
-    currentPhaseSteps.findIndex((s) => s.id === currentStep.id)
+    currentPhaseSteps.findIndex((s) => s.id === currentStep.id),
   );
 
   return (
-    <div className="w-full space-y-2.5">
+    <div className='w-full space-y-2.5'>
       {/* Stage 1: 3 Phase Pills (warmup, main, cooling) */}
-      <div className="flex items-center gap-2 w-full">
+      <div className='flex items-center gap-2 w-full'>
         {PHASES.map(({ key, label }, idx) => {
           const isCurrent = currentPhase === key;
           const isPast = idx < activePhaseIndex;
 
-          let pillStyle = 'bg-neutral-900/90 text-neutral-500 border-neutral-800';
+          let pillStyle =
+            'bg-neutral-900/90 text-neutral-500 border-neutral-800';
 
           if (isCurrent) {
             if (key === 'warmup') {
@@ -49,9 +49,11 @@ export function ProgressBar({
             }
           } else if (isPast) {
             if (key === 'warmup') {
-              pillStyle = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-medium';
+              pillStyle =
+                'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-medium';
             } else if (key === 'main') {
-              pillStyle = 'bg-sky-500/20 text-sky-300 border-sky-500/40 font-medium';
+              pillStyle =
+                'bg-sky-500/20 text-sky-300 border-sky-500/40 font-medium';
             }
           }
 
@@ -67,7 +69,7 @@ export function ProgressBar({
       </div>
 
       {/* Stage 2: Phase Exercises (Ticks for active phase exercises only) */}
-      <div className="flex h-1.5 w-full gap-1.5">
+      <div className='flex h-1.5 w-full gap-1.5'>
         {currentPhaseSteps.map((step, idx) => {
           const isPast = idx < currentStepInPhaseIndex;
           const isCurrent = idx === currentStepInPhaseIndex;
@@ -78,8 +80,8 @@ export function ProgressBar({
               currentPhase === 'warmup'
                 ? 'bg-emerald-400'
                 : currentPhase === 'main'
-                ? 'bg-sky-400'
-                : 'bg-purple-400';
+                  ? 'bg-sky-400'
+                  : 'bg-purple-400';
           } else if (isCurrent) {
             segmentClass = 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]';
           }
