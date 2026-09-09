@@ -78,7 +78,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
             return (
               <div
                 key={key}
-                className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillPast}`}
+                className={`flex-1 h-6.5 sm:h-7 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillPast}`}
               >
                 <Check className='h-3 w-3 stroke-[2.5]' />
                 <span>{label}</span>
@@ -91,7 +91,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
             return (
               <div
                 key={key}
-                className={`flex-1 h-6 sm:h-6.5 rounded-full border ${theme.pillActiveBorder} p-[2px] bg-black flex items-center justify-center transition-all duration-300 select-none shadow-[0_0_12px_rgba(0,0,0,0.5)]`}
+                className={`flex-1 h-6.5 sm:h-7 rounded-full border-2 ${theme.pillActiveBorder} p-[3px] bg-black flex items-center justify-center transition-all duration-300 select-none shadow-[0_0_12px_rgba(0,0,0,0.5)]`}
               >
                 <div
                   className={`w-full h-full rounded-full ${theme.pillActiveFill} text-neutral-950 font-bold flex items-center justify-center text-[10px] sm:text-xs font-mono uppercase tracking-wider leading-none`}
@@ -106,7 +106,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
           return (
             <div
               key={key}
-              className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillUpcoming}`}
+              className={`flex-1 h-6.5 sm:h-7 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillUpcoming}`}
             >
               <span>{label}</span>
             </div>
@@ -115,7 +115,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
       </div>
 
       {/* Stage 2: Phase Exercises */}
-      <div className='flex h-2.5 sm:h-3 w-full gap-1 sm:gap-1.5'>
+      <div className='flex h-3 sm:h-3.5 w-full gap-1 sm:gap-1.5'>
         {currentPhaseSteps.map((step, idx) => {
           const isPast = idx < currentStepInPhaseIndex;
           const isCurrent = idx === currentStepInPhaseIndex;
@@ -125,7 +125,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
             return (
               <div
                 key={step.id}
-                className={`h-full flex-1 rounded-full border transition-all duration-300 ${theme.bubblePast}`}
+                className={`h-full flex-1 rounded-full border-2 transition-all duration-300 ${theme.bubblePast}`}
               />
             );
           }
@@ -135,7 +135,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
             return (
               <div
                 key={step.id}
-                className={`h-full flex-1 rounded-full border ${theme.bubbleCurrentBorder} p-[1px] sm:p-[1.5px] bg-black flex items-center justify-center transition-all duration-300`}
+                className={`h-full flex-1 rounded-full border-2 ${theme.bubbleCurrentBorder} p-[2px] bg-black flex items-center justify-center transition-all duration-300`}
               >
                 <div
                   className={`w-full h-full rounded-full ${theme.bubbleCurrentFill} animate-pulse`}
@@ -148,7 +148,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
           return (
             <div
               key={step.id}
-              className={`h-full flex-1 rounded-full border transition-all duration-300 ${theme.bubbleUpcoming}`}
+              className={`h-full flex-1 rounded-full border-2 transition-all duration-300 ${theme.bubbleUpcoming}`}
             />
           );
         })}
