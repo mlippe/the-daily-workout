@@ -103,7 +103,10 @@ export default function App() {
         {/* Hero Section: Today's 15-Minute Session */}
         <RecommendationHero
           workout={heroWorkout}
+          isRecommended={isRecommended}
           reason={heroReason}
+          recommendedWorkoutTitle={recommendation.workout.title}
+          onResetToRecommended={() => setSelectedWorkout(null)}
           onStart={handleStartWorkout}
           onPreview={(w) => setPreviewWorkout(w)}
         />
@@ -112,6 +115,7 @@ export default function App() {
         <RoutineList
           workouts={ALL_WORKOUT_PLANS}
           activeWorkoutId={heroWorkout.id}
+          recommendedWorkoutId={recommendation.workout.id}
           onSelect={(w) => setSelectedWorkout(w)}
           onStart={handleStartWorkout}
         />

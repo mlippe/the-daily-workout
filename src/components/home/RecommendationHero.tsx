@@ -1,16 +1,22 @@
-import { Play, List } from 'lucide-react';
+import { Play, List, Sparkles, RotateCcw } from 'lucide-react';
 import type { WorkoutPlan } from '../../types/workout';
 
 interface RecommendationHeroProps {
   workout: WorkoutPlan;
+  isRecommended: boolean;
   reason: string;
+  recommendedWorkoutTitle?: string;
+  onResetToRecommended?: () => void;
   onStart: (workout: WorkoutPlan) => void;
   onPreview: (workout: WorkoutPlan) => void;
 }
 
 export function RecommendationHero({
   workout,
+  isRecommended,
   reason,
+  recommendedWorkoutTitle,
+  onResetToRecommended,
   onStart,
   onPreview,
 }: RecommendationHeroProps) {
@@ -21,11 +27,38 @@ export function RecommendationHero({
 
   return (
     <section className="py-8 sm:py-12">
-      {/* Subtle kicker */}
-      <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
-        <span>Today's Routine</span>
-        <span>•</span>
-        <span>15 Minutes</span>
+      {/* Subtle kicker & recommended status */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
+          {isRecommended ? (
+            <>
+              <span className="inline-flex items-center gap-1 text-white font-semibold">
+                <Sparkles className="h-3 w-3 text-amber-300" />
+                Today's Recommendation
+              </span>
+              <span>•</span>
+              <span>15 Minutes</span>
+            </>
+          ) : (
+            <>
+              <span className="text-neutral-300">Selected Routine</span>
+              <span>•</span>
+              <span>15 Minutes</span>
+            </>
+          )}
+        </div>
+
+        {/* Quick button to return to recommendation if viewing custom workout */}
+        {!isRecommended && onResetToRecommended && recommendedWorkoutTitle && (
+          <button
+            type="button"
+            onClick={onResetToRecommended}
+            className="inline-flex items-center gap-1.5 font-mono text-xs text-neutral-400 hover:text-white transition-colors"
+          >
+            <RotateCcw className="h-3 w-3" />
+            <span>Back to recommendation ({recommendedWorkoutTitle})</span>
+          </button>
+        )}
       </div>
 
       {/* Large, confident display title */}
