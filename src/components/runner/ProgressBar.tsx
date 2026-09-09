@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import type { WorkoutPlan, WorkoutStep } from '../../types/workout';
 
 interface ProgressBarProps {
@@ -25,71 +26,129 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
     currentPhaseSteps.findIndex((s) => s.id === currentStep.id),
   );
 
+  // All non-active phases adapt the same accent color as the current active phase:
+  // - Inactive parts: just outlined
+  // - Done parts: outline + non-pulsing solid fill
+  // - Active parts: outline + black inset padding + fill (lower bar pulses, main steps non-pulsing)
+  const phaseThemes = {
+    warmup: {
+      pillActiveBorder: 'border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.35)]',
+      pillActiveFill: 'bg-emerald-400',
+      pillPast: 'bg-emerald-400 border-emerald-400 text-neutral-950 font-bold',
+      pillUpcoming: 'bg-transparent border-emerald-400/50 text-emerald-400/80 font-medium',
+      bubbleCurrentBorder: 'border-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]',
+      bubbleCurrentFill: 'bg-emerald-400',
+      bubblePast: 'bg-emerald-400 border-emerald-400',
+      bubbleUpcoming: 'bg-transparent border-emerald-500/40',
+    },
+    main: {
+      pillActiveBorder: 'border-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.35)]',
+      pillActiveFill: 'bg-sky-400',
+      pillPast: 'bg-sky-400 border-sky-400 text-neutral-950 font-bold',
+      pillUpcoming: 'bg-transparent border-sky-400/50 text-sky-400/80 font-medium',
+      bubbleCurrentBorder: 'border-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]',
+      bubbleCurrentFill: 'bg-sky-400',
+      bubblePast: 'bg-sky-400 border-sky-400',
+      bubbleUpcoming: 'bg-transparent border-sky-500/40',
+    },
+    cooldown: {
+      pillActiveBorder: 'border-purple-400 shadow-[0_0_12px_rgba(192,132,252,0.35)]',
+      pillActiveFill: 'bg-purple-400',
+      pillPast: 'bg-purple-400 border-purple-400 text-neutral-950 font-bold',
+      pillUpcoming: 'bg-transparent border-purple-400/50 text-purple-400/80 font-medium',
+      bubbleCurrentBorder: 'border-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.5)]',
+      bubbleCurrentFill: 'bg-purple-400',
+      bubblePast: 'bg-purple-400 border-purple-400',
+      bubbleUpcoming: 'bg-transparent border-purple-500/40',
+    },
+  };
+
+  const theme = phaseThemes[currentPhase] ?? phaseThemes.main;
+
   return (
-    <div className='w-full space-y-2.5'>
-      {/* Stage 1: 3 Phase Pills (warmup, main, cooling) */}
+    <div className='w-full space-y-2'>
+      {/* Stage 1: 3 Phase Pills */}
       <div className='flex items-center gap-2 w-full'>
         {PHASES.map(({ key, label }, idx) => {
           const isCurrent = currentPhase === key;
           const isPast = idx < activePhaseIndex;
 
-          let pillStyle =
-            'bg-neutral-900/90 text-neutral-500 border-neutral-800';
-
-          if (isCurrent) {
-            if (key === 'warmup') {
-              pillStyle =
-                'bg-emerald-400 text-neutral-950 border-emerald-400 font-bold shadow-[0_0_12px_rgba(52,211,153,0.35)]';
-            } else if (key === 'main') {
-              pillStyle =
-                'bg-sky-400 text-neutral-950 border-sky-400 font-bold shadow-[0_0_12px_rgba(56,189,248,0.35)]';
-            } else {
-              pillStyle =
-                'bg-purple-400 text-neutral-950 border-purple-400 font-bold shadow-[0_0_12px_rgba(192,132,252,0.35)]';
-            }
-          } else if (isPast) {
-            if (key === 'warmup') {
-              pillStyle =
-                'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-medium';
-            } else if (key === 'main') {
-              pillStyle =
-                'bg-sky-500/20 text-sky-300 border-sky-500/40 font-medium';
-            }
+          if (isPast) {
+            // Done parts are outline + non pulsing fill
+            return (
+              <div
+                key={key}
+                className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillPast}`}
+              >
+                <Check className='h-3 w-3 stroke-[2.5]' />
+                <span>{label}</span>
+              </div>
+            );
           }
 
+          if (isCurrent) {
+            // Current one has outline + inset fill (little black padding), without pulsing ("there active is just filled")
+            return (
+              <div
+                key={key}
+                className={`flex-1 h-6 sm:h-6.5 rounded-full border ${theme.pillActiveBorder} p-[2px] bg-black flex items-center justify-center transition-all duration-300 select-none shadow-[0_0_12px_rgba(0,0,0,0.5)]`}
+              >
+                <div
+                  className={`w-full h-full rounded-full ${theme.pillActiveFill} text-neutral-950 font-bold flex items-center justify-center text-[10px] sm:text-xs font-mono uppercase tracking-wider leading-none`}
+                >
+                  <span>{label}</span>
+                </div>
+              </div>
+            );
+          }
+
+          // Inactive parts are just outlined
           return (
             <div
               key={key}
-              className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center rounded-full border text-[10px] sm:text-xs font-mono tracking-wider transition-all duration-300 select-none ${pillStyle}`}
+              className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillUpcoming}`}
             >
-              {label}
+              <span>{label}</span>
             </div>
           );
         })}
       </div>
 
-      {/* Stage 2: Phase Exercises (Ticks for active phase exercises only) */}
-      <div className='flex h-1.5 w-full gap-1.5'>
+      {/* Stage 2: Phase Exercises */}
+      <div className='flex h-2.5 sm:h-3 w-full gap-1 sm:gap-1.5'>
         {currentPhaseSteps.map((step, idx) => {
           const isPast = idx < currentStepInPhaseIndex;
           const isCurrent = idx === currentStepInPhaseIndex;
 
-          let segmentClass = 'bg-neutral-800/80';
           if (isPast) {
-            segmentClass =
-              currentPhase === 'warmup'
-                ? 'bg-emerald-400'
-                : currentPhase === 'main'
-                  ? 'bg-sky-400'
-                  : 'bg-purple-400';
-          } else if (isCurrent) {
-            segmentClass = 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]';
+            // Done parts are outline + non pulsing fill
+            return (
+              <div
+                key={step.id}
+                className={`h-full flex-1 rounded-full border transition-all duration-300 ${theme.bubblePast}`}
+              />
+            );
           }
 
+          if (isCurrent) {
+            // Current one has a fill, but an inset (little black padding) and pulses in lower bar
+            return (
+              <div
+                key={step.id}
+                className={`h-full flex-1 rounded-full border ${theme.bubbleCurrentBorder} p-[1px] sm:p-[1.5px] bg-black flex items-center justify-center transition-all duration-300`}
+              >
+                <div
+                  className={`w-full h-full rounded-full ${theme.bubbleCurrentFill} animate-pulse`}
+                />
+              </div>
+            );
+          }
+
+          // Inactive parts are just outlined
           return (
             <div
               key={step.id}
-              className={`h-full flex-1 rounded-full transition-all duration-300 ${segmentClass}`}
+              className={`h-full flex-1 rounded-full border transition-all duration-300 ${theme.bubbleUpcoming}`}
             />
           );
         })}

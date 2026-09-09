@@ -37,6 +37,57 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const currentStep = workout.steps[currentStepIndex];
+  const currentPhase = currentStep.phase;
+
+  // Whole workout view adapts the colors of the active phase:
+  // warmup: Emerald | main: Sky Blue | cooldown: Purple
+  const phaseTheme = useMemo(() => {
+    switch (currentPhase) {
+      case 'warmup':
+        return {
+          playBtn: 'bg-emerald-400 text-neutral-950 hover:bg-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.45)]',
+          playBtnPaused: 'bg-emerald-500 text-neutral-950 hover:bg-emerald-400 shadow-[0_0_24px_rgba(52,211,153,0.6)] animate-pulse',
+          badge: 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400',
+          repsCardHover: 'hover:border-emerald-500/50 hover:shadow-[0_0_24px_rgba(52,211,153,0.15)]',
+          repsNumberHover: 'group-hover:text-emerald-400',
+          repActionText: 'text-emerald-400',
+          stepBadge: 'border-emerald-500/40 text-emerald-300 bg-emerald-950/20',
+          headerBorder: 'border-emerald-500/20',
+          footerBorder: 'border-emerald-500/20',
+          controlHover: 'hover:border-emerald-500/50 hover:text-emerald-300 hover:bg-emerald-950/20',
+          timerPill: 'border-emerald-500/40 text-emerald-300',
+        };
+      case 'cooldown':
+        return {
+          playBtn: 'bg-purple-400 text-neutral-950 hover:bg-purple-300 shadow-[0_0_24px_rgba(192,132,252,0.45)]',
+          playBtnPaused: 'bg-purple-500 text-neutral-950 hover:bg-purple-400 shadow-[0_0_24px_rgba(192,132,252,0.6)] animate-pulse',
+          badge: 'bg-purple-500/15 border border-purple-500/40 text-purple-400',
+          repsCardHover: 'hover:border-purple-500/50 hover:shadow-[0_0_24px_rgba(192,132,252,0.15)]',
+          repsNumberHover: 'group-hover:text-purple-400',
+          repActionText: 'text-purple-400',
+          stepBadge: 'border-purple-500/40 text-purple-300 bg-purple-950/20',
+          headerBorder: 'border-purple-500/20',
+          footerBorder: 'border-purple-500/20',
+          controlHover: 'hover:border-purple-500/50 hover:text-purple-300 hover:bg-purple-950/20',
+          timerPill: 'border-purple-500/40 text-purple-300',
+        };
+      case 'main':
+      default:
+        return {
+          playBtn: 'bg-sky-400 text-neutral-950 hover:bg-sky-300 shadow-[0_0_24px_rgba(56,189,248,0.45)]',
+          playBtnPaused: 'bg-sky-500 text-neutral-950 hover:bg-sky-400 shadow-[0_0_24px_rgba(56,189,248,0.6)] animate-pulse',
+          badge: 'bg-sky-500/15 border border-sky-500/40 text-sky-400',
+          repsCardHover: 'hover:border-sky-500/50 hover:shadow-[0_0_24px_rgba(56,189,248,0.15)]',
+          repsNumberHover: 'group-hover:text-sky-400',
+          repActionText: 'text-sky-400',
+          stepBadge: 'border-sky-500/40 text-sky-300 bg-sky-950/20',
+          headerBorder: 'border-sky-500/20',
+          footerBorder: 'border-sky-500/20',
+          controlHover: 'hover:border-sky-500/50 hover:text-sky-300 hover:bg-sky-950/20',
+          timerPill: 'border-sky-500/40 text-sky-300',
+        };
+    }
+  }, [currentPhase]);
 
   const [secondsRemaining, setSecondsRemaining] = useState<number>(() => currentStep.workDurationSeconds);
   const [totalElapsedSeconds, setTotalElapsedSeconds] = useState(0);
@@ -168,7 +219,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-between bg-black text-white select-none">
       {/* Standalone Status Bar: 2-stage progress has its own dedicated space */}
-      <header className="border-b border-neutral-900/80 bg-black/90 px-4 sm:px-6 pt-3 pb-2.5 backdrop-blur-md">
+      <header className={`border-b ${phaseTheme.headerBorder} bg-black/90 px-4 sm:px-6 pt-3 pb-2.5 backdrop-blur-md transition-colors duration-300`}>
         <div className="mx-auto max-w-2xl md:max-w-3xl">
           <ProgressBar
             workout={workout}
@@ -200,7 +251,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                     give up
                   </button>
 
-                  <div className="pointer-events-auto rounded-full bg-black/60 px-3 py-1 font-mono text-xs font-semibold text-neutral-200 border border-neutral-800/80 backdrop-blur-md tabular-nums tracking-wider shadow-sm">
+                  <div className={`pointer-events-auto rounded-full bg-black/60 px-3 py-1 font-mono text-xs font-semibold border ${phaseTheme.timerPill} backdrop-blur-md tabular-nums tracking-wider shadow-sm transition-colors`}>
                     {formatTime(totalElapsedSeconds)}
                   </div>
 
@@ -234,7 +285,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
               <div className="flex flex-col items-center justify-center shrink-0 my-4 sm:my-5">
                 {/* Standard Set Indicator Badge */}
                 <div className="mb-2">
-                  <span className="rounded-full bg-sky-500/10 border border-sky-500/30 px-3.5 py-1 font-mono text-xs uppercase tracking-widest text-sky-400 font-semibold shadow-sm">
+                  <span className={`rounded-full ${phaseTheme.badge} px-3.5 py-1 font-mono text-xs uppercase tracking-widest font-semibold shadow-sm transition-colors`}>
                     {currentStep.round ? `Set ${currentStep.round} of 2` : 'Standard Set'}
                   </span>
                 </div>
@@ -242,11 +293,11 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                 {/* Big Reps Count Display */}
                 <div
                   onClick={advance}
-                  className="group flex flex-col items-center justify-center rounded-3xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 px-8 sm:px-10 py-4 transition-all duration-200 active:scale-95 cursor-pointer shadow-lg hover:border-neutral-700"
+                  className={`group flex flex-col items-center justify-center rounded-3xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 ${phaseTheme.repsCardHover} px-8 sm:px-10 py-4 transition-all duration-200 active:scale-95 cursor-pointer shadow-lg`}
                   title="Tap to complete set"
                 >
                   <div className="flex items-baseline gap-2.5">
-                    <span className="font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-tighter text-white group-hover:text-emerald-400 transition-colors">
+                    <span className={`font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-tighter text-white ${phaseTheme.repsNumberHover} transition-colors`}>
                       {currentStep.targetReps ?? 12}
                     </span>
                     <span className="font-mono text-lg sm:text-xl font-bold uppercase tracking-wider text-neutral-400 group-hover:text-neutral-300 transition-colors">
@@ -254,7 +305,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                     </span>
                   </div>
 
-                  <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+                  <div className={`mt-2 flex items-center gap-1.5 text-xs font-semibold ${phaseTheme.repActionText} transition-colors`}>
                     <CheckCircle2 className="h-4 w-4 stroke-[2.5]" />
                     <span>Tap to Complete Set</span>
                   </div>
@@ -311,7 +362,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
               <ol className="space-y-3.5">
                 {quickSteps.map((stepText, idx) => (
                   <li key={idx} className="flex items-start gap-3.5">
-                    <span className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 border border-neutral-800 font-mono text-xs sm:text-sm font-bold text-neutral-300 mt-0.5">
+                    <span className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border ${phaseTheme.stepBadge} font-mono text-xs sm:text-sm font-bold mt-0.5 transition-colors`}>
                       {idx + 1}
                     </span>
                     <p className="text-base sm:text-lg md:text-xl font-medium text-neutral-100 leading-relaxed">
@@ -341,12 +392,12 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
       </main>
 
       {/* Bottom Controls Bar */}
-      <footer className="border-t border-neutral-900 bg-black px-4 py-4">
+      <footer className={`border-t ${phaseTheme.footerBorder} bg-black px-4 py-4 transition-colors duration-300`}>
         <div className="mx-auto flex max-w-md items-center justify-between gap-6">
           <button
             type="button"
             onClick={handleSkipBack}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+            className={`flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 ${phaseTheme.controlHover} transition-all`}
             title="Previous (Left Arrow)"
             aria-label="Previous step"
           >
@@ -356,10 +407,8 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
           <button
             type="button"
             onClick={() => setIsPaused((p) => !p)}
-            className={`flex h-16 w-16 items-center justify-center rounded-full shadow-xl transition-transform active:scale-95 ${
-              isPaused
-                ? 'bg-emerald-500 text-neutral-950 hover:bg-emerald-400'
-                : 'bg-white text-neutral-950 hover:bg-neutral-100'
+            className={`flex h-16 w-16 items-center justify-center rounded-full shadow-xl transition-all active:scale-95 ${
+              isPaused ? phaseTheme.playBtnPaused : phaseTheme.playBtn
             }`}
             title={isPaused ? 'Resume (Space)' : 'Pause (Space)'}
             aria-label={isPaused ? 'Resume workout' : 'Pause workout'}
@@ -370,7 +419,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
           <button
             type="button"
             onClick={handleSkipForward}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+            className={`flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 ${phaseTheme.controlHover} transition-all`}
             title="Skip (Right Arrow)"
             aria-label="Skip to next step"
           >
