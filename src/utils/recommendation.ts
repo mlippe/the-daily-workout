@@ -1,13 +1,7 @@
 import type { MusclePillar } from '../types/exercise';
 import type { WorkoutPlan, WorkoutPillarFocus } from '../types/workout';
 import { getWorkoutHistory } from './storage';
-import {
-  WORKOUT_PUSH,
-  WORKOUT_PULL_BACK,
-  WORKOUT_LEGS,
-  WORKOUT_CORE,
-  WORKOUT_FULL_BODY,
-} from './workoutGenerator';
+import { getRandomVariation } from './workoutGenerator';
 
 export interface RecommendationResult {
   workout: WorkoutPlan;
@@ -15,13 +9,6 @@ export interface RecommendationResult {
   pillarBreakdown: Record<MusclePillar, number>;
   daysSinceLastWorkout: number | null;
 }
-
-const PILLAR_WORKOUT_MAP: Record<MusclePillar, WorkoutPlan> = {
-  push: WORKOUT_PUSH,
-  pull_back: WORKOUT_PULL_BACK,
-  legs: WORKOUT_LEGS,
-  core: WORKOUT_CORE,
-};
 
 const PILLAR_NAMES: Record<MusclePillar, string> = {
   push: 'Upper Body (Push)',
@@ -44,7 +31,7 @@ export function getDailyRecommendation(): RecommendationResult {
   // Case 1: First-time user with no history
   if (history.length === 0) {
     return {
-      workout: WORKOUT_FULL_BODY,
+      workout: getRandomVariation('full_body'),
       reason: 'Welcome! Start with this full-body reset to wake up all major muscle groups.',
       pillarBreakdown,
       daysSinceLastWorkout: null,
@@ -92,7 +79,7 @@ export function getDailyRecommendation(): RecommendationResult {
   // Case 2: Inactivity break (> 3 days since last session)
   if (diffDays >= 4) {
     return {
-      workout: WORKOUT_FULL_BODY,
+      workout: getRandomVariation('full_body'),
       reason: `Welcome back! Re-activate your whole body after ${diffDays} days of rest.`,
       pillarBreakdown,
       daysSinceLastWorkout: diffDays,
@@ -104,7 +91,7 @@ export function getDailyRecommendation(): RecommendationResult {
   if (diffDays <= 1) {
     if (lastPillar === 'push') {
       return {
-        workout: WORKOUT_PULL_BACK,
+        workout: getRandomVariation('pull_back'),
         reason: "Balances yesterday's Upper Push with posterior back and posture work.",
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
@@ -112,7 +99,7 @@ export function getDailyRecommendation(): RecommendationResult {
     }
     if (lastPillar === 'pull_back') {
       return {
-        workout: WORKOUT_LEGS,
+        workout: getRandomVariation('legs'),
         reason: 'Gives your upper back recovery while mobilizing lower body and glutes.',
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
@@ -120,7 +107,7 @@ export function getDailyRecommendation(): RecommendationResult {
     }
     if (lastPillar === 'legs') {
       return {
-        workout: WORKOUT_CORE,
+        workout: getRandomVariation('core'),
         reason: 'Rests leg muscles with focused pelvic and spinal stability.',
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
@@ -128,7 +115,7 @@ export function getDailyRecommendation(): RecommendationResult {
     }
     if (lastPillar === 'core') {
       return {
-        workout: WORKOUT_PUSH,
+        workout: getRandomVariation('push'),
         reason: 'Builds upper body pushing power with a fresh, stabilized core.',
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
@@ -150,7 +137,7 @@ export function getDailyRecommendation(): RecommendationResult {
   const restedDays = daysSincePillar[selectedPillar];
 
   return {
-    workout: PILLAR_WORKOUT_MAP[selectedPillar],
+    workout: getRandomVariation(selectedPillar),
     reason: restedDays < 999 
       ? `${PILLAR_NAMES[selectedPillar]} hasn't been targeted in ${restedDays} days.`
       : `${PILLAR_NAMES[selectedPillar]} is ready for focus to maintain muscle balance.`,

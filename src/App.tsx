@@ -1,14 +1,18 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { WorkoutPlan } from './types/workout';
-import { ALL_WORKOUT_PLANS, applyTargetRepsToWorkout } from './utils/workoutGenerator';
+import {
+  ALL_WORKOUT_PLANS,
+  applyTargetRepsToWorkout,
+  getRandomVariation,
+} from './utils/workoutGenerator';
 import { getDailyRecommendation } from './utils/recommendation';
 import {
   getStreakStats,
   saveWorkoutCompletion,
-  getWorkoutTargetReps,
   saveWorkoutTargetReps,
   incrementWorkoutTargetReps,
   getAllWorkoutTargetReps,
+  DEFAULT_TARGET_REPS,
 } from './utils/storage';
 import { StreakHeader } from './components/home/StreakHeader';
 import { RecommendationHero } from './components/home/RecommendationHero';
@@ -53,8 +57,14 @@ export default function App() {
 
   const heroTargetReps = useMemo(() => {
     void statsVersion;
-    return getWorkoutTargetReps(baseHeroWorkout.id);
-  }, [baseHeroWorkout.id, statsVersion]);
+    if (typeof allRepTargets[baseHeroWorkout.primaryPillar] === 'number') {
+      return allRepTargets[baseHeroWorkout.primaryPillar];
+    }
+    if (typeof allRepTargets[baseHeroWorkout.id] === 'number') {
+      return allRepTargets[baseHeroWorkout.id];
+    }
+    return DEFAULT_TARGET_REPS;
+  }, [allRepTargets, baseHeroWorkout.primaryPillar, baseHeroWorkout.id, statsVersion]);
 
   const heroWorkout = useMemo(() => {
     return applyTargetRepsToWorkout(baseHeroWorkout, heroTargetReps);
@@ -67,15 +77,40 @@ export default function App() {
   // Manual override handler from the hero
   const handleUpdateTargetReps = useCallback(
     (newReps: number) => {
+      saveWorkoutTargetReps(baseHeroWorkout.primaryPillar, newReps);
       saveWorkoutTargetReps(baseHeroWorkout.id, newReps);
       setStatsVersion((v) => v + 1);
     },
-    [baseHeroWorkout.id]
+    [baseHeroWorkout.primaryPillar, baseHeroWorkout.id]
+  );
+
+  // Shuffle another variation for the current hero workout category
+  const handleShuffleVariation = useCallback(() => {
+    const nextVariation = getRandomVariation(
+      baseHeroWorkout.primaryPillar,
+      baseHeroWorkout.id
+    );
+    setSelectedWorkout(nextVariation);
+  }, [baseHeroWorkout.primaryPillar, baseHeroWorkout.id]);
+
+  // When a category in the list is selected, shuffle in a variation for that category
+  const handleSelectCategory = useCallback(
+    (categoryWorkout: WorkoutPlan) => {
+      const excludeId =
+        selectedWorkout?.primaryPillar === categoryWorkout.primaryPillar
+          ? selectedWorkout.id
+          : undefined;
+      const variation = getRandomVariation(categoryWorkout.primaryPillar, excludeId);
+      setSelectedWorkout(variation);
+    },
+    [selectedWorkout]
   );
 
   // Start workout action
   const handleStartWorkout = useCallback((workout: WorkoutPlan) => {
-    const targetReps = getWorkoutTargetReps(workout.id);
+    const all = getAllWorkoutTargetReps();
+    const targetReps =
+      all[workout.primaryPillar] ?? all[workout.id] ?? DEFAULT_TARGET_REPS;
     const workoutWithReps = applyTargetRepsToWorkout(workout, targetReps);
     setActiveWorkout(workoutWithReps);
     setView('running');
@@ -83,7 +118,9 @@ export default function App() {
 
   // Preview workout action
   const handlePreviewWorkout = useCallback((workout: WorkoutPlan) => {
-    const targetReps = getWorkoutTargetReps(workout.id);
+    const all = getAllWorkoutTargetReps();
+    const targetReps =
+      all[workout.primaryPillar] ?? all[workout.id] ?? DEFAULT_TARGET_REPS;
     const workoutWithReps = applyTargetRepsToWorkout(workout, targetReps);
     setPreviewWorkout(workoutWithReps);
   }, []);
@@ -99,7 +136,8 @@ export default function App() {
     });
 
     // Automatic progression: automatically increment target reps by +1 for the next session
-    const nextReps = incrementWorkoutTargetReps(summary.workout.id, 1);
+    const nextReps = incrementWorkoutTargetReps(summary.workout.primaryPillar, 1);
+    saveWorkoutTargetReps(summary.workout.id, nextReps);
     setNextTargetReps(nextReps);
 
     setCompletedWorkout(summary.workout);
@@ -153,6 +191,7 @@ export default function App() {
           recommendedWorkoutTitle={recommendation.workout.title}
           targetReps={heroTargetReps}
           onUpdateTargetReps={handleUpdateTargetReps}
+          onShuffleVariation={handleShuffleVariation}
           onResetToRecommended={() => setSelectedWorkout(null)}
           onStart={handleStartWorkout}
           onPreview={handlePreviewWorkout}
@@ -163,9 +202,18 @@ export default function App() {
           workouts={ALL_WORKOUT_PLANS}
           activeWorkoutId={heroWorkout.id}
           recommendedWorkoutId={recommendation.workout.id}
+          activePillar={heroWorkout.primaryPillar}
+          recommendedPillar={recommendation.workout.primaryPillar}
           repTargets={allRepTargets}
-          onSelect={(w) => setSelectedWorkout(w)}
-          onStart={handleStartWorkout}
+          onSelect={handleSelectCategory}
+          onStart={(w) => {
+            if (w.primaryPillar === heroWorkout.primaryPillar) {
+              handleStartWorkout(heroWorkout);
+            } else {
+              const variation = getRandomVariation(w.primaryPillar);
+              handleStartWorkout(variation);
+            }
+          }}
         />
 
         {/* Minimal footer */}

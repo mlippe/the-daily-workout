@@ -5,6 +5,8 @@ interface RoutineListProps {
   workouts: WorkoutPlan[];
   activeWorkoutId: string;
   recommendedWorkoutId: string;
+  activePillar?: string;
+  recommendedPillar?: string;
   repTargets?: Record<string, number>;
   onSelect: (workout: WorkoutPlan) => void;
   onStart: (workout: WorkoutPlan) => void;
@@ -14,6 +16,8 @@ export function RoutineList({
   workouts,
   activeWorkoutId,
   recommendedWorkoutId,
+  activePillar,
+  recommendedPillar,
   repTargets,
   onSelect,
   onStart,
@@ -31,8 +35,11 @@ export function RoutineList({
 
       <div className='divide-y divide-neutral-900 border-y border-neutral-900'>
         {workouts.map((w) => {
-          const isCurrentFocus = w.id === activeWorkoutId;
-          const isRecommended = w.id === recommendedWorkoutId;
+          const isCurrentFocus =
+            w.id === activeWorkoutId || (Boolean(activePillar) && w.primaryPillar === activePillar);
+          const isRecommended =
+            w.id === recommendedWorkoutId ||
+            (Boolean(recommendedPillar) && w.primaryPillar === recommendedPillar);
 
           return (
             <div
@@ -79,7 +86,7 @@ export function RoutineList({
 
               <div className='flex items-center gap-3 shrink-0'>
                 <span className='font-mono text-xs text-neutral-400'>
-                  15m • {repTargets?.[w.id] ?? 12} reps
+                  15m • {repTargets?.[w.primaryPillar] ?? repTargets?.[w.id] ?? 12} reps
                 </span>
                 <button
                   type='button'

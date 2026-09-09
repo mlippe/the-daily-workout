@@ -1061,31 +1061,6 @@
     ]
   },
   {
-    "id": "Standing_Towel_Triceps_Extension",
-    "name": "Standing Towel Triceps Extension",
-    "category": "main",
-    "pillar": "push",
-    "primaryMuscles": [
-      "triceps"
-    ],
-    "secondaryMuscles": [],
-    "equipment": "body only",
-    "level": "beginner",
-    "type": "reps",
-    "defaultDuration": 45,
-    "defaultReps": 12,
-    "instructions": [
-      "To begin, stand up with both arms fully extended above the head holding one end of a towel with both hands. Your elbows should be in and the arms perpendicular to the floor with the palms facing each other while your feet should be shoulder width apart from each other. This is the starting position.",
-      "Now communicate with your partner so that he/she can grip the other side of the towel to apply resistance. Keeping your upper arms close to your head (elbows in) and perpendicular to the floor, lower the resistance in a semicircular motion behind your head until your forearms touch your biceps. Tip: The upper arms should remain stationary and only the forearms should move. Breathe in as you perform this step.",
-      "Go back to the starting position by using the triceps to raise the towel. Breathe out as you perform this step.",
-      "Repeat for the recommended amount of repetitions."
-    ],
-    "images": [
-      "/exercises/Standing_Towel_Triceps_Extension/0.jpg",
-      "/exercises/Standing_Towel_Triceps_Extension/1.jpg"
-    ]
-  },
-  {
     "id": "Isometric_Chest_Squeezes",
     "name": "Isometric Chest Squeezes",
     "category": "main",
@@ -1250,35 +1225,6 @@
     "images": [
       "/exercises/Superman/0.jpg",
       "/exercises/Superman/1.jpg"
-    ]
-  },
-  {
-    "id": "Hyperextensions_With_No_Hyperextension_Bench",
-    "name": "Hyperextensions With No Hyperextension Bench",
-    "category": "main",
-    "pillar": "pull_back",
-    "primaryMuscles": [
-      "lower back"
-    ],
-    "secondaryMuscles": [
-      "glutes",
-      "hamstrings"
-    ],
-    "equipment": "body only",
-    "level": "intermediate",
-    "type": "reps",
-    "defaultDuration": 45,
-    "defaultReps": 12,
-    "instructions": [
-      "With someone holding down your legs, slide yourself down to the edge a flat bench until your hips hang off the end of the bench. Tip: Your entire upper body should be hanging down towards the floor. Also, you will be in the same position as if you were on a hyperextension bench but the range of motion will be shorter due to the height of the flat bench vs. that of the hyperextension bench.",
-      "With your body straight, cross your arms in front of you (my preference) or behind your head. This will be your starting position. Tip: You can also hold a weight plate for extra resistance in front of you under your crossed arms.",
-      "Start bending forward slowly at the waist as far as you can while keeping your back flat. Inhale as you perform this movement. Keep moving forward until you almost touch the floor or you feel a nice stretch on the hamstrings (whichever comes first). Tip: Never round the back as you perform this exercise.",
-      "Slowly raise your torso back to the initial position as you exhale. Tip: Avoid the temptation to arch your back past a straight line. Also, do not swing the torso at any time in order to protect the back from injury.",
-      "Repeat for the recommended amount of repetitions."
-    ],
-    "images": [
-      "/exercises/Hyperextensions_With_No_Hyperextension_Bench/0.jpg",
-      "/exercises/Hyperextensions_With_No_Hyperextension_Bench/1.jpg"
     ]
   },
   {
@@ -2057,63 +2003,6 @@
     ]
   },
   {
-    "id": "Floor_Glute-Ham_Raise",
-    "name": "Floor Glute-Ham Raise",
-    "category": "main",
-    "pillar": "legs",
-    "primaryMuscles": [
-      "hamstrings"
-    ],
-    "secondaryMuscles": [
-      "calves",
-      "glutes"
-    ],
-    "equipment": "body only",
-    "level": "intermediate",
-    "type": "reps",
-    "defaultDuration": 45,
-    "defaultReps": 12,
-    "instructions": [
-      "You can use a partner for this exercise or brace your feet under something stable.",
-      "Begin on your knees with your upper legs and torso upright. If using a partner, they will firmly hold your feet to keep you in position. This will be your starting position.",
-      "Lower yourself by extending at the knee, taking care to NOT flex the hips as you go forward.",
-      "Place your hands in front of you as you reach the floor. This movement is very difficult and you may be unable to do it unaided. Use your arms to lightly push off the floor to aid your return to the starting position."
-    ],
-    "images": [
-      "/exercises/Floor_Glute-Ham_Raise/0.jpg",
-      "/exercises/Floor_Glute-Ham_Raise/1.jpg"
-    ]
-  },
-  {
-    "id": "Natural_Glute_Ham_Raise",
-    "name": "Natural Glute Ham Raise",
-    "category": "main",
-    "pillar": "legs",
-    "primaryMuscles": [
-      "hamstrings"
-    ],
-    "secondaryMuscles": [
-      "calves",
-      "glutes",
-      "lower back"
-    ],
-    "equipment": "body only",
-    "level": "intermediate",
-    "type": "reps",
-    "defaultDuration": 45,
-    "defaultReps": 12,
-    "instructions": [
-      "Using the leg pad of a lat pulldown machine or a preacher bench, position yourself so that your ankles are under the pads, knees on the seat, and you are facing away from the machine. You should be upright and maintaining good posture.",
-      "This will be your starting position. Lower yourself under control until your knees are almost completely straight.",
-      "Remaining in control, raise yourself back up to the starting position.",
-      "If you are unable to complete a rep, use a band, a partner, or push off of a box to aid in completing a repetition."
-    ],
-    "images": [
-      "/exercises/Natural_Glute_Ham_Raise/0.jpg",
-      "/exercises/Natural_Glute_Ham_Raise/1.jpg"
-    ]
-  },
-  {
     "id": "Moving_Claw_Series",
     "name": "Moving Claw Series",
     "category": "main",
@@ -2277,30 +2166,6 @@
     "images": [
       "/exercises/Leg_Lift/0.jpg",
       "/exercises/Leg_Lift/1.jpg"
-    ]
-  },
-  {
-    "id": "Prone_Manual_Hamstring",
-    "name": "Prone Manual Hamstring",
-    "category": "main",
-    "pillar": "legs",
-    "primaryMuscles": [
-      "hamstrings"
-    ],
-    "secondaryMuscles": [],
-    "equipment": "body only",
-    "level": "beginner",
-    "type": "reps",
-    "defaultDuration": 45,
-    "defaultReps": 12,
-    "instructions": [
-      "You will need a partner for this exercise. Lay face down with your legs straight. Your assistant will place their hand on your heel.",
-      "To begin, flex the knee to curl your leg up. Your partner should provide resistance, starting light and increasing the pressure as the movement is completed. Communicate with your partner to monitor appropriate resistance levels.",
-      "Pause at the top, returning the leg to the starting position as your partner provides resistance going the other direction."
-    ],
-    "images": [
-      "/exercises/Prone_Manual_Hamstring/0.jpg",
-      "/exercises/Prone_Manual_Hamstring/1.jpg"
     ]
   },
   {
@@ -2534,11 +2399,9 @@
     "defaultDuration": 45,
     "defaultReps": 12,
     "instructions": [
-      "Lie down on the floor placing your feet either under something that will not move or by having a partner hold them. Your legs should be bent at the knees.",
-      "Elevate your upper body so that it creates an imaginary V-shape with your thighs. Your arms should be fully extended in front of you perpendicular to your torso and with the hands clasped. This is the starting position.",
-      "Twist your torso to the right side until your arms are parallel with the floor while breathing out.",
-      "Hold the contraction for a second and move back to the starting position while breathing out. Now move to the opposite side performing the same techniques you applied to the right side.",
-      "Repeat for the recommended amount of repetitions."
+      "Sit on the floor with your knees bent and heels touching the floor or slightly elevated. Elevate your upper body slightly to create a V-shape with your thighs.",
+      "Clasp your hands in front of your chest and brace your core.",
+      "Twist your torso smoothly to the right side until your hands are beside your hip, pause, and then twist to the left side in a controlled motion."
     ],
     "images": [
       "/exercises/Russian_Twist/0.jpg",
@@ -2641,11 +2504,10 @@
     "defaultDuration": 45,
     "defaultReps": 12,
     "instructions": [
-      "Lie down on the floor placing your feet either under something that will not move or by having a partner hold them. Your legs should be bent at the knees.",
-      "Place your hands behind your head and lock them together by clasping your fingers. This is the starting position.",
-      "Elevate your upper body so that it creates an imaginary V-shape with your thighs. Breathe out when performing this part of the exercise.",
-      "Once you feel the contraction for a second, lower your upper body back down to the starting position while inhaling.",
-      "Repeat for the recommended amount of repetitions."
+      "Lie on your back with your knees bent and feet flat on the floor about hip-width apart.",
+      "Place your fingertips behind your ears or cross your arms over your chest.",
+      "Engage your abdominals to curl your upper body up towards your knees, keeping the motion smooth without pulling on your neck.",
+      "Slowly lower yourself back down under control to the starting position and repeat."
     ],
     "images": [
       "/exercises/Sit-Up/0.jpg",
@@ -3184,29 +3046,6 @@
     ]
   },
   {
-    "id": "Lying_Prone_Quadriceps",
-    "name": "Lying Prone Quadriceps",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "quadriceps"
-    ],
-    "secondaryMuscles": [],
-    "equipment": "body only",
-    "level": "expert",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "Lay face down on the floor with your partner kneeling beside you. Flex one knee and raise that leg off the ground, attempting to touch your glutes with your foot. Your partner should hold the knee and ankle. This will be your starting position.",
-      "Attempt to extend your knee while your partner prevents any actual movement.",
-      "After 10-20 seconds, relax your muscles as your partner gently pushes the foot towards your glutes, further stretching the quadriceps and hip flexors.",
-      "After 10-20 seconds, switch sides."
-    ],
-    "images": [
-      "/exercises/Lying_Prone_Quadriceps/0.jpg",
-      "/exercises/Lying_Prone_Quadriceps/1.jpg"
-    ]
-  },
-  {
     "id": "Seated_Floor_Hamstring_Stretch",
     "name": "Seated Floor Hamstring Stretch",
     "category": "cooldown",
@@ -3227,30 +3066,6 @@
     "images": [
       "/exercises/Seated_Floor_Hamstring_Stretch/0.jpg",
       "/exercises/Seated_Floor_Hamstring_Stretch/1.jpg"
-    ]
-  },
-  {
-    "id": "Seated_Hamstring",
-    "name": "Seated Hamstring",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "hamstrings"
-    ],
-    "secondaryMuscles": [
-      "calves"
-    ],
-    "equipment": "body only",
-    "level": "expert",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "In a seated position with your legs extended, have your partner stand behind you. Now, lean forward as your partner braces your shoulders with their hands. This will be your starting position.",
-      "Attempt to push your torso back for 10-20 seconds, as your partner prevents any actual movement of your torso.",
-      "Now relax your muscles as your partner increases the stretch by gently pushing your torso forward for 10-20 seconds."
-    ],
-    "images": [
-      "/exercises/Seated_Hamstring/0.jpg",
-      "/exercises/Seated_Hamstring/1.jpg"
     ]
   },
   {
@@ -3298,29 +3113,6 @@
     "images": [
       "/exercises/90_90_Hamstring/0.jpg",
       "/exercises/90_90_Hamstring/1.jpg"
-    ]
-  },
-  {
-    "id": "Adductor_Groin",
-    "name": "Adductor/Groin",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "adductors"
-    ],
-    "secondaryMuscles": [],
-    "equipment": "body only",
-    "level": "intermediate",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "Lie on your back with your feet raised towards the ceiling.",
-      "Have your partner hold your feet or ankles. Abduct your legs as far as you can. This will be your starting position.",
-      "Attempt to squeeze your legs together for 10 or more seconds, while your partner prevents you from doing so.",
-      "Now, relax the muscles in your legs as your partner pushes your feet apart, stretching as far as is comfortable for you. Be sure to let your partner know when the stretch is adequate to prevent overstretching or injury."
-    ],
-    "images": [
-      "/exercises/Adductor_Groin/0.jpg",
-      "/exercises/Adductor_Groin/1.jpg"
     ]
   },
   {
@@ -3437,79 +3229,6 @@
     ]
   },
   {
-    "id": "Lying_Glute",
-    "name": "Lying Glute",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "glutes"
-    ],
-    "secondaryMuscles": [
-      "abductors"
-    ],
-    "equipment": "body only",
-    "level": "expert",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "Lie on your back with your partner kneeling beside you.",
-      "Flex the hip of one leg, raising it off of the floor. Rotate the leg so the foot is over the opposite hip, the lower leg perpendicular to your body. Your partner should hold the knee and ankle in place. This will be your starting position.",
-      "Attempt to push your leg towards your partner, who should be preventing any actual movement of the leg.",
-      "After 10-20 seconds, completely relax as your partner gently pushes the ankle and knee towards your chest. Be sure to inform your helper when the stretch is adequate to prevent injury or overstretching."
-    ],
-    "images": [
-      "/exercises/Lying_Glute/0.jpg",
-      "/exercises/Lying_Glute/1.jpg"
-    ]
-  },
-  {
-    "id": "Seated_Glute",
-    "name": "Seated Glute",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "glutes"
-    ],
-    "secondaryMuscles": [
-      "adductors"
-    ],
-    "equipment": "body only",
-    "level": "expert",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "In a seated position with your knees bent, cross one ankle over the opposite knee. Your partner will stand behind you. Now, lean forward as your partner braces your shoulders with their hands. This will be your starting position.",
-      "Attempt to push your torso back for 10-20 seconds, as your partner prevents any actual movement of your torso.",
-      "Now relax your muscles as your partner increases the stretch by gently pushing your torso forward for 10-20 seconds."
-    ],
-    "images": [
-      "/exercises/Seated_Glute/0.jpg",
-      "/exercises/Seated_Glute/1.jpg"
-    ]
-  },
-  {
-    "id": "Overhead_Triceps",
-    "name": "Overhead Triceps",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "triceps"
-    ],
-    "secondaryMuscles": [
-      "lats"
-    ],
-    "equipment": "body only",
-    "level": "expert",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "Sit upright on the floor with your partner behind you. Raise one arm straight up, and flex the elbow, attempting to touch your hand to your back. Your parner should hold your elbow and wrist. This will be your starting position.",
-      "Attempt to extend the arm straight into the air as your partner prevents you from doing actually doing so.",
-      "After 10-20 seconds, relax the arm and allow your partner to further stretch the tricep by applying gentle pressure to the wrist. Hold for 10-20 seconds, and then switch sides."
-    ],
-    "images": [
-      "/exercises/Overhead_Triceps/0.jpg",
-      "/exercises/Overhead_Triceps/1.jpg"
-    ]
-  },
-  {
     "id": "Triceps_Stretch",
     "name": "Triceps Stretch",
     "category": "cooldown",
@@ -3593,30 +3312,6 @@
     "images": [
       "/exercises/Chin_To_Chest_Stretch/0.jpg",
       "/exercises/Chin_To_Chest_Stretch/1.jpg"
-    ]
-  },
-  {
-    "id": "Seated_Front_Deltoid",
-    "name": "Seated Front Deltoid",
-    "category": "cooldown",
-    "primaryMuscles": [
-      "shoulders"
-    ],
-    "secondaryMuscles": [
-      "chest"
-    ],
-    "equipment": "body only",
-    "level": "expert",
-    "type": "time",
-    "defaultDuration": 30,
-    "instructions": [
-      "Sit upright on the floor with your legs bent, your partner standing behind you. Stick your arms straight out to your sides, with your palms facing the ground. Attempt to move them as far behind you as possible, as your assistant holds your wrists. This will be your starting position.",
-      "Keeping your elbows straight, attempt to move your arms to the front, with your partner gently restraining you to prevent any actual movement for 10-20 seconds.",
-      "Now, relax your muscles and allow your partner to gently increase the stretch on the shoulders and chest. Hold for 10 to 20 seconds."
-    ],
-    "images": [
-      "/exercises/Seated_Front_Deltoid/0.jpg",
-      "/exercises/Seated_Front_Deltoid/1.jpg"
     ]
   },
   {

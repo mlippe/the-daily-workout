@@ -1,4 +1,4 @@
-import { Play, List, Sparkles, RotateCcw, Minus, Plus } from 'lucide-react';
+import { Play, List, Sparkles, RotateCcw, Minus, Plus, Shuffle } from 'lucide-react';
 import type { WorkoutPlan } from '../../types/workout';
 
 interface RecommendationHeroProps {
@@ -8,6 +8,7 @@ interface RecommendationHeroProps {
   recommendedWorkoutTitle?: string;
   targetReps: number;
   onUpdateTargetReps: (reps: number) => void;
+  onShuffleVariation?: () => void;
   onResetToRecommended?: () => void;
   onStart: (workout: WorkoutPlan) => void;
   onPreview: (workout: WorkoutPlan) => void;
@@ -20,6 +21,7 @@ export function RecommendationHero({
   recommendedWorkoutTitle,
   targetReps,
   onUpdateTargetReps,
+  onShuffleVariation,
   onResetToRecommended,
   onStart,
   onPreview,
@@ -52,17 +54,31 @@ export function RecommendationHero({
           )}
         </div>
 
-        {/* Quick button to return to recommendation if viewing custom workout */}
-        {!isRecommended && onResetToRecommended && recommendedWorkoutTitle && (
-          <button
-            type="button"
-            onClick={onResetToRecommended}
-            className="inline-flex items-center gap-1.5 font-mono text-xs text-neutral-400 hover:text-white transition-colors"
-          >
-            <RotateCcw className="h-3 w-3" />
-            <span>Back to recommendation ({recommendedWorkoutTitle})</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2.5">
+          {onShuffleVariation && (
+            <button
+              type="button"
+              onClick={onShuffleVariation}
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-neutral-300 hover:text-white bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-800 rounded-full px-3 py-1 transition-all active:scale-95 cursor-pointer shadow-sm"
+              title="Shuffle another variation of this routine"
+            >
+              <Shuffle className="h-3 w-3 text-sky-400" />
+              <span>Shuffle variation</span>
+            </button>
+          )}
+
+          {/* Quick button to return to recommendation if viewing custom workout */}
+          {!isRecommended && onResetToRecommended && recommendedWorkoutTitle && (
+            <button
+              type="button"
+              onClick={onResetToRecommended}
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-neutral-400 hover:text-white transition-colors"
+            >
+              <RotateCcw className="h-3 w-3" />
+              <span>Back to recommendation</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Large, confident display title */}
