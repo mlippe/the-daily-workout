@@ -220,100 +220,96 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-        <div className="mx-auto flex min-h-full w-full max-w-3xl lg:max-w-4xl flex-col items-center justify-center">
+      <main className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-3xl lg:max-w-4xl flex-col items-center justify-between pb-6">
           {subState === 'work' ? (
             /* WORK STATE */
-            <div className="my-auto flex w-full flex-col items-center justify-center gap-5 sm:gap-6 py-2">
-              {/* Title & target muscles */}
-              <div className="text-center">
-                <div className="font-mono text-xs uppercase tracking-wider text-neutral-400">
-                  Exercise {currentStepIndex + 1} of {workout.steps.length} • {currentStep.phase}
-                </div>
-                <h1 className="mt-1 text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-                  {currentStep.exercise.name}
-                </h1>
-                <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5 font-mono text-xs sm:text-sm text-neutral-400">
-                  <span className="capitalize">{currentStep.exercise.primaryMuscles.join(', ')}</span>
-                </div>
-              </div>
-
-              {/* Central Hero: Big Visual Animation & Big Timer */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 md:gap-14 w-full my-2 sm:my-3">
-                {/* Visual demo animation */}
-                <div className="w-72 sm:w-80 md:w-96 lg:w-[26rem] max-w-[calc(100vw-2.5rem)] aspect-4/3 relative shrink-0">
-                  <ExerciseVisual
-                    key={currentStep.exercise.id}
-                    exercise={currentStep.exercise}
-                    isPaused={isPaused}
-                    className="h-full w-full shadow-2xl ring-1 ring-neutral-800 bg-neutral-900"
-                  />
-                </div>
-
-                {/* Big Countdown Ring & Reps */}
-                <div
-                  onClick={() => {
-                    if (currentStep.exercise.type === 'reps') {
-                      advance();
-                    }
-                  }}
-                  className={`flex flex-col items-center justify-center cursor-pointer transition-transform shrink-0 ${
-                    currentStep.exercise.type === 'reps' ? 'active:scale-95' : ''
-                  }`}
+            <div className="flex w-full flex-col items-center">
+              {/* Merged Hero: Full-width animation with title at bottom edge */}
+              <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl aspect-[3/2] max-h-[44vh] relative shrink-0 sm:rounded-3xl sm:mt-1 overflow-hidden bg-black">
+                <ExerciseVisual
+                  key={currentStep.exercise.id}
+                  exercise={currentStep.exercise}
+                  isPaused={isPaused}
+                  overlayGradient={true}
+                  className="h-full w-full"
                 >
-                  <div className="relative flex h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 items-center justify-center">
-                    <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="44"
-                        className="stroke-neutral-800"
-                        strokeWidth="6"
-                        fill="transparent"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="44"
-                        className={`transition-all duration-300 ${
-                          secondsRemaining <= 5
-                            ? 'stroke-rose-500'
-                            : currentStep.phase === 'warmup'
-                            ? 'stroke-emerald-400'
-                            : currentStep.phase === 'main'
-                            ? 'stroke-sky-400'
-                            : 'stroke-purple-400'
-                        }`}
-                        strokeWidth="6"
-                        strokeDasharray={276.46}
-                        strokeDashoffset={276.46 * (1 - strokePercent / 100)}
-                        strokeLinecap="round"
-                        fill="transparent"
-                      />
-                    </svg>
-
-                    <div className="absolute flex flex-col items-center">
-                      <span className="font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-tighter">
-                        {secondsRemaining}
-                      </span>
-                      <span className="text-[11px] sm:text-xs uppercase font-semibold tracking-wider text-neutral-400 mt-0.5">
-                        {currentStep.exercise.type === 'reps' ? 'Sec' : 'Seconds'}
-                      </span>
+                  <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-2 pt-6 text-center flex flex-col items-center justify-end">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                      {currentStep.exercise.name}
+                    </h1>
+                    <div className="mt-0.5 flex items-center justify-center gap-2 font-mono text-[11px] sm:text-xs text-neutral-300 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
+                      <span className="capitalize">{currentStep.exercise.primaryMuscles.join(', ')}</span>
+                      <span className="text-neutral-500">•</span>
+                      <span className="text-neutral-400">Step {currentStepIndex + 1}/{workout.steps.length}</span>
                     </div>
                   </div>
+                </ExerciseVisual>
+              </div>
 
-                  {currentStep.exercise.type === 'reps' && (
-                    <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-neutral-800 px-3.5 py-1.5 text-xs font-semibold text-neutral-200 border border-neutral-700 shadow-md">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      <span>Target: {currentStep.targetReps} reps • <span className="text-neutral-400">Tap when done</span></span>
-                    </div>
-                  )}
+              {/* Central Timer & Reps */}
+              <div
+                onClick={() => {
+                  if (currentStep.exercise.type === 'reps') {
+                    advance();
+                  }
+                }}
+                className={`flex flex-col items-center justify-center cursor-pointer transition-transform shrink-0 my-4 sm:my-5 ${
+                  currentStep.exercise.type === 'reps' ? 'active:scale-95' : ''
+                }`}
+              >
+                <div className="relative flex h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 items-center justify-center">
+                  <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      className="stroke-neutral-800"
+                      strokeWidth="6"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      className={`transition-all duration-300 ${
+                        secondsRemaining <= 5
+                          ? 'stroke-rose-500'
+                          : currentStep.phase === 'warmup'
+                          ? 'stroke-emerald-400'
+                          : currentStep.phase === 'main'
+                          ? 'stroke-sky-400'
+                          : 'stroke-purple-400'
+                      }`}
+                      strokeWidth="6"
+                      strokeDasharray={276.46}
+                      strokeDashoffset={276.46 * (1 - strokePercent / 100)}
+                      strokeLinecap="round"
+                      fill="transparent"
+                    />
+                  </svg>
+
+                  <div className="absolute flex flex-col items-center">
+                    <span className="font-mono text-4xl sm:text-5xl md:text-6xl font-black tabular-nums tracking-tighter">
+                      {secondsRemaining}
+                    </span>
+                    <span className="text-[10px] sm:text-xs uppercase font-semibold tracking-wider text-neutral-400 mt-0.5">
+                      {currentStep.exercise.type === 'reps' ? 'Sec' : 'Seconds'}
+                    </span>
+                  </div>
                 </div>
+
+                {currentStep.exercise.type === 'reps' && (
+                  <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-3.5 py-1.5 text-xs font-semibold text-neutral-200 border border-neutral-800 shadow-md">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    <span>Target: {currentStep.targetReps} reps • <span className="text-neutral-400">Tap when done</span></span>
+                  </div>
+                )}
               </div>
 
               {/* Floating 3-Step Process */}
-              <div className="w-full max-w-xl md:max-w-2xl text-left">
-                <ol className="space-y-4">
+              <div className="w-full max-w-xl md:max-w-2xl px-5 sm:px-0 text-left">
+                <ol className="space-y-3.5">
                   {quickSteps.map((stepText, idx) => (
                     <li key={idx} className="flex items-start gap-3.5">
                       <span className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 border border-neutral-800 font-mono text-xs sm:text-sm font-bold text-neutral-300 mt-0.5">
@@ -344,7 +340,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
             </div>
           ) : (
             /* REST & TRANSITION STATE */
-            <div className="my-auto flex h-full w-full flex-col items-center justify-center gap-6 py-4 text-center">
+            <div className="my-auto flex h-full w-full flex-col items-center justify-center gap-6 p-4 sm:p-6 text-center">
               <div>
                 <span className="inline-block rounded-full bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 text-xs font-mono uppercase tracking-widest text-amber-400">
                   Rest & Prepare
