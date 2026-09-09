@@ -10,101 +10,162 @@ interface ProgressBarProps {
 
 export function ProgressBar({
   workout,
-  currentStepIndex,
   totalElapsedSeconds,
   currentStep,
   subState,
 }: ProgressBarProps) {
-  const totalSeconds = workout.totalDurationSeconds || 900;
-  const progressPercent = Math.min(100, Math.max(0, (totalElapsedSeconds / totalSeconds) * 100));
-
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60);
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  const getPhaseColor = () => {
-    if (subState === 'rest') return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-    switch (currentStep.phase) {
-      case 'warmup':
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-      case 'main':
-        return 'bg-sky-500/20 text-sky-400 border-sky-500/30';
-      case 'cooldown':
-        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-    }
+  const getPhaseTotal = (phase: 'warmup' | 'main' | 'cooldown') => {
+    return workout.steps
+      .filter((s) => s.phase === phase)
+      .reduce((sum, s) => sum + (s.workDurationSeconds || 0) + (s.restDurationSeconds || 0), 0);
   };
 
-  const getPhaseTitle = () => {
-    if (subState === 'rest') return 'Rest & Transition';
-    switch (currentStep.phase) {
-      case 'warmup':
-        return 'Phase 1: Warm-Up';
-      case 'main':
-        return `Phase 2: Main Circuit (Round ${currentStep.round ?? 1} of 2)`;
-      case 'cooldown':
-        return 'Phase 3: Cool-Down';
-    }
-  };
+  const warmupTotal = getPhaseTotal('warmup') || 150;
+  const mainTotal = getPhaseTotal('main') || 600;
+  const cooldownTotal = getPhaseTotal('cooldown') || 150;
+  const totalSeconds = workout.totalDurationSeconds || warmupTotal + mainTotal + cooldownTotal;
+
+  // Real-time elapsed progress per phase
+  const warmupElapsed = Math.min(warmupTotal, Math.max(0, totalElapsedSeconds));
+  const warmupProgress = (warmupElapsed / warmupTotal) * 100;
+
+  const mainElapsed = Math.min(mainTotal, Math.max(0, totalElapsedSeconds - warmupTotal));
+  const mainProgress = (mainElapsed / mainTotal) * 100;
+
+  const cooldownElapsed = Math.min(
+    cooldownTotal,
+    Math.max(0, totalElapsedSeconds - (warmupTotal + mainTotal))
+  );
+  const cooldownProgress = (cooldownElapsed / cooldownTotal) * 100;
+
+  // Exercises in the current active phase
+  const currentPhase = currentStep.phase;
+  const currentPhaseSteps = workout.steps.filter((s) => s.phase === currentPhase);
+  const currentStepInPhaseIndex = Math.max(
+    0,
+    currentPhaseSteps.findIndex((s) => s.id === currentStep.id)
+  );
 
   return (
-    <div className="w-full space-y-2.5">
-      {/* Top row: Phase Badge & Total Time remaining */}
-      <div className="flex items-center justify-between text-sm">
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-semibold tracking-wide uppercase ${getPhaseColor()}`}
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
-          {getPhaseTitle()}
-        </span>
+    <div className="w-full space-y-2">
+      {/* Top Status Line: Phase Title + Exercise In Phase + Total Time */}
+      <div className="flex items-center justify-between font-mono text-[11px] sm:text-xs">
+        <div className="flex items-center gap-2 min-w-0">
+          <span
+            className={`inline-flex items-center gap-1 font-semibold uppercase tracking-wider ${
+              currentPhase === 'warmup'
+                ? 'text-emerald-400'
+                : currentPhase === 'main'
+                ? 'text-sky-400'
+                : 'text-purple-400'
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                subState === 'rest'
+                  ? 'bg-amber-400 animate-pulse'
+                  : currentPhase === 'warmup'
+                  ? 'bg-emerald-400'
+                  : currentPhase === 'main'
+                  ? 'bg-sky-400'
+                  : 'bg-purple-400'
+              }`}
+            />
+            {currentPhase === 'warmup'
+              ? 'Warm-Up'
+              : currentPhase === 'main'
+              ? `Main Circuit${currentStep.round ? ` (R${currentStep.round})` : ''}`
+              : 'Cool-Down'}
+          </span>
+          <span className="text-neutral-600">•</span>
+          <span className="text-neutral-400 truncate">
+            Ex {currentStepInPhaseIndex + 1} of {currentPhaseSteps.length}
+          </span>
+        </div>
 
-        <div className="font-mono text-xs text-neutral-400">
+        <div className="tabular-nums text-neutral-400 shrink-0">
           <span className="font-bold text-white">{formatTime(totalElapsedSeconds)}</span>
-          <span className="text-neutral-500"> / {formatTime(totalSeconds)}</span>
+          <span className="text-neutral-600"> / {formatTime(totalSeconds)}</span>
         </div>
       </div>
 
-      {/* Segmented Timeline */}
-      <div className="flex h-2 w-full gap-1 overflow-hidden rounded-full bg-neutral-900 p-0.5">
-        {workout.steps.map((step, idx) => {
-          const isPast = idx < currentStepIndex;
-          const isCurrent = idx === currentStepIndex;
+      {/* Bar 1: Macro Phase Progress (Warmup • Main • Cooldown) */}
+      <div className="flex h-1.5 w-full gap-1.5">
+        {/* Warm-Up Segment */}
+        <div
+          style={{ flex: warmupTotal }}
+          className="relative overflow-hidden rounded-full bg-neutral-900"
+          title={`Warm-Up (${formatTime(warmupTotal)})`}
+        >
+          <div
+            className="h-full bg-emerald-400 transition-all duration-300 rounded-full"
+            style={{ width: `${warmupProgress}%` }}
+          />
+        </div>
 
-          let colorClass = 'bg-neutral-800';
+        {/* Main Circuit Segment */}
+        <div
+          style={{ flex: mainTotal }}
+          className="relative overflow-hidden rounded-full bg-neutral-900"
+          title={`Main Circuit (${formatTime(mainTotal)})`}
+        >
+          <div
+            className="h-full bg-sky-400 transition-all duration-300 rounded-full"
+            style={{ width: `${mainProgress}%` }}
+          />
+        </div>
+
+        {/* Cool-Down Segment */}
+        <div
+          style={{ flex: cooldownTotal }}
+          className="relative overflow-hidden rounded-full bg-neutral-900"
+          title={`Cool-Down (${formatTime(cooldownTotal)})`}
+        >
+          <div
+            className="h-full bg-purple-400 transition-all duration-300 rounded-full"
+            style={{ width: `${cooldownProgress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Bar 2: Micro Phase Exercises (Ticks for active phase exercises only) */}
+      <div className="flex h-1 w-full gap-1">
+        {currentPhaseSteps.map((step, idx) => {
+          const isPast = idx < currentStepInPhaseIndex;
+          const isCurrent = idx === currentStepInPhaseIndex;
+
+          let segmentClass = 'bg-neutral-800/80';
           if (isPast) {
-            colorClass =
-              step.phase === 'warmup'
+            segmentClass =
+              currentPhase === 'warmup'
                 ? 'bg-emerald-500'
-                : step.phase === 'main'
+                : currentPhase === 'main'
                 ? 'bg-sky-500'
                 : 'bg-purple-500';
           } else if (isCurrent) {
-            colorClass =
+            segmentClass =
               subState === 'rest'
                 ? 'bg-amber-400 animate-pulse'
-                : step.phase === 'warmup'
-                ? 'bg-emerald-400 animate-pulse'
-                : step.phase === 'main'
-                ? 'bg-sky-400 animate-pulse'
-                : 'bg-purple-400 animate-pulse';
+                : currentPhase === 'warmup'
+                ? 'bg-emerald-300 animate-pulse'
+                : currentPhase === 'main'
+                ? 'bg-sky-300 animate-pulse'
+                : 'bg-purple-300 animate-pulse';
           }
 
           return (
             <div
               key={step.id}
-              className={`h-full flex-1 rounded-sm transition-all duration-300 ${colorClass}`}
+              className={`h-full flex-1 rounded-full transition-all duration-300 ${segmentClass}`}
             />
           );
         })}
-      </div>
-
-      {/* Overall Progress Percentage Bar */}
-      <div className="h-1 w-full overflow-hidden rounded-full bg-neutral-900">
-        <div
-          className="h-full bg-neutral-500 transition-all duration-300"
-          style={{ width: `${progressPercent}%` }}
-        />
       </div>
     </div>
   );
