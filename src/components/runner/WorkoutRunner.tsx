@@ -185,7 +185,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
     <div className="fixed inset-0 z-50 flex flex-col justify-between bg-black text-white select-none">
       {/* Top Bar: Progress, WakeLock status, Controls */}
       <header className="border-b border-neutral-900 bg-black/80 px-4 py-3 backdrop-blur-md">
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-4">
+        <div className="mx-auto flex max-w-3xl lg:max-w-4xl items-center justify-between gap-4">
           <button
             type="button"
             onClick={() => setShowExitModal(true)}
@@ -221,189 +221,201 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
       </header>
 
       {/* Main Content Area */}
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center p-4 overflow-y-auto">
-        {subState === 'work' ? (
-          /* WORK STATE */
-          <div className="flex w-full flex-col items-center justify-center gap-4 py-2">
-            {/* Title & target muscles */}
-            <div className="text-center">
-              <div className="font-mono text-xs uppercase tracking-wider text-neutral-400">
-                Exercise {currentStepIndex + 1} of {workout.steps.length}
-              </div>
-              <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                {currentStep.exercise.name}
-              </h1>
-              <div className="mt-1 flex flex-wrap items-center justify-center gap-1.5 font-mono text-xs text-neutral-400">
-                <span className="capitalize">{currentStep.exercise.primaryMuscles.join(', ')}</span>
-              </div>
-            </div>
-
-            {/* Visual & Countdown Row */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 w-full">
-              {/* Visual demo animation */}
-              <div className="w-48 sm:w-56 aspect-4/3 relative shrink-0">
-                <ExerciseVisual
-                  key={currentStep.exercise.id}
-                  exercise={currentStep.exercise}
-                  isPaused={isPaused}
-                  className="h-full w-full shadow-lg ring-1 ring-neutral-800"
-                />
-              </div>
-
-              {/* Countdown Ring & Reps */}
-              <div
-                onClick={() => {
-                  if (currentStep.exercise.type === 'reps') {
-                    advance();
-                  }
-                }}
-                className={`flex flex-col items-center justify-center cursor-pointer transition-transform ${
-                  currentStep.exercise.type === 'reps' ? 'active:scale-95' : ''
-                }`}
-              >
-                <div className="relative flex h-28 w-28 sm:h-32 sm:w-32 items-center justify-center">
-                  <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="44"
-                      className="stroke-neutral-800"
-                      strokeWidth="6"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="44"
-                      className={`transition-all duration-300 ${
-                        secondsRemaining <= 5
-                          ? 'stroke-rose-500'
-                          : currentStep.phase === 'warmup'
-                          ? 'stroke-emerald-400'
-                          : currentStep.phase === 'main'
-                          ? 'stroke-sky-400'
-                          : 'stroke-purple-400'
-                      }`}
-                      strokeWidth="6"
-                      strokeDasharray={276.46}
-                      strokeDashoffset={276.46 * (1 - strokePercent / 100)}
-                      strokeLinecap="round"
-                      fill="transparent"
-                    />
-                  </svg>
-
-                  <div className="absolute flex flex-col items-center">
-                    <span className="font-mono text-4xl font-black tabular-nums tracking-tighter">
-                      {secondsRemaining}
-                    </span>
-                    <span className="text-[10px] uppercase font-semibold text-neutral-400">Seconds</span>
-                  </div>
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <div className="mx-auto flex min-h-full w-full max-w-3xl lg:max-w-4xl flex-col items-center justify-center">
+          {subState === 'work' ? (
+            /* WORK STATE */
+            <div className="my-auto flex w-full flex-col items-center justify-center gap-5 sm:gap-6 py-2">
+              {/* Title & target muscles */}
+              <div className="text-center">
+                <div className="font-mono text-xs uppercase tracking-wider text-neutral-400">
+                  Exercise {currentStepIndex + 1} of {workout.steps.length} • {currentStep.phase}
                 </div>
-
-                {currentStep.exercise.type === 'reps' && (
-                  <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-200 border border-neutral-700">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Target: {currentStep.targetReps} reps (Tap when done)
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Large 3-Step Process Card */}
-            <div className="w-full max-w-lg rounded-2xl bg-neutral-900/50 border border-neutral-800/80 p-4 sm:p-5 text-left shadow-lg">
-              <div className="flex items-center justify-between mb-3 border-b border-neutral-800/60 pb-2.5">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 font-semibold">
-                  How To Do It • 3 Steps
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsPaused(true);
-                    setShowDetailsModal(true);
-                  }}
-                  className="inline-flex items-center gap-1.5 font-mono text-xs text-neutral-300 hover:text-white bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-full px-3 py-1 transition-all active:scale-95"
-                >
-                  <Info className="h-3.5 w-3.5 text-neutral-400" />
-                  <span>Details</span>
-                </button>
+                <h1 className="mt-1 text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                  {currentStep.exercise.name}
+                </h1>
+                <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5 font-mono text-xs sm:text-sm text-neutral-400">
+                  <span className="capitalize">{currentStep.exercise.primaryMuscles.join(', ')}</span>
+                </div>
               </div>
 
-              <ol className="space-y-3">
-                {quickSteps.map((stepText, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-800 border border-neutral-700/60 font-mono text-xs font-bold text-white mt-0.5">
-                      {idx + 1}
-                    </span>
-                    <p className="text-sm sm:text-base md:text-lg font-medium text-neutral-100 leading-snug">
-                      {stepText}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        ) : (
-          /* REST & TRANSITION STATE */
-          <div className="flex h-full w-full flex-col items-center justify-center gap-6 py-4 text-center">
-            <div>
-              <span className="inline-block rounded-full bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 text-xs font-mono uppercase tracking-widest text-amber-400">
-                Rest & Prepare
-              </span>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">Catch Your Breath</h2>
-            </div>
-
-            {/* Big Rest Timer */}
-            <div className="relative flex h-36 w-36 items-center justify-center">
-              <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="44"
-                  className="stroke-neutral-800"
-                  strokeWidth="6"
-                  fill="transparent"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="44"
-                  className="stroke-amber-400 transition-all duration-300"
-                  strokeWidth="6"
-                  strokeDasharray={276.46}
-                  strokeDashoffset={276.46 * (1 - strokePercent / 100)}
-                  strokeLinecap="round"
-                  fill="transparent"
-                />
-              </svg>
-              <div className="absolute flex flex-col items-center">
-                <span className="font-mono text-5xl font-black tabular-nums text-amber-400 tracking-tighter">
-                  {secondsRemaining}
-                </span>
-                <span className="text-[10px] uppercase font-semibold text-neutral-400">Rest</span>
-              </div>
-            </div>
-
-            {/* Next Exercise Preview */}
-            {nextStep && (
-              <div className="flex w-full max-w-sm items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/90 p-3 text-left shadow-lg">
-                <div className="h-16 w-16 overflow-hidden rounded-xl bg-neutral-950 shrink-0">
-                  <img
-                    src={nextStep.exercise.images[0]}
-                    alt={nextStep.exercise.name}
-                    className="h-full w-full object-contain p-1"
+              {/* Central Hero: Big Visual Animation & Big Timer */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 md:gap-14 w-full my-2 sm:my-3">
+                {/* Visual demo animation */}
+                <div className="w-72 sm:w-80 md:w-96 lg:w-[26rem] max-w-[calc(100vw-2.5rem)] aspect-4/3 relative shrink-0">
+                  <ExerciseVisual
+                    key={currentStep.exercise.id}
+                    exercise={currentStep.exercise}
+                    isPaused={isPaused}
+                    className="h-full w-full shadow-2xl ring-1 ring-neutral-800 bg-neutral-900"
                   />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-mono text-[10px] uppercase tracking-wider text-neutral-400">Up Next</div>
-                  <div className="truncate text-base font-semibold text-white">{nextStep.exercise.name}</div>
-                  <div className="text-xs text-neutral-400 truncate">
-                    {nextStep.exercise.primaryMuscles.join(', ')}
+
+                {/* Big Countdown Ring & Reps */}
+                <div
+                  onClick={() => {
+                    if (currentStep.exercise.type === 'reps') {
+                      advance();
+                    }
+                  }}
+                  className={`flex flex-col items-center justify-center cursor-pointer transition-transform shrink-0 ${
+                    currentStep.exercise.type === 'reps' ? 'active:scale-95' : ''
+                  }`}
+                >
+                  <div className="relative flex h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 items-center justify-center">
+                    <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="44"
+                        className="stroke-neutral-800"
+                        strokeWidth="6"
+                        fill="transparent"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="44"
+                        className={`transition-all duration-300 ${
+                          secondsRemaining <= 5
+                            ? 'stroke-rose-500'
+                            : currentStep.phase === 'warmup'
+                            ? 'stroke-emerald-400'
+                            : currentStep.phase === 'main'
+                            ? 'stroke-sky-400'
+                            : 'stroke-purple-400'
+                        }`}
+                        strokeWidth="6"
+                        strokeDasharray={276.46}
+                        strokeDashoffset={276.46 * (1 - strokePercent / 100)}
+                        strokeLinecap="round"
+                        fill="transparent"
+                      />
+                    </svg>
+
+                    <div className="absolute flex flex-col items-center">
+                      <span className="font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-tighter">
+                        {secondsRemaining}
+                      </span>
+                      <span className="text-[11px] sm:text-xs uppercase font-semibold tracking-wider text-neutral-400 mt-0.5">
+                        {currentStep.exercise.type === 'reps' ? 'Sec' : 'Seconds'}
+                      </span>
+                    </div>
                   </div>
+
+                  {currentStep.exercise.type === 'reps' && (
+                    <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-neutral-800 px-3.5 py-1.5 text-xs font-semibold text-neutral-200 border border-neutral-700 shadow-md">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                      <span>Target: {currentStep.targetReps} reps • <span className="text-neutral-400">Tap when done</span></span>
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
-          </div>
-        )}
+
+              {/* 3-Step Process Card */}
+              <div className="w-full max-w-xl md:max-w-2xl rounded-2xl bg-neutral-900/60 border border-neutral-800/80 p-5 sm:p-6 text-left shadow-xl backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-4 border-b border-neutral-800/70 pb-3">
+                  <span className="font-mono text-xs uppercase tracking-widest text-neutral-400 font-semibold">
+                    How To Do It • 3 Key Steps
+                  </span>
+                  <span className="font-mono text-[11px] text-neutral-500 uppercase tracking-wider">Form Focus</span>
+                </div>
+
+                <ol className="space-y-4">
+                  {quickSteps.map((stepText, idx) => (
+                    <li key={idx} className="flex items-start gap-3.5">
+                      <span className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full bg-neutral-800 border border-neutral-700/80 font-mono text-xs sm:text-sm font-bold text-neutral-200 mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <p className="text-base sm:text-lg md:text-xl font-medium text-neutral-100 leading-relaxed">
+                        {stepText}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+
+                {/* Details Button below the steps */}
+                <div className="mt-5 pt-3.5 border-t border-neutral-800/80 flex items-center justify-between">
+                  <span className="font-mono text-xs text-neutral-400">
+                    Need complete technique instructions?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPaused(true);
+                      setShowDetailsModal(true);
+                    }}
+                    className="inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-200 hover:text-white bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer"
+                  >
+                    <Info className="h-4 w-4 text-neutral-400" />
+                    <span>Details</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* REST & TRANSITION STATE */
+            <div className="my-auto flex h-full w-full flex-col items-center justify-center gap-6 py-4 text-center">
+              <div>
+                <span className="inline-block rounded-full bg-amber-500/10 border border-amber-500/30 px-3.5 py-1 text-xs font-mono uppercase tracking-widest text-amber-400">
+                  Rest & Prepare
+                </span>
+                <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-white">Catch Your Breath</h2>
+              </div>
+
+              {/* Big Rest Timer */}
+              <div className="relative flex h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 items-center justify-center">
+                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="44"
+                    className="stroke-neutral-800"
+                    strokeWidth="6"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="44"
+                    className="stroke-amber-400 transition-all duration-300"
+                    strokeWidth="6"
+                    strokeDasharray={276.46}
+                    strokeDashoffset={276.46 * (1 - strokePercent / 100)}
+                    strokeLinecap="round"
+                    fill="transparent"
+                  />
+                </svg>
+                <div className="absolute flex flex-col items-center">
+                  <span className="font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums text-amber-400 tracking-tighter">
+                    {secondsRemaining}
+                  </span>
+                  <span className="text-xs uppercase font-semibold text-neutral-400 tracking-wider mt-0.5">Rest</span>
+                </div>
+              </div>
+
+              {/* Next Exercise Preview */}
+              {nextStep && (
+                <div className="flex w-full max-w-md items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/90 p-4 text-left shadow-lg">
+                  <div className="h-20 w-20 overflow-hidden rounded-xl bg-neutral-950 shrink-0">
+                    <img
+                      src={nextStep.exercise.images[0]}
+                      alt={nextStep.exercise.name}
+                      className="h-full w-full object-contain p-1"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-mono text-xs uppercase tracking-wider text-neutral-400">Up Next</div>
+                    <div className="truncate text-lg font-semibold text-white">{nextStep.exercise.name}</div>
+                    <div className="text-xs text-neutral-400 truncate">
+                      {nextStep.exercise.primaryMuscles.join(', ')}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Bottom Controls Bar */}
