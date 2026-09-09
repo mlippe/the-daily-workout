@@ -11,16 +11,80 @@ function findOrFallback(id: string, fallbackCategory: 'warmup' | 'main' | 'coold
   return exercises[0];
 }
 
-function buildStep(exercise: Exercise, phase: 'warmup' | 'main' | 'cooldown', round?: number, stepIdx = 0): WorkoutStep {
-  const isMain = phase === 'main';
+/**
+ * Calculate adaptive step durations for the main circuit exercises so that
+ * the entire workout remains around 15 minutes (warmup 2m + cooldown 2m + main ~10.5-11m).
+ *
+ * Timed exercises are adjusted specifically to 30s, 45s, or 60s.
+ * Rep exercises are estimated based on target reps and allocated budgeted set intervals.
+ * When reps increase, timed exercises dynamically downshift (60s -> 45s -> 30s) to compensate.
+ */
+export function calculateAdaptiveDurations(
+  mainExercises: Exercise[],
+  targetReps: number = 12
+): {
+  repDurationSeconds: number;
+  timedDurationSeconds: number;
+} {
+  const repExercises = mainExercises.filter((e) => e.type === 'reps');
+  const timedExercises = mainExercises.filter((e) => e.type === 'time');
+
+  const nReps = repExercises.length;
+  const nTimed = timedExercises.length;
+
+  // Main circuit target per round: 320s (240s warmup/cooldown + 2 * 320s = 880s, ~14m 40s)
+  const targetRoundBudget = 320;
+
+  if (nTimed === 0) {
+    // When all 5 exercises are rep-based:
+    // Pacing interval scales with reps, clamped between 50s and 66s so total workout never exceeds 15 minutes
+    const estimated = Math.round(targetReps * 2.5 + 25);
+    const repDuration = Math.min(66, Math.max(50, estimated));
+    return {
+      repDurationSeconds: repDuration,
+      timedDurationSeconds: 0,
+    };
+  }
+
+  // When there are timed exercises in the main circuit:
+  // Estimate time taken by rep exercises: ~2.5s per rep + 20s recovery/transition
+  const estimatedRepTime = Math.round(targetReps * 2.5 + 20);
+  const totalRepTimeInRound = nReps * estimatedRepTime;
+  const remainingForTimed = targetRoundBudget - totalRepTimeInRound;
+  const idealTimed = remainingForTimed / nTimed;
+
+  // Discrete options as requested: 30s, 45s, or 60s
+  const allowedTimedOptions = [30, 45, 60];
+  const timedDuration = allowedTimedOptions.reduce((prev, curr) =>
+    Math.abs(curr - idealTimed) < Math.abs(prev - idealTimed) ? curr : prev
+  );
+
+  // Compensate by allocating remaining budget to rep exercises (bounded between 40s and 75s)
+  const remainingForReps = (targetRoundBudget - nTimed * timedDuration) / nReps;
+  const repDuration = Math.max(40, Math.min(75, Math.round(remainingForReps)));
+
+  return {
+    repDurationSeconds: repDuration,
+    timedDurationSeconds: timedDuration,
+  };
+}
+
+function buildStep(
+  exercise: Exercise,
+  phase: 'warmup' | 'main' | 'cooldown',
+  round?: number,
+  stepIdx = 0,
+  workDurationSeconds = phase === 'main' ? 60 : 30,
+  targetReps?: number
+): WorkoutStep {
   return {
     id: `${phase}-${round ? `r${round}-` : ''}${exercise.id}-${stepIdx}`,
     exercise,
     phase,
     round,
-    workDurationSeconds: isMain ? 60 : 30,
+    workDurationSeconds,
     restDurationSeconds: 0,
-    targetReps: exercise.type === 'reps' ? (exercise.defaultReps ?? 12) : undefined,
+    targetReps: exercise.type === 'reps' ? (targetReps ?? exercise.defaultReps ?? 12) : undefined,
   };
 }
 
@@ -38,23 +102,28 @@ export function createWorkoutFromExercises(
   const mainExercises = mainIds.map((eid) => findOrFallback(eid, 'main'));
   const cooldownExercises = cooldownIds.map((eid) => findOrFallback(eid, 'cooldown'));
 
+  // Adaptive duration calculation based on default reps (12)
+  const defaultReps = 12;
+  const { repDurationSeconds, timedDurationSeconds } = calculateAdaptiveDurations(mainExercises, defaultReps);
+
   const steps: WorkoutStep[] = [];
 
   // Phase 1: 4 Warm-up movements (4 * 30s = 120s)
   warmupExercises.slice(0, 4).forEach((ex, idx) => {
-    steps.push(buildStep(ex, 'warmup', undefined, idx));
+    steps.push(buildStep(ex, 'warmup', undefined, idx, 30));
   });
 
-  // Phase 2: Main Circuit (2 rounds of 5 exercises: 10 * 60s = 600s)
+  // Phase 2: Main Circuit (2 rounds of 5 exercises)
   for (let round = 1; round <= 2; round++) {
     mainExercises.slice(0, 5).forEach((ex, idx) => {
-      steps.push(buildStep(ex, 'main', round, idx));
+      const duration = ex.type === 'reps' ? repDurationSeconds : timedDurationSeconds;
+      steps.push(buildStep(ex, 'main', round, idx, duration, defaultReps));
     });
   }
 
   // Phase 3: 4 Cool-down stretches (4 * 30s = 120s)
   cooldownExercises.slice(0, 4).forEach((ex, idx) => {
-    steps.push(buildStep(ex, 'cooldown', undefined, idx));
+    steps.push(buildStep(ex, 'cooldown', undefined, idx, 30));
   });
 
   const targetMuscles = Array.from(
@@ -357,12 +426,34 @@ export function getNextVariation(pillar: WorkoutPillarFocus, currentId?: string)
 }
 
 export function applyTargetRepsToWorkout(workout: WorkoutPlan, targetReps: number): WorkoutPlan {
+  // Extract main circuit exercises (round 1)
+  const mainExercises = workout.steps
+    .filter((s) => s.phase === 'main' && s.round === 1)
+    .map((s) => s.exercise);
+
+  const { repDurationSeconds, timedDurationSeconds } = calculateAdaptiveDurations(
+    mainExercises,
+    targetReps
+  );
+
+  const updatedSteps = workout.steps.map((step) => {
+    if (step.phase !== 'main') {
+      return step;
+    }
+    const isRep = step.exercise.type === 'reps';
+    return {
+      ...step,
+      targetReps: isRep ? targetReps : undefined,
+      workDurationSeconds: isRep ? repDurationSeconds : timedDurationSeconds,
+    };
+  });
+
+  const totalDurationSeconds = updatedSteps.reduce((acc, s) => acc + s.workDurationSeconds, 0);
+
   return {
     ...workout,
-    steps: workout.steps.map((step) => ({
-      ...step,
-      targetReps: step.exercise.type === 'reps' ? targetReps : undefined,
-    })),
+    totalDurationSeconds,
+    steps: updatedSteps,
   };
 }
 
