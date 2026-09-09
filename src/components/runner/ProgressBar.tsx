@@ -27,36 +27,44 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
   );
 
   // All non-active phases adapt the same accent color as the current active phase:
-  // - Inactive parts: just outlined
-  // - Done parts: outline + non-pulsing solid fill
-  // - Active parts: outline + black inset padding + fill (lower bar pulses, main steps non-pulsing)
+  // - Main phase pills: active and done are whole pill filled; not done is outline
+  // - Exercise bubbles: active has outline + inset + pulsing fill; done is solid filled; not done is outline
   const phaseThemes = {
     warmup: {
-      pillActiveBorder: 'border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.35)]',
-      pillActiveFill: 'bg-emerald-400',
-      pillPast: 'bg-emerald-400 border-emerald-400 text-neutral-950 font-bold',
-      pillUpcoming: 'bg-transparent border-emerald-400/50 text-emerald-400/80 font-medium',
-      bubbleCurrentBorder: 'border-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]',
+      pillActive:
+        'bg-emerald-400 border-emerald-400 text-neutral-950 font-bold shadow-[0_0_12px_rgba(52,211,153,0.35)]',
+      pillPast:
+        'bg-emerald-400 border-emerald-400 text-neutral-950 font-bold',
+      pillUpcoming:
+        'bg-transparent border-emerald-400/50 text-emerald-400/80 font-medium',
+      bubbleCurrentBorder:
+        'border-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]',
       bubbleCurrentFill: 'bg-emerald-400',
       bubblePast: 'bg-emerald-400 border-emerald-400',
       bubbleUpcoming: 'bg-transparent border-emerald-500/40',
     },
     main: {
-      pillActiveBorder: 'border-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.35)]',
-      pillActiveFill: 'bg-sky-400',
-      pillPast: 'bg-sky-400 border-sky-400 text-neutral-950 font-bold',
-      pillUpcoming: 'bg-transparent border-sky-400/50 text-sky-400/80 font-medium',
-      bubbleCurrentBorder: 'border-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]',
+      pillActive:
+        'bg-sky-400 border-sky-400 text-neutral-950 font-bold shadow-[0_0_12px_rgba(56,189,248,0.35)]',
+      pillPast:
+        'bg-sky-400 border-sky-400 text-neutral-950 font-bold',
+      pillUpcoming:
+        'bg-transparent border-sky-400/50 text-sky-400/80 font-medium',
+      bubbleCurrentBorder:
+        'border-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]',
       bubbleCurrentFill: 'bg-sky-400',
       bubblePast: 'bg-sky-400 border-sky-400',
       bubbleUpcoming: 'bg-transparent border-sky-500/40',
     },
     cooldown: {
-      pillActiveBorder: 'border-purple-400 shadow-[0_0_12px_rgba(192,132,252,0.35)]',
-      pillActiveFill: 'bg-purple-400',
-      pillPast: 'bg-purple-400 border-purple-400 text-neutral-950 font-bold',
-      pillUpcoming: 'bg-transparent border-purple-400/50 text-purple-400/80 font-medium',
-      bubbleCurrentBorder: 'border-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.5)]',
+      pillActive:
+        'bg-purple-400 border-purple-400 text-neutral-950 font-bold shadow-[0_0_12px_rgba(192,132,252,0.35)]',
+      pillPast:
+        'bg-purple-400 border-purple-400 text-neutral-950 font-bold',
+      pillUpcoming:
+        'bg-transparent border-purple-400/50 text-purple-400/80 font-medium',
+      bubbleCurrentBorder:
+        'border-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.5)]',
       bubbleCurrentFill: 'bg-purple-400',
       bubblePast: 'bg-purple-400 border-purple-400',
       bubbleUpcoming: 'bg-transparent border-purple-500/40',
@@ -74,11 +82,11 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
           const isPast = idx < activePhaseIndex;
 
           if (isPast) {
-            // Done parts are outline + non pulsing fill
+            // Done: whole pill filled with checkmark
             return (
               <div
                 key={key}
-                className={`flex-1 h-6.5 sm:h-7 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillPast}`}
+                className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillPast}`}
               >
                 <Check className='h-3 w-3 stroke-[2.5]' />
                 <span>{label}</span>
@@ -87,26 +95,22 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
           }
 
           if (isCurrent) {
-            // Current one has outline + inset fill (little black padding), without pulsing ("there active is just filled")
+            // Active: whole pill filled (no inset)
             return (
               <div
                 key={key}
-                className={`flex-1 h-6.5 sm:h-7 rounded-full border-2 ${theme.pillActiveBorder} p-[3px] bg-black flex items-center justify-center transition-all duration-300 select-none shadow-[0_0_12px_rgba(0,0,0,0.5)]`}
+                className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillActive}`}
               >
-                <div
-                  className={`w-full h-full rounded-full ${theme.pillActiveFill} text-neutral-950 font-bold flex items-center justify-center text-[10px] sm:text-xs font-mono uppercase tracking-wider leading-none`}
-                >
-                  <span>{label}</span>
-                </div>
+                <span>{label}</span>
               </div>
             );
           }
 
-          // Inactive parts are just outlined
+          // Not done: outline only
           return (
             <div
               key={key}
-              className={`flex-1 h-6.5 sm:h-7 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillUpcoming}`}
+              className={`flex-1 h-6 sm:h-6.5 flex items-center justify-center gap-1.5 rounded-full border-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-all duration-300 select-none ${theme.pillUpcoming}`}
             >
               <span>{label}</span>
             </div>
