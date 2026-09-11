@@ -112,7 +112,15 @@ export function WorkoutRunner({
   const [secondsRemaining, setSecondsRemaining] = useState<number>(
     () => currentStep.workDurationSeconds,
   );
+  const [introSecondsRemaining, setIntroSecondsRemaining] = useState<number>(
+    () => (currentStep.exercise.type === 'time' ? 5 : 0),
+  );
   const [totalElapsedSeconds, setTotalElapsedSeconds] = useState(0);
+
+  // Skip the 5s intro and start the exercise immediately if user taps
+  const handleSkipIntro = useCallback(() => {
+    setIntroSecondsRemaining(0);
+  }, []);
 
   // Derive large 3-step actionable instructions for the current exercise
   const quickSteps = useMemo(
@@ -138,8 +146,10 @@ export function WorkoutRunner({
   const advance = useCallback(() => {
     if (currentStepIndex < workout.steps.length - 1) {
       const nextIdx = currentStepIndex + 1;
+      const nextStep = workout.steps[nextIdx];
       setCurrentStepIndex(nextIdx);
-      setSecondsRemaining(workout.steps[nextIdx].workDurationSeconds);
+      setSecondsRemaining(nextStep.workDurationSeconds);
+      setIntroSecondsRemaining(nextStep.exercise.type === 'time' ? 5 : 0);
       soundEngine.playTransitionChime();
     } else {
       soundEngine.playCompletionFanfare();
@@ -154,8 +164,10 @@ export function WorkoutRunner({
   const handleSkipForward = useCallback(() => {
     if (currentStepIndex < workout.steps.length - 1) {
       const nextIdx = currentStepIndex + 1;
+      const nextStep = workout.steps[nextIdx];
       setCurrentStepIndex(nextIdx);
-      setSecondsRemaining(workout.steps[nextIdx].workDurationSeconds);
+      setSecondsRemaining(nextStep.workDurationSeconds);
+      setIntroSecondsRemaining(nextStep.exercise.type === 'time' ? 5 : 0);
     } else {
       onComplete({
         totalTimeSeconds: totalElapsedSeconds,
@@ -168,10 +180,13 @@ export function WorkoutRunner({
   const handleSkipBack = useCallback(() => {
     if (currentStepIndex > 0) {
       const prevIdx = currentStepIndex - 1;
+      const prevStep = workout.steps[prevIdx];
       setCurrentStepIndex(prevIdx);
-      setSecondsRemaining(workout.steps[prevIdx].workDurationSeconds);
+      setSecondsRemaining(prevStep.workDurationSeconds);
+      setIntroSecondsRemaining(prevStep.exercise.type === 'time' ? 5 : 0);
     } else {
       setSecondsRemaining(currentStep.workDurationSeconds);
+      setIntroSecondsRemaining(currentStep.exercise.type === 'time' ? 5 : 0);
     }
   }, [currentStepIndex, currentStep, workout.steps]);
 
@@ -192,20 +207,34 @@ export function WorkoutRunner({
         return;
       }
 
-      setSecondsRemaining((prev) => {
-        const next = prev - 1;
-
-        // Sound pips for countdown on timed exercises
-        if (next <= 5 && next >= 1) {
-          soundEngine.playPip();
+      setIntroSecondsRemaining((prevIntro) => {
+        if (prevIntro > 0) {
+          const next = prevIntro - 1;
+          if (next >= 1 && next <= 3) {
+            soundEngine.playPip();
+          } else if (next === 0) {
+            soundEngine.playPip(880, 0.25);
+          }
+          return next;
         }
 
-        if (next <= 0) {
-          setTimeout(() => advanceRef.current(), 0);
-          return 0;
-        }
+        setSecondsRemaining((prevSec) => {
+          const nextSec = prevSec - 1;
 
-        return next;
+          // Sound pips for countdown on timed exercises
+          if (nextSec <= 5 && nextSec >= 1) {
+            soundEngine.playPip();
+          }
+
+          if (nextSec <= 0) {
+            setTimeout(() => advanceRef.current(), 0);
+            return 0;
+          }
+
+          return nextSec;
+        });
+
+        return 0;
       });
     }, 1000);
 
@@ -356,9 +385,17 @@ export function WorkoutRunner({
                 </div>
               </div>
             ) : (
-              /* Timed Progress Ring (Plank, Stretches, Isometric Holds) */
-              <div className='flex flex-col items-center justify-center shrink-0 my-4 sm:my-5'>
-                <div className='relative flex h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 items-center justify-center'>
+              /* Timed Exercise Display: Round Progress Ring with "Get into position" Intro Overlay */
+              <div className='relative flex flex-col items-center justify-center shrink-0 my-4 sm:my-5 min-h-[140px] sm:min-h-[160px] w-full max-w-xs sm:max-w-sm'>
+                {/* Actual Workout Timer (Round Progress Bar) */}
+                <div
+                  className={`relative flex h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 items-center justify-center transition-opacity duration-300 ${
+                    introSecondsRemaining > 0
+                      ? 'opacity-0 pointer-events-none'
+                      : 'opacity-100'
+                  }`}
+                  aria-hidden={introSecondsRemaining > 0}
+                >
                   <svg
                     className='h-full w-full -rotate-90'
                     viewBox='0 0 100 100'
@@ -401,6 +438,48 @@ export function WorkoutRunner({
                     </span>
                   </div>
                 </div>
+
+                {/* 5-Second "Get into position" Intro Overlay - Layered directly above the workout timer, hiding it behind it */}
+                {introSecondsRemaining > 0 && (
+                  <div
+                    onClick={handleSkipIntro}
+                    role='status'
+                    aria-live='polite'
+                    className='absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl border border-amber-500/30 bg-neutral-950 px-6 py-4 shadow-2xl backdrop-blur-md cursor-pointer transition-all duration-300'
+                    title='Tap to start now'
+                  >
+                    <div className='mb-2'>
+                      <span className='rounded-full bg-amber-500/15 border border-amber-500/40 px-3 py-1 font-mono text-[11px] sm:text-xs uppercase tracking-widest font-semibold text-amber-400 shadow-sm'>
+                        Get into position
+                      </span>
+                    </div>
+
+                    <div className='flex items-baseline gap-1 my-0.5'>
+                      <span className='font-mono text-5xl sm:text-6xl font-black tabular-nums tracking-tight text-white'>
+                        {introSecondsRemaining}
+                      </span>
+                      <span className='font-mono text-xs uppercase tracking-wider text-amber-400 font-bold'>
+                        s
+                      </span>
+                    </div>
+
+                    {/* Horizontal Progress Bar */}
+                    <div className='w-full max-w-[200px] sm:max-w-[220px] mt-2'>
+                      <div className='h-2.5 w-full overflow-hidden rounded-full bg-neutral-800 border border-neutral-700/60 p-0.5'>
+                        <div
+                          className='h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-1000 ease-linear shadow-[0_0_12px_rgba(251,191,36,0.5)]'
+                          style={{
+                            width: `${(introSecondsRemaining / 5) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <span className='text-[10px] font-mono text-neutral-400 uppercase tracking-wider mt-2 hover:text-neutral-300 transition-colors'>
+                      tap to start now
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 
