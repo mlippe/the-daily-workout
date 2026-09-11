@@ -8,6 +8,7 @@ import {
   VolumeX,
   CheckCircle2,
   Info,
+  ChevronDown,
 } from 'lucide-react';
 import type { WorkoutPlan } from '../../types/workout';
 import { soundEngine } from '../../utils/audio';
@@ -125,6 +126,23 @@ export function WorkoutRunner({
     introRemainingRef.current = 0;
     setIntroSecondsRemaining(0);
   }, []);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const instructionsRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLElement>) => {
+    setIsScrolled(e.currentTarget.scrollTop > 40);
+  }, []);
+
+  const handleScrollToInstructions = useCallback(() => {
+    instructionsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  // Reset scroll position to top when step changes
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+  }, [currentStepIndex]);
 
   // Derive large 3-step actionable instructions for the current exercise
   const quickSteps = useMemo(
@@ -297,11 +315,19 @@ export function WorkoutRunner({
       </header>
 
       {/* Main Content Area */}
-      <main className='flex-1 overflow-y-auto'>
-        <div className='mx-auto flex min-h-full w-full max-w-3xl lg:max-w-4xl flex-col items-center justify-between pb-6'>
-          <div className='flex w-full flex-col items-center'>
+      <main
+        ref={mainRef}
+        onScroll={handleScroll}
+        className='flex-1 overflow-y-auto h-full scroll-smooth'
+      >
+        <div className='mx-auto flex w-full max-w-3xl lg:max-w-4xl flex-col items-center'>
+          {/* Primary Viewport Stage: Full viewport height focused on images, title, and timer */}
+          <div
+            className='w-full min-h-full flex flex-col items-center justify-between pb-6 pt-1 sm:pt-2 shrink-0'
+            style={{ minHeight: '100%' }}
+          >
             {/* Merged Hero: Full-width animation with top controls overlay and title */}
-            <div className='w-full max-w-full sm:max-w-2xl md:max-w-3xl aspect-[3/2] max-h-[44vh] relative shrink-0 sm:rounded-3xl sm:mt-2 overflow-hidden bg-black'>
+            <div className='w-full max-w-full sm:max-w-2xl md:max-w-3xl aspect-[3/2] max-h-[46vh] relative shrink-0 sm:rounded-3xl overflow-hidden bg-black'>
               <ExerciseVisual
                 key={currentStep.exercise.id}
                 exercise={currentStep.exercise}
@@ -488,42 +514,61 @@ export function WorkoutRunner({
                 )}
               </div>
             )}
+          </div>
 
-            {/* Floating 3-Step Process */}
-            <div className='w-full max-w-xl md:max-w-2xl px-5 sm:px-0 text-left'>
-              <ol className='space-y-3.5'>
-                {quickSteps.map((stepText, idx) => (
-                  <li key={idx} className='flex items-start gap-3.5'>
-                    <span
-                      className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border ${phaseTheme.stepBadge} font-mono text-xs sm:text-sm font-bold mt-0.5 transition-colors`}
-                    >
-                      {idx + 1}
-                    </span>
-                    <p className='text-base sm:text-lg md:text-xl font-medium text-neutral-100 leading-relaxed'>
-                      {stepText}
-                    </p>
-                  </li>
-                ))}
-              </ol>
+          {/* Section 2: Scrollable Instructions Below */}
+          <div
+            ref={instructionsRef}
+            className='w-full max-w-xl md:max-w-2xl px-5 sm:px-6 pt-8 pb-24 text-left border-t border-neutral-900/80'
+          >
+            <ol className='space-y-4'>
+              {quickSteps.map((stepText, idx) => (
+                <li key={idx} className='flex items-start gap-3.5'>
+                  <span
+                    className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border ${phaseTheme.stepBadge} font-mono text-xs sm:text-sm font-bold mt-0.5 transition-colors`}
+                  >
+                    {idx + 1}
+                  </span>
+                  <p className='text-base sm:text-lg md:text-xl font-medium text-neutral-100 leading-relaxed'>
+                    {stepText}
+                  </p>
+                </li>
+              ))}
+            </ol>
 
-              {/* Details Button */}
-              <div className='mt-4 flex justify-center sm:justify-start'>
-                <button
-                  type='button'
-                  onClick={() => {
-                    setIsPaused(true);
-                    setShowDetailsModal(true);
-                  }}
-                  className='inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-300 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer'
-                >
-                  <Info className='h-4 w-4 text-neutral-400' />
-                  <span>Details</span>
-                </button>
-              </div>
+            {/* Full Details Button Below Steps */}
+            <div className='mt-6 flex justify-center sm:justify-start'>
+              <button
+                type='button'
+                onClick={() => {
+                  setIsPaused(true);
+                  setShowDetailsModal(true);
+                }}
+                className='inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-300 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer'
+              >
+                <Info className='h-4 w-4 text-neutral-400' />
+                <span>Full Details</span>
+              </button>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Floating Instructions Badge */}
+      <button
+        type='button'
+        onClick={handleScrollToInstructions}
+        className={`fixed left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 rounded-full bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 px-3.5 py-1.5 font-mono text-[11px] sm:text-xs font-semibold tracking-wide backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.7)] transition-all duration-300 active:scale-95 cursor-pointer bottom-[114px] sm:bottom-[126px] ${
+          isScrolled
+            ? 'opacity-0 pointer-events-none translate-y-3'
+            : 'opacity-100 pointer-events-auto translate-y-0'
+        }`}
+        title='Scroll to instructions'
+        aria-label='Scroll to instructions'
+      >
+        <span>Instructions</span>
+        <ChevronDown className='h-3.5 w-3.5 text-neutral-400 animate-bounce' />
+      </button>
 
       {/* Bottom Controls Bar */}
       <footer
