@@ -29,31 +29,32 @@ export function ExerciseVisual({
     return () => clearInterval(interval);
   }, [isPaused, exercise.id]);
 
-  const currentImageSrc = exercise.images[frameIndex];
-  const nextImageSrc = exercise.images[frameIndex === 0 ? 1 : 0];
-
   return (
-    <div className={`relative flex items-center justify-center overflow-hidden bg-black ${className}`}>
-      {/* Hidden image preloader to prevent flicker */}
+    <div
+      className={`relative flex items-center justify-center overflow-hidden bg-black ${className}`}
+    >
+      {/* Base Frame (Step 1) */}
       <img
-        src={nextImageSrc}
-        alt=""
-        aria-hidden="true"
-        className="hidden"
+        src={exercise.images[0]}
+        alt={`${exercise.name} starting position`}
+        className='absolute inset-0 h-full w-full object-contain select-none'
+        loading='eager'
       />
 
+      {/* Crossfade Frame (Step 2) - Smooth 300ms fade */}
       <img
-        key={`${exercise.id}-${frameIndex}`}
-        src={currentImageSrc}
-        alt={`${exercise.name} step ${frameIndex + 1}`}
-        className="h-full w-full object-contain select-none"
-        loading="eager"
+        src={exercise.images[1]}
+        alt={`${exercise.name} active position`}
+        className={`absolute inset-0 h-full w-full object-contain select-none transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${
+          frameIndex === 1 ? 'opacity-100' : 'opacity-0'
+        }`}
+        loading='eager'
       />
 
       {/* Subtle bottom gradient fade so the photo remains prominently visible */}
       {overlayGradient && (
         <div
-          className="pointer-events-none absolute inset-0"
+          className='pointer-events-none absolute inset-0'
           style={{
             background:
               'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.85) 16%, rgba(0, 0, 0, 0.25) 28%, transparent 40%)',
