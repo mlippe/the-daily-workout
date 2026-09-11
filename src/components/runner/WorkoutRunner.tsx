@@ -117,8 +117,12 @@ export function WorkoutRunner({
   );
   const [totalElapsedSeconds, setTotalElapsedSeconds] = useState(0);
 
+  const introRemainingRef = useRef(currentStep.exercise.type === 'time' ? 5 : 0);
+  const secondsRemainingRef = useRef(currentStep.workDurationSeconds);
+
   // Skip the 5s intro and start the exercise immediately if user taps
   const handleSkipIntro = useCallback(() => {
+    introRemainingRef.current = 0;
     setIntroSecondsRemaining(0);
   }, []);
 
@@ -148,8 +152,10 @@ export function WorkoutRunner({
       const nextIdx = currentStepIndex + 1;
       const nextStep = workout.steps[nextIdx];
       setCurrentStepIndex(nextIdx);
+      secondsRemainingRef.current = nextStep.workDurationSeconds;
+      introRemainingRef.current = nextStep.exercise.type === 'time' ? 5 : 0;
       setSecondsRemaining(nextStep.workDurationSeconds);
-      setIntroSecondsRemaining(nextStep.exercise.type === 'time' ? 5 : 0);
+      setIntroSecondsRemaining(introRemainingRef.current);
       soundEngine.playTransitionChime();
     } else {
       soundEngine.playCompletionFanfare();
@@ -166,8 +172,10 @@ export function WorkoutRunner({
       const nextIdx = currentStepIndex + 1;
       const nextStep = workout.steps[nextIdx];
       setCurrentStepIndex(nextIdx);
+      secondsRemainingRef.current = nextStep.workDurationSeconds;
+      introRemainingRef.current = nextStep.exercise.type === 'time' ? 5 : 0;
       setSecondsRemaining(nextStep.workDurationSeconds);
-      setIntroSecondsRemaining(nextStep.exercise.type === 'time' ? 5 : 0);
+      setIntroSecondsRemaining(introRemainingRef.current);
     } else {
       onComplete({
         totalTimeSeconds: totalElapsedSeconds,
@@ -182,11 +190,15 @@ export function WorkoutRunner({
       const prevIdx = currentStepIndex - 1;
       const prevStep = workout.steps[prevIdx];
       setCurrentStepIndex(prevIdx);
+      secondsRemainingRef.current = prevStep.workDurationSeconds;
+      introRemainingRef.current = prevStep.exercise.type === 'time' ? 5 : 0;
       setSecondsRemaining(prevStep.workDurationSeconds);
-      setIntroSecondsRemaining(prevStep.exercise.type === 'time' ? 5 : 0);
+      setIntroSecondsRemaining(introRemainingRef.current);
     } else {
+      secondsRemainingRef.current = currentStep.workDurationSeconds;
+      introRemainingRef.current = currentStep.exercise.type === 'time' ? 5 : 0;
       setSecondsRemaining(currentStep.workDurationSeconds);
-      setIntroSecondsRemaining(currentStep.exercise.type === 'time' ? 5 : 0);
+      setIntroSecondsRemaining(introRemainingRef.current);
     }
   }, [currentStepIndex, currentStep, workout.steps]);
 
@@ -207,35 +219,29 @@ export function WorkoutRunner({
         return;
       }
 
-      setIntroSecondsRemaining((prevIntro) => {
-        if (prevIntro > 0) {
-          const next = prevIntro - 1;
-          if (next >= 1 && next <= 3) {
-            soundEngine.playPip();
-          } else if (next === 0) {
-            soundEngine.playPip(880, 0.25);
-          }
-          return next;
+      if (introRemainingRef.current > 0) {
+        introRemainingRef.current -= 1;
+        const nextIntro = introRemainingRef.current;
+        setIntroSecondsRemaining(nextIntro);
+        if (nextIntro >= 1 && nextIntro <= 3) {
+          soundEngine.playPip();
+        } else if (nextIntro === 0) {
+          soundEngine.playPip(880, 0.25);
         }
+        return;
+      }
 
-        setSecondsRemaining((prevSec) => {
-          const nextSec = prevSec - 1;
+      secondsRemainingRef.current -= 1;
+      const nextSec = secondsRemainingRef.current;
+      setSecondsRemaining(nextSec);
 
-          // Sound pips for countdown on timed exercises
-          if (nextSec <= 5 && nextSec >= 1) {
-            soundEngine.playPip();
-          }
+      if (nextSec <= 5 && nextSec >= 1) {
+        soundEngine.playPip();
+      }
 
-          if (nextSec <= 0) {
-            setTimeout(() => advanceRef.current(), 0);
-            return 0;
-          }
-
-          return nextSec;
-        });
-
-        return 0;
-      });
+      if (nextSec <= 0) {
+        setTimeout(() => advanceRef.current(), 0);
+      }
     }, 1000);
 
     return () => clearInterval(timer);
