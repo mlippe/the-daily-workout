@@ -156,22 +156,22 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
     advanceRef.current = advance;
   }, [advance]);
 
-  const currentStepRef = useRef(currentStep);
-  useEffect(() => {
-    currentStepRef.current = currentStep;
-  }, [currentStep]);
-
   useEffect(() => {
     if (isPaused) return;
 
     const timer = setInterval(() => {
       setTotalElapsedSeconds((prev) => prev + 1);
 
+      // Rep-based exercises do not auto-advance after a timer
+      if (currentStep.exercise.type !== 'time') {
+        return;
+      }
+
       setSecondsRemaining((prev) => {
         const next = prev - 1;
 
         // Sound pips only for time-based isometric/hold exercises like Plank
-        if (currentStepRef.current.exercise.type === 'time' && next <= 5 && next >= 1) {
+        if (next <= 5 && next >= 1) {
           soundEngine.playPip(next === 1 ? 520 : 440, 0.1);
         }
 
@@ -185,7 +185,7 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, currentStepIndex, currentStep.exercise.type]);
 
   // Keyboard navigation
   useEffect(() => {
