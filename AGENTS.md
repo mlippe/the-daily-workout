@@ -23,7 +23,7 @@ This is **The Daily Workout** — a 15-minute, offline-capable, zero-backend fit
 - **Core loop:** Warm-up (2.5 min) → Main Circuit (10 min, 2 rounds × 5 exercises, 45s work / 15s rest) → Cool-down (2.5 min) = exactly 900 seconds.
 - **Data model:** exercises are typed (`Exercise` interface), organized into 4 muscle pillars (`push`, `pull_back`, `legs`, `core`), sourced once from `free-exercise-db` into `src/data/exercises.json` + `public/exercises/{id}/0.jpg,1.jpg`.
 - **Recommendation engine:** reads workout history from `localStorage`, recommends whichever pillar has rested longest, falls back to Full Body Balancing after gaps.
-- **Runner UX:** fullscreen, high-contrast, 2-step image toggle animation, big countdown with 440Hz tick / 880Hz completion chime, wake lock held during the session.
+- **Runner UX:** fullscreen, high-contrast, 2-step image toggle animation, big countdown with 880Hz tick / completion chime, wake lock held during the session.
 
 When implementing any step from the roadmap, stay inside this philosophy — don't introduce a state management library, a CSS-in-JS solution, or a backend "just in case." If something in the roadmap seems to need more than `localStorage` + React state can comfortably give, flag it rather than silently reaching for more infrastructure.
 
@@ -57,3 +57,5 @@ feat(runner): add auto-advance countdown
 ```
 
 Keep commits scoped to one logical change. Don't bundle unrelated fixes into a feature commit.
+
+NEVER attempt to make a commit by yourself. Just provide the commit message.

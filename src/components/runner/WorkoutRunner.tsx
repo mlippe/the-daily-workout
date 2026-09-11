@@ -170,9 +170,9 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
       setSecondsRemaining((prev) => {
         const next = prev - 1;
 
-        // Sound pips only for time-based isometric/hold exercises like Plank
+        // Sound pips for countdown on timed exercises
         if (next <= 5 && next >= 1) {
-          soundEngine.playPip(next === 1 ? 520 : 440, 0.1);
+          soundEngine.playPip();
         }
 
         if (next <= 0) {

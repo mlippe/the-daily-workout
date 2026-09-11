@@ -44,8 +44,8 @@ class SoundEngine {
     return this.isMuted;
   }
 
-  // Short 440Hz beep for 5, 4, 3, 2, 1s countdowns
-  public playPip(frequency = 440, duration = 0.12): void {
+  // Short 880Hz beep for 5, 4, 3, 2, 1s countdowns (matches transition chime tonality for phone speaker clarity)
+  public playPip(frequency = 880, duration = 0.15): void {
     if (this.isMuted) return;
     const ctx = this.getContext();
     if (!ctx) return;
@@ -59,7 +59,7 @@ class SoundEngine {
 
       // Smooth attack and decay envelope to prevent clicks
       gain.gain.setValueAtTime(0.001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
 
       osc.connect(gain);
