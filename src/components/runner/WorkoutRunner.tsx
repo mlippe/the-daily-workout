@@ -266,16 +266,11 @@ export function WorkoutRunner({ workout, onComplete, onExit }: WorkoutRunnerProp
                   </button>
                 </div>
 
-                {/* Title & metadata at bottom edge */}
-                <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-2 pt-6 text-center flex flex-col items-center justify-end">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                {/* Title at bottom edge */}
+                <div className="absolute inset-x-0 bottom-0 z-10 px-4 sm:px-6 pb-2.5 sm:pb-3.5 pt-8 text-center flex flex-col items-center justify-end">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-balance leading-tight">
                     {currentStep.exercise.name}
                   </h1>
-                  <div className="mt-0.5 flex items-center justify-center gap-2 font-mono text-[11px] sm:text-xs text-neutral-300 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">
-                    <span className="capitalize">{currentStep.exercise.primaryMuscles.join(', ')}</span>
-                    <span className="text-neutral-500">•</span>
-                    <span className="text-neutral-400">Step {currentStepIndex + 1}/{workout.steps.length}</span>
-                  </div>
                 </div>
               </ExerciseVisual>
             </div>

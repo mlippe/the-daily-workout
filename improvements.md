@@ -6,4 +6,8 @@
 
 - the details popup should show the actual full description of a excercise, not the 1 2 3 steps
 
+- the font in the timer numbers needs a bit more letter spacing so it is easier to read
+
 - a bit more spacing between the timer and the 123 so that the screen is less crowded visually
+
+- some excercises are useful for two sides: stretches which are focusing on one body side. make those appear always with a single step but then one side and other side after each other. in the warmups and cooldowns!

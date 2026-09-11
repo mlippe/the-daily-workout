@@ -56,7 +56,7 @@ export function ExerciseVisual({
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.75) 12%, rgba(0, 0, 0, 0.2) 22%, transparent 32%)',
+              'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.85) 16%, rgba(0, 0, 0, 0.25) 28%, transparent 40%)',
           }}
         />
       )}
