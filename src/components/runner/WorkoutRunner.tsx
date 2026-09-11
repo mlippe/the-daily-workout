@@ -338,7 +338,7 @@ export function WorkoutRunner({
                 >
                   <div className='flex items-baseline gap-2.5'>
                     <span
-                      className={`font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-tighter text-white ${phaseTheme.repsNumberHover} transition-colors`}
+                      className={`font-mono text-5xl sm:text-6xl md:text-7xl font-black tabular-nums tracking-wider text-white ${phaseTheme.repsNumberHover} transition-colors`}
                     >
                       {currentStep.targetReps ?? 12}
                     </span>
