@@ -59,24 +59,16 @@ export function ExerciseDetailsModal({ exercise, isOpen, onClose }: ExerciseDeta
             </div>
           </div>
 
-          {/* Full Instructions */}
+          {/* Full Description */}
           <div>
             <h4 className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 mb-3">
-              Full Step-by-Step Technique
+              Description
             </h4>
-            <ol className="space-y-3">
-              {exercise.instructions.map((inst, index) => (
-                <li
-                  key={index}
-                  className="flex gap-3 text-sm text-neutral-300 leading-relaxed"
-                >
-                  <span className="font-mono text-xs text-neutral-400 shrink-0 mt-0.5">
-                    0{index + 1}
-                  </span>
-                  <span>{inst}</span>
-                </li>
+            <div className="space-y-3 text-sm text-neutral-300 leading-relaxed">
+              {exercise.instructions.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
               ))}
-            </ol>
+            </div>
           </div>
 
           {/* Additional details */}
