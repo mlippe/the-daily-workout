@@ -312,7 +312,7 @@ export function WorkoutRunner({
         if (nextIntro >= 1 && nextIntro <= 3) {
           soundEngine.playPip();
         } else if (nextIntro === 0) {
-          soundEngine.playPip(880, 0.25);
+          soundEngine.playPip(880, 0.5);
         }
         return;
       }
@@ -324,7 +324,7 @@ export function WorkoutRunner({
         if (nextSwitch >= 1 && nextSwitch <= 2) {
           soundEngine.playPip();
         } else if (nextSwitch === 0) {
-          soundEngine.playPip(880, 0.25);
+          soundEngine.playPip(880, 0.5);
         }
         return;
       }
