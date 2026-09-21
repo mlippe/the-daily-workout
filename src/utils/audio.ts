@@ -107,6 +107,42 @@ class SoundEngine {
     }
   }
 
+  // Distinct 2-tone melodic chime to prompt switching sides during unilateral stretches
+  public playSwitchSideChime(): void {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      // Ascending interval: A4 (440Hz) -> E5 (659.25Hz)
+      const notes = [
+        { freq: 440.0, start: now, dur: 0.16 },
+        { freq: 659.25, start: now + 0.11, dur: 0.28 },
+      ];
+
+      for (const note of notes) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(note.freq, note.start);
+
+        gain.gain.setValueAtTime(0.001, note.start);
+        gain.gain.exponentialRampToValueAtTime(0.3, note.start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, note.start + note.dur);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(note.start);
+        osc.stop(note.start + note.dur);
+      }
+    } catch {
+      // Ignore audio failure
+    }
+  }
+
   // Celebratory fanfare upon 15-minute workout completion
   public playCompletionFanfare(): void {
     if (this.isMuted) return;

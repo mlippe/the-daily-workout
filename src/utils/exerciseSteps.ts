@@ -117,6 +117,96 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Gently draw your heel toward your glutes until you feel a stretch in the thigh.',
     'Keep your hips square to the mat and hold without arching your lower back.',
   ],
+  'Triceps Stretch': [
+    'Reach one hand behind head, bend elbow, and grasp it with opposite hand.',
+    'Gently pull elbow until feeling a triceps and shoulder stretch.',
+    'Hold steadily on the first side, then smoothly switch arms when prompted.',
+  ],
+  'Shoulder Stretch': [
+    'Bring one arm straight across your chest parallel to the floor.',
+    'Use your opposite forearm to gently hug the arm closer to your chest.',
+    'Hold upright posture on the first arm, then switch to the other side.',
+  ],
+  'Side Neck Stretch': [
+    'Relax shoulders down and gently tilt your head toward one shoulder.',
+    'Rest your hand lightly on the side of head for a gentle stretch.',
+    'Hold the neck stretch smoothly, then switch to the opposite side.',
+  ],
+  'Middle Back Stretch': [
+    'Stand tall with feet shoulder-width apart and hands resting on hips.',
+    'Gently twist your torso and shoulders toward one side until you feel a stretch.',
+    'Hold the spinal rotation with steady breaths, then switch to the other side.',
+  ],
+  'Side-Lying Floor Stretch': [
+    'Lie on one side with bottom knee bent to stabilize your body.',
+    'Reach top arm long overhead while gently extending top leg backward.',
+    'Lengthen through your entire side body, then roll over to switch sides.',
+  ],
+  'Seated Floor Hamstring Stretch': [
+    'Sit with one leg straight out and the opposite foot against inner thigh.',
+    'Hinge forward from hips and reach toward your extended ankle.',
+    'Hold the deep hamstring stretch, then switch legs when prompted.',
+  ],
+  'Calf Stretch Hands Against Wall': [
+    'Place hands on wall at chest height and step one foot straight back.',
+    'Press back heel firmly into floor while bending front knee forward.',
+    'Feel the calf stretch through the back leg, then switch to other foot.',
+  ],
+  'Knee Across The Body': [
+    'Lie flat on back with one leg straight, bend opposite knee to 90 degrees.',
+    'Guide bent knee across body toward floor with opposite hand.',
+    'Keep both shoulders grounded on mat, then switch sides when prompted.',
+  ],
+  'On Your Side Quad Stretch': [
+    'Lie on side with bottom knee bent 90 degrees to stabilize your torso.',
+    'Bend top knee and hold top foot with top hand behind your glutes.',
+    'Press hip forward as you draw foot back, then switch sides when prompted.',
+  ],
+  'Ankle On The Knee': [
+    'Lie on back with knees bent, resting one ankle over opposite knee.',
+    'Clasp hands around bottom thigh and gently draw both legs toward chest.',
+    'Feel stretch deep in outer hip and glute, then switch to other leg.',
+  ],
+  '90/90 Hamstring': [
+    'Lie on back with one leg flat and other leg bent 90 degrees at hip and knee.',
+    'Extend lifted leg up toward ceiling, holding a gentle hamstring stretch.',
+    'Maintain lower back contact with floor, then switch legs when prompted.',
+  ],
+  'Standing Gastrocnemius Calf Stretch': [
+    'Elevate one heel or step forward, hinging at hips with leg straight.',
+    'Reach forward toward toes to stretch the calf muscle deeply.',
+    'Hold with steady breathing, then switch to the other foot on cue.',
+  ],
+  'Leg-Up Hamstring Stretch': [
+    'Lie on back, bend one knee with foot flat, and extend other leg straight up.',
+    'Hold behind the lifted thigh or calf, gently drawing leg toward chest.',
+    'Keep hips grounded on floor, then switch legs when prompted.',
+  ],
+  "World's Greatest Stretch": [
+    'Step forward into a long lunge with back leg extended and hands inside front foot.',
+    'Lower inside elbow toward the floor to open hips and stretch groin.',
+    'Rotate chest and reach arm up to ceiling, then switch sides when prompted.',
+  ],
+  'Standing Hip Circles': [
+    'Stand tall on one leg with hand on a wall or support for balance.',
+    'Lift unsupported knee to 90 degrees and rotate in large, slow circles.',
+    'Mobilize the hip joint through full range, then switch to other leg.',
+  ],
+  'Front Leg Raises': [
+    'Stand tall holding a support and swing one leg forward with control.',
+    'Continue swinging leg smoothly forward and back within your flexibility.',
+    'Keep torso upright throughout, then switch legs when prompted.',
+  ],
+  'Ankle Circles': [
+    'Lift one foot slightly off the floor while maintaining a tall posture.',
+    'Rotate the ankle slowly in large circular motions with your big toe.',
+    'Mobilize the joint smoothly, then repeat on the opposite ankle.',
+  ],
+  'Hip Circles (prone)': [
+    'Begin on all fours with wrists under shoulders and knees under hips.',
+    'Lift one knee and rotate femur in wide, slow circular motions.',
+    'Keep hips level and core engaged, then switch to other side on cue.',
+  ],
 };
 
 function cleanSentence(s: string): string {

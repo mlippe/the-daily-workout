@@ -10,6 +10,7 @@ export interface WorkoutStep {
   workDurationSeconds: number; // Duration of active exercise
   restDurationSeconds?: number;
   targetReps?: number;
+  isTwoSided?: boolean; // When true, step runs one side then other side after each other
 }
 
 export type WorkoutPillarFocus = MusclePillar | 'full_body';

@@ -1,6 +1,12 @@
 import type { Exercise, MusclePillar } from '../types/exercise';
 import type { WorkoutPlan, WorkoutStep, WorkoutPillarFocus } from '../types/workout';
-import { exercises, getExerciseById, getExercisesByCategory, getExercisesByPillar } from '../data/exercises';
+import {
+  exercises,
+  getExerciseById,
+  getExercisesByCategory,
+  getExercisesByPillar,
+  isTwoSidedExercise,
+} from '../data/exercises';
 
 function findOrFallback(id: string, fallbackCategory: 'warmup' | 'main' | 'cooldown', pillar?: MusclePillar): Exercise {
   const found = getExerciseById(id);
@@ -77,6 +83,10 @@ function buildStep(
   workDurationSeconds = phase === 'main' ? 60 : 30,
   targetReps?: number
 ): WorkoutStep {
+  const isTwoSided =
+    (phase === 'warmup' || phase === 'cooldown') &&
+    Boolean(exercise.isTwoSided || isTwoSidedExercise(exercise.id));
+
   return {
     id: `${phase}-${round ? `r${round}-` : ''}${exercise.id}-${stepIdx}`,
     exercise,
@@ -85,6 +95,7 @@ function buildStep(
     workDurationSeconds,
     restDurationSeconds: 0,
     targetReps: exercise.type === 'reps' ? (targetReps ?? exercise.defaultReps ?? 12) : undefined,
+    isTwoSided: isTwoSided || undefined,
   };
 }
 

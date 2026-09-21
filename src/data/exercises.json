@@ -43,7 +43,8 @@
     "images": [
       "/exercises/Ankle_Circles/0.jpg",
       "/exercises/Ankle_Circles/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Elbow_Circles",
@@ -115,7 +116,8 @@
     "images": [
       "/exercises/Standing_Hip_Circles/0.jpg",
       "/exercises/Standing_Hip_Circles/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Hip_Circles_prone",
@@ -139,7 +141,8 @@
     "images": [
       "/exercises/Hip_Circles_prone/0.jpg",
       "/exercises/Hip_Circles_prone/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Groiners",
@@ -182,7 +185,8 @@
     "images": [
       "/exercises/Front_Leg_Raises/0.jpg",
       "/exercises/Front_Leg_Raises/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Dynamic_Chest_Stretch",
@@ -468,7 +472,8 @@
     "images": [
       "/exercises/Worlds_Greatest_Stretch/0.jpg",
       "/exercises/Worlds_Greatest_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Wrist_Circles",
@@ -1472,7 +1477,8 @@
     "images": [
       "/exercises/Middle_Back_Stretch/0.jpg",
       "/exercises/Middle_Back_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Upper_Back_Stretch",
@@ -1615,7 +1621,8 @@
     "images": [
       "/exercises/Side-Lying_Floor_Stretch/0.jpg",
       "/exercises/Side-Lying_Floor_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Standing_Pelvic_Tilt",
@@ -3022,7 +3029,8 @@
     "images": [
       "/exercises/All_Fours_Quad_Stretch/0.jpg",
       "/exercises/All_Fours_Quad_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "On_Your_Side_Quad_Stretch",
@@ -3043,7 +3051,8 @@
     "images": [
       "/exercises/On_Your_Side_Quad_Stretch/0.jpg",
       "/exercises/On_Your_Side_Quad_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Seated_Floor_Hamstring_Stretch",
@@ -3066,7 +3075,8 @@
     "images": [
       "/exercises/Seated_Floor_Hamstring_Stretch/0.jpg",
       "/exercises/Seated_Floor_Hamstring_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Leg-Up_Hamstring_Stretch",
@@ -3088,7 +3098,8 @@
     "images": [
       "/exercises/Leg-Up_Hamstring_Stretch/0.jpg",
       "/exercises/Leg-Up_Hamstring_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "90_90_Hamstring",
@@ -3113,7 +3124,8 @@
     "images": [
       "/exercises/90_90_Hamstring/0.jpg",
       "/exercises/90_90_Hamstring/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Ankle_On_The_Knee",
@@ -3135,7 +3147,8 @@
     "images": [
       "/exercises/Ankle_On_The_Knee/0.jpg",
       "/exercises/Ankle_On_The_Knee/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Calf_Stretch_Hands_Against_Wall",
@@ -3157,7 +3170,8 @@
     "images": [
       "/exercises/Calf_Stretch_Hands_Against_Wall/0.jpg",
       "/exercises/Calf_Stretch_Hands_Against_Wall/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Calf_Stretch_Elbows_Against_Wall",
@@ -3226,7 +3240,8 @@
     "images": [
       "/exercises/Knee_Across_The_Body/0.jpg",
       "/exercises/Knee_Across_The_Body/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Triceps_Stretch",
@@ -3248,7 +3263,8 @@
     "images": [
       "/exercises/Triceps_Stretch/0.jpg",
       "/exercises/Triceps_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Shoulder_Stretch",
@@ -3268,7 +3284,8 @@
     "images": [
       "/exercises/Shoulder_Stretch/0.jpg",
       "/exercises/Shoulder_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Side_Neck_Stretch",
@@ -3289,7 +3306,8 @@
     "images": [
       "/exercises/Side_Neck_Stretch/0.jpg",
       "/exercises/Side_Neck_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "Chin_To_Chest_Stretch",
@@ -3336,7 +3354,8 @@
     "images": [
       "/exercises/Standing_Gastrocnemius_Calf_Stretch/0.jpg",
       "/exercises/Standing_Gastrocnemius_Calf_Stretch/1.jpg"
-    ]
+    ],
+    "isTwoSided": true
   },
   {
     "id": "The_Straddle",

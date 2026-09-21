@@ -20,4 +20,6 @@ export interface Exercise {
   defaultReps?: number; // e.g. 15
   instructions: string[];
   images: [string, string]; // ["/exercises/pushup/0.jpg", "/exercises/pushup/1.jpg"]
+  isTwoSided?: boolean; // For unilateral movements/stretches that work one side at a time
 }
+
