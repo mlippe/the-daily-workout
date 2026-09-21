@@ -309,9 +309,7 @@ export function WorkoutRunner({
         introRemainingRef.current -= 1;
         const nextIntro = introRemainingRef.current;
         setIntroSecondsRemaining(nextIntro);
-        if (nextIntro >= 1 && nextIntro <= 3) {
-          soundEngine.playPip();
-        } else if (nextIntro === 0) {
+        if (nextIntro === 0) {
           soundEngine.playPip(880, 0.5);
         }
         return;
@@ -321,9 +319,7 @@ export function WorkoutRunner({
         switchRemainingRef.current -= 1;
         const nextSwitch = switchRemainingRef.current;
         setSwitchSecondsRemaining(nextSwitch);
-        if (nextSwitch >= 1 && nextSwitch <= 2) {
-          soundEngine.playPip();
-        } else if (nextSwitch === 0) {
+        if (nextSwitch === 0) {
           soundEngine.playPip(880, 0.5);
         }
         return;
