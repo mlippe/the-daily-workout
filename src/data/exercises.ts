@@ -34,6 +34,8 @@ export const TWO_SIDED_EXERCISE_IDS = new Set<string>([
   'Single-Arm_Push-Up',
   'One_Arm_Against_Wall',
   'Side_Jackknife',
+  'Step-up_with_Knee_Raise',
+  'Cross-Body_Crunch',
 
   // Cooldown unilateral
   'Triceps_Stretch',

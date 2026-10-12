@@ -207,6 +207,121 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Lift one knee and rotate femur in wide, slow circular motions.',
     'Keep hips level and core engaged, then switch to other side on cue.',
   ],
+  'Step-up with Knee Raise': [
+    'Place your lead foot firmly onto a sturdy step or platform.',
+    'Drive through your heel to stand tall while driving opposite knee toward chest.',
+    'Step back down with control and maintain rhythm on this side before switching.',
+  ],
+  'Cross-Body Crunch': [
+    'Lie on back with knees bent and hands lightly supporting head.',
+    'Lift shoulder blade off floor and rotate elbow across toward opposite knee.',
+    'Squeeze obliques at peak crunch, lower slowly, and complete side before switching.',
+  ],
+  'Spider Crawl': [
+    'Start in a push-up position with body in a straight, rigid line.',
+    'Bring one knee out to the side toward your elbow while maintaining low hips.',
+    'Pause briefly, step back, and alternate sides smoothly with core braced.',
+  ],
+  'Isometric Chest Squeezes': [
+    'Press palms together directly in front of your chest with elbows bent wide.',
+    'Squeeze palms firmly against each other, contracting chest and shoulders.',
+    'Hold continuous maximum isometric tension while breathing steadily.',
+  ],
+  'Push-Ups With Feet Elevated': [
+    'Place toes on a sturdy elevated bench or step and hands on the floor.',
+    'Lower chest under control until elbows form a 90-degree angle.',
+    'Press through palms back to lockout, engaging upper chest and deltoids.',
+  ],
+  'Push-Up to Side Plank': [
+    'Perform a standard push-up with chest lowering close to the floor.',
+    'As you press up, rotate torso to one side and reach top arm toward ceiling.',
+    'Return to high plank and repeat with smooth rotational control.',
+  ],
+  'Freehand Jump Squat': [
+    'Lower into a parallel squat with chest tall and arms back.',
+    'Explode upward off the floor into a vertical jump, swinging arms up.',
+    'Land softly on the balls of your feet, immediately absorbing into next squat.',
+  ],
+  'Lateral Bound': [
+    'Stand balanced on one leg with knee soft and torso slightly hinged.',
+    'Push explosively off the stance leg to leap sideways onto opposite foot.',
+    'Stick the landing with a bent knee, stabilize briefly, and bound back.',
+  ],
+  'Frog Hops': [
+    'Start in a deep wide squat with fingertips touching the floor between feet.',
+    'Hop forward slightly while staying low in your squat stance.',
+    'Absorb the landing softly on midfoot and stay low throughout the set.',
+  ],
+  'Side Jackknife': [
+    'Lie on your side with legs straight and bottom arm extended on the floor.',
+    'Place top hand behind head and simultaneously raise legs and upper torso.',
+    'Squeeze your side waist at the top, lower slowly, and finish side before switching.',
+  ],
+  'Side Leg Raises': [
+    'Lie straight on your side with hips stacked vertically.',
+    'Lift top leg upward toward ceiling keeping toes pointed forward.',
+    'Pause for a gluteus medius contraction, lower with control, then switch sides.',
+  ],
+  'Rear Leg Raises': [
+    'Begin on all fours with wrists under shoulders and spine neutral.',
+    'Extend one leg straight back and lift heel toward ceiling without arching back.',
+    'Squeeze glute at top, lower slowly, and switch legs when prompted.',
+  ],
+  'Split Squats': [
+    'Take a long split stance with feet hip-width apart and torso upright.',
+    'Lower back knee straight down toward floor until front thigh is parallel.',
+    'Drive through front heel to return to top, finishing side before switching.',
+  ],
+  'Lower Back Curl': [
+    'Lie face down on the mat with arms relaxed by your sides.',
+    'Gently curl your upper chest and shoulders off the floor using spinal erectors.',
+    'Hold briefly at top without craning neck, then lower down smoothly.',
+  ],
+  'Standing Pelvic Tilt': [
+    'Stand tall with knees slightly soft and hands on your hips.',
+    'Gently tuck your pelvis under to flatten lumbar arch, engaging lower abs.',
+    'Release back to neutral with smooth, rhythmic pelvic control.',
+  ],
+  'Hug Knees To Chest': [
+    'Lie flat on back and draw both knees up toward your chest.',
+    'Wrap arms around shins and gently hug knees in to decompress lower back.',
+    'Breathe deeply into your abdomen, allowing spinal muscles to fully relax.',
+  ],
+  'Spinal Stretch': [
+    'Lie on your back with arms extended wide in a T-shape.',
+    'Bend knees and let them drop gently to one side while keeping shoulders flat.',
+    'Breathe into the rotational stretch along your spine, then switch sides.',
+  ],
+  'Upper Back Stretch': [
+    'Clasp hands together in front of chest and round your upper back forward.',
+    'Drop chin to chest and push knuckles away to open between shoulder blades.',
+    'Breathe into your mid-back, holding the gentle stretch with relaxed shoulders.',
+  ],
+  'One Arm Against Wall': [
+    'Place palm and forearm flat against a wall at shoulder height.',
+    'Gently rotate torso away from wall until feeling a chest and anterior shoulder stretch.',
+    'Breathe steadily into the stretch, then turn to stretch the opposite arm.',
+  ],
+  'Dynamic Chest Stretch': [
+    'Stand tall and open arms wide horizontally, expanding your chest.',
+    'Cross arms smoothly in front of body, hugging shoulders briefly.',
+    'Continue rhythmic opening and crossing motions at a controlled tempo.',
+  ],
+  'Dynamic Back Stretch': [
+    'Stand tall with feet wide and reach arms forward with rounded back.',
+    'Pull elbows back behind torso, squeezing shoulder blades together.',
+    'Flow smoothly between reaching forward and retracting back with your breath.',
+  ],
+  'Wrist Circles': [
+    'Interlace fingers or hold loose fists in front of your chest.',
+    'Rotate wrists in smooth, gentle circular motions through full range.',
+    'Warm up joint lubrication and forearm tendons before pressing sets.',
+  ],
+  'Elbow Circles': [
+    'Place fingertips lightly on the tops of your shoulders.',
+    'Draw large circular motions with your elbows in both directions.',
+    'Mobilize the shoulder joint and thoracic capsule with tall posture.',
+  ],
 };
 
 function cleanSentence(s: string): string {
