@@ -12,8 +12,11 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
   if (!isOpen) return null;
 
   const warmupSteps = workout.steps.filter((s) => s.phase === 'warmup');
-  const mainSteps = workout.steps.filter((s) => s.phase === 'main' && s.round === 1);
+  const mainSteps = workout.steps.filter(
+    (s) => s.phase === 'main' && s.round === 1 && !s.isRest,
+  );
   const cooldownSteps = workout.steps.filter((s) => s.phase === 'cooldown');
+  const hasRest = workout.steps.some((s) => s.isRest);
 
   const renderExerciseRow = (step: WorkoutStep, index: number) => (
     <div
@@ -106,6 +109,17 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
             <div className="divide-y divide-neutral-900/60">
               {mainSteps.map((step, idx) => renderExerciseRow(step, idx))}
             </div>
+            {hasRest && (
+              <div className="mt-2.5 flex items-center justify-between rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs font-mono text-amber-300">
+                <span className="flex items-center gap-1.5">
+                  <span>☕</span>
+                  <span className="font-sans font-medium text-amber-200">
+                    20s Rest between Round 1 & Round 2
+                  </span>
+                </span>
+                <span className="text-amber-400/80">Active Recovery</span>
+              </div>
+            )}
           </div>
 
           {/* Phase 3: Cool-down */}

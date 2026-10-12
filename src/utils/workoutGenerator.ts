@@ -38,8 +38,8 @@ export function calculateAdaptiveDurations(
   const nReps = repExercises.length;
   const nTimed = timedExercises.length;
 
-  // Main circuit target per round: 320s (240s warmup/cooldown + 2 * 320s = 880s, ~14m 40s)
-  const targetRoundBudget = 320;
+  // Main circuit target per round: 290s (2 rounds x 290s + 20s rest = 600s, exactly 10 min)
+  const targetRoundBudget = 290;
 
   if (nTimed === 0) {
     // When all 5 exercises are rep-based:
@@ -135,6 +135,37 @@ function buildStepsForExercise(
   ];
 }
 
+export const REST_EXERCISE: Exercise = {
+  id: 'rest-inter-round',
+  name: 'Rest & Recover',
+  category: 'main',
+  pillar: 'core',
+  primaryMuscles: [],
+  secondaryMuscles: [],
+  equipment: 'body only',
+  level: 'beginner',
+  type: 'time',
+  defaultDuration: 20,
+  instructions: [
+    'Take slow, deep diaphragmatic breaths to bring your heart rate down.',
+    'Drink a sip of water and shake out tension in your limbs.',
+    'Mentally prepare for Round 2.',
+  ],
+  images: ['/exercises/Cat_Stretch/0.jpg', '/exercises/Cat_Stretch/1.jpg'],
+};
+
+export function createRestStep(durationSeconds = 20, afterRound = 1): WorkoutStep {
+  return {
+    id: `main-r${afterRound}-rest`,
+    exercise: REST_EXERCISE,
+    phase: 'main',
+    round: afterRound,
+    workDurationSeconds: durationSeconds,
+    restDurationSeconds: 0,
+    isRest: true,
+  };
+}
+
 export function createWorkoutFromExercises(
   id: string,
   title: string,
@@ -158,7 +189,7 @@ export function createWorkoutFromExercises(
     buildStepsForExercise(ex, 'warmup', undefined, idx, warmupStepDuration)
   );
 
-  // 2. Main Circuit Phase: 2 Rounds, Target 600 seconds total (300 seconds per round)
+  // 2. Main Circuit Phase: 2 Rounds + 20s Inter-Round Rest, Target 600 seconds total
   const defaultReps = 12;
   const preliminaryRound1 = mainExercises.flatMap((ex, idx) =>
     buildStepsForExercise(ex, 'main', 1, idx, 45, defaultReps)
@@ -175,6 +206,10 @@ export function createWorkoutFromExercises(
       const stepsForEx = buildStepsForExercise(ex, 'main', round, idx, duration, defaultReps);
       mainSteps.push(...stepsForEx);
     });
+    if (round === 1) {
+      // Dedicated 20s rest interval between Round 1 and Round 2
+      mainSteps.push(createRestStep(20, 1));
+    }
   }
 
   // 3. Cool-down Phase: Target 150 seconds (~2.5 minutes)
@@ -488,9 +523,9 @@ export function getNextVariation(pillar: WorkoutPillarFocus, currentId?: string)
 }
 
 export function applyTargetRepsToWorkout(workout: WorkoutPlan, targetReps: number): WorkoutPlan {
-  // Extract main circuit exercises (round 1)
+  // Extract main circuit exercises (round 1), excluding rest steps
   const mainExercises = workout.steps
-    .filter((s) => s.phase === 'main' && s.round === 1)
+    .filter((s) => s.phase === 'main' && s.round === 1 && !s.isRest)
     .map((s) => s.exercise);
 
   const { repDurationSeconds, timedDurationSeconds } = calculateAdaptiveDurations(
@@ -499,7 +534,7 @@ export function applyTargetRepsToWorkout(workout: WorkoutPlan, targetReps: numbe
   );
 
   const updatedSteps = workout.steps.map((step) => {
-    if (step.phase !== 'main') {
+    if (step.phase !== 'main' || step.isRest) {
       return step;
     }
     const isRep = step.exercise.type === 'reps';

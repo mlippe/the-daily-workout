@@ -4,6 +4,7 @@ import type { WorkoutPlan, WorkoutStep } from '../../types/workout';
 interface ProgressBarProps {
   workout: WorkoutPlan;
   currentStep: WorkoutStep;
+  nextStep?: WorkoutStep;
 }
 
 const PHASES = [
@@ -12,7 +13,7 @@ const PHASES = [
   { key: 'cooldown', label: 'cooldown' },
 ] as const;
 
-export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
+export function ProgressBar({ workout, currentStep, nextStep }: ProgressBarProps) {
   const currentPhase = currentStep.phase;
   const phaseOrder = ['warmup', 'main', 'cooldown'] as const;
   const activePhaseIndex = phaseOrder.indexOf(currentPhase);
@@ -74,7 +75,7 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
   const theme = phaseThemes[currentPhase] ?? phaseThemes.main;
 
   return (
-    <div className='w-full space-y-2'>
+    <div className='w-full space-y-1.5'>
       {/* Stage 1: 3 Phase Pills */}
       <div className='flex items-center gap-2 w-full'>
         {PHASES.map(({ key, label }, idx) => {
@@ -119,10 +120,26 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
       </div>
 
       {/* Stage 2: Phase Exercises */}
-      <div className='flex h-3 sm:h-3.5 w-full gap-1 sm:gap-1.5'>
+      <div className='flex h-2.5 sm:h-3 w-full gap-1 sm:gap-1.5 items-center'>
         {currentPhaseSteps.map((step, idx) => {
           const isPast = idx < currentStepInPhaseIndex;
           const isCurrent = idx === currentStepInPhaseIndex;
+
+          if (step.isRest) {
+            return (
+              <div
+                key={step.id}
+                title='Rest (20s)'
+                className={`h-full w-2.5 sm:w-3 shrink-0 rounded-full border border-dashed transition-all duration-300 ${
+                  isPast
+                    ? 'border-neutral-600 bg-neutral-800'
+                    : isCurrent
+                      ? 'border-amber-400 bg-amber-400/50 shadow-[0_0_8px_rgba(251,191,36,0.6)] animate-pulse'
+                      : 'border-neutral-800 bg-transparent'
+                }`}
+              />
+            );
+          }
 
           if (isPast) {
             // Done parts are outline + non pulsing fill
@@ -157,6 +174,29 @@ export function ProgressBar({ workout, currentStep }: ProgressBarProps) {
           );
         })}
       </div>
+
+      {/* Stage 3: Subtle Minimal "Up Next" Foresight */}
+      {nextStep && (
+        <div className='flex items-center justify-between pt-0.5 text-[11px] font-mono select-none'>
+          <div className='flex items-center gap-1.5 min-w-0 pr-2'>
+            <span className='rounded bg-neutral-900 border border-neutral-800 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-neutral-400 shrink-0'>
+              Up Next
+            </span>
+            <span className='text-neutral-300 font-medium truncate'>
+              {nextStep.isRest
+                ? '20s Rest & Recovery'
+                : `${nextStep.exercise.name}${nextStep.side ? ` (${nextStep.side === 'right' ? 'Right' : 'Left'})` : ''}`}
+            </span>
+          </div>
+          <span className='text-[10px] font-semibold text-neutral-400 shrink-0 tabular-nums'>
+            {nextStep.isRest
+              ? '20s'
+              : nextStep.exercise.type === 'reps'
+                ? `${nextStep.targetReps ?? 12} reps`
+                : `${nextStep.workDurationSeconds}s`}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

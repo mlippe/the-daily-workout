@@ -12,6 +12,7 @@ export interface WorkoutStep {
   targetReps?: number;
   isTwoSided?: boolean;
   side?: 'right' | 'left'; // For unilateral exercises split into separate right and left steps
+  isRest?: boolean; // Dedicated rest and recovery interval (e.g. between rounds)
 }
 
 export type WorkoutPillarFocus = MusclePillar | 'full_body';

@@ -9,8 +9,9 @@ import {
   CheckCircle2,
   Info,
   ChevronDown,
+  Coffee,
 } from 'lucide-react';
-import type { WorkoutPlan } from '../../types/workout';
+import type { WorkoutPlan, WorkoutStep } from '../../types/workout';
 import { soundEngine } from '../../utils/audio';
 import { useWakeLock } from '../../hooks/useWakeLock';
 import { getQuickSteps } from '../../utils/exerciseSteps';
@@ -23,6 +24,9 @@ const formatTime = (secs: number) => {
   const s = Math.floor(secs % 60);
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 };
+
+const getInitialIntro = (step: WorkoutStep) =>
+  !step.isRest && step.exercise.type === 'time' ? 5 : 0;
 
 interface WorkoutRunnerProps {
   workout: WorkoutPlan;
@@ -48,8 +52,29 @@ export function WorkoutRunner({
   const currentPhase = currentStep.phase;
 
   // Whole workout view adapts the colors of the active phase:
-  // warmup: Emerald | main: Sky Blue | cooldown: Purple
+  // rest: Amber | warmup: Emerald | main: Sky Blue | cooldown: Purple
   const phaseTheme = useMemo(() => {
+    if (currentStep.isRest) {
+      return {
+        playBtn:
+          'bg-amber-400 text-neutral-950 hover:bg-amber-300 shadow-[0_0_24px_rgba(251,191,36,0.45)]',
+        playBtnPaused:
+          'bg-amber-500 text-neutral-950 hover:bg-amber-400 shadow-[0_0_24px_rgba(251,191,36,0.6)] animate-pulse',
+        badge:
+          'bg-amber-500/15 border border-amber-500/40 text-amber-300',
+        repsCardHover:
+          'hover:border-amber-500/50 hover:shadow-[0_0_24px_rgba(251,191,36,0.15)]',
+        repsNumberHover: 'group-hover:text-amber-300',
+        repActionText: 'text-amber-300',
+        stepBadge: 'border-amber-500/40 text-amber-300 bg-amber-950/20',
+        headerBorder: 'border-amber-500/20',
+        footerBorder: 'border-amber-500/20',
+        controlHover:
+          'hover:border-amber-500/50 hover:text-amber-300 hover:bg-amber-950/20',
+        timerPill: 'border-amber-500/40 text-amber-300',
+      };
+    }
+
     switch (currentPhase) {
       case 'warmup':
         return {
@@ -108,17 +133,17 @@ export function WorkoutRunner({
           timerPill: 'border-sky-500/40 text-sky-300',
         };
     }
-  }, [currentPhase]);
+  }, [currentPhase, currentStep.isRest]);
 
   const [secondsRemaining, setSecondsRemaining] = useState<number>(
     () => currentStep.workDurationSeconds,
   );
   const [introSecondsRemaining, setIntroSecondsRemaining] = useState<number>(
-    () => (currentStep.exercise.type === 'time' ? 5 : 0),
+    () => getInitialIntro(currentStep),
   );
   const [totalElapsedSeconds, setTotalElapsedSeconds] = useState(0);
 
-  const introRemainingRef = useRef(currentStep.exercise.type === 'time' ? 5 : 0);
+  const introRemainingRef = useRef(getInitialIntro(currentStep));
   const secondsRemainingRef = useRef(currentStep.workDurationSeconds);
 
   // Skip the 5s intro and start the exercise immediately if user taps
@@ -144,11 +169,17 @@ export function WorkoutRunner({
     mainRef.current?.scrollTo({ top: 0, behavior: 'instant' });
   }, [currentStepIndex]);
 
-  // Derive large 3-step actionable instructions for the current exercise
-  const quickSteps = useMemo(
-    () => getQuickSteps(currentStep.exercise),
-    [currentStep.exercise],
-  );
+  // Derive large 3-step actionable instructions for the current exercise or recovery
+  const quickSteps = useMemo(() => {
+    if (currentStep.isRest) {
+      return [
+        'Take slow, deep breaths through your nose to lower your heart rate.',
+        'Sip some water and shake out tension from your working muscles.',
+        'Focus your energy and get ready to crush Round 2.',
+      ];
+    }
+    return getQuickSteps(currentStep.exercise);
+  }, [currentStep.exercise, currentStep.isRest]);
 
   // Keep screen awake while workout is active and not paused
   useWakeLock(!isPaused);
@@ -172,7 +203,7 @@ export function WorkoutRunner({
 
       setCurrentStepIndex(nextIdx);
       secondsRemainingRef.current = nextStep.workDurationSeconds;
-      introRemainingRef.current = nextStep.exercise.type === 'time' ? 5 : 0;
+      introRemainingRef.current = getInitialIntro(nextStep);
       setSecondsRemaining(nextStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
       soundEngine.playTransitionChime();
@@ -193,7 +224,7 @@ export function WorkoutRunner({
 
       setCurrentStepIndex(nextIdx);
       secondsRemainingRef.current = nextStep.workDurationSeconds;
-      introRemainingRef.current = nextStep.exercise.type === 'time' ? 5 : 0;
+      introRemainingRef.current = getInitialIntro(nextStep);
       setSecondsRemaining(nextStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
     } else {
@@ -212,12 +243,12 @@ export function WorkoutRunner({
 
       setCurrentStepIndex(prevIdx);
       secondsRemainingRef.current = prevStep.workDurationSeconds;
-      introRemainingRef.current = prevStep.exercise.type === 'time' ? 5 : 0;
+      introRemainingRef.current = getInitialIntro(prevStep);
       setSecondsRemaining(prevStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
     } else {
       secondsRemainingRef.current = currentStep.workDurationSeconds;
-      introRemainingRef.current = currentStep.exercise.type === 'time' ? 5 : 0;
+      introRemainingRef.current = getInitialIntro(currentStep);
       setSecondsRemaining(currentStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
     }
@@ -311,7 +342,11 @@ export function WorkoutRunner({
         className={`border-b ${phaseTheme.headerBorder} bg-black/90 px-4 sm:px-6 pt-3 pb-2.5 backdrop-blur-md transition-colors duration-300`}
       >
         <div className='mx-auto max-w-2xl md:max-w-3xl'>
-          <ProgressBar workout={workout} currentStep={currentStep} />
+          <ProgressBar
+            workout={workout}
+            currentStep={currentStep}
+            nextStep={workout.steps[currentStepIndex + 1]}
+          />
         </div>
       </header>
 
@@ -327,68 +362,122 @@ export function WorkoutRunner({
             className='w-full min-h-full flex flex-col items-center justify-between pb-6 pt-1 sm:pt-2 shrink-0'
             style={{ minHeight: '100%' }}
           >
-            {/* Merged Hero: Full-width animation with top controls overlay and title */}
+            {/* Merged Hero: Full-width animation or Rest card */}
             <div className='w-full max-w-full sm:max-w-2xl md:max-w-3xl aspect-[3/2] max-h-[46vh] relative shrink-0 sm:rounded-3xl overflow-hidden bg-black'>
-              <ExerciseVisual
-                key={currentStep.exercise.id}
-                exercise={currentStep.exercise}
-                isPaused={isPaused}
-                overlayGradient={true}
-                className='h-full w-full'
-              >
-                {/* Top Controls Overlay on image: give up (left), timer (center), mute (right) */}
-                <div className='absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between pointer-events-none'>
-                  <button
-                    type='button'
-                    onClick={() => setShowExitModal(true)}
-                    className='pointer-events-auto rounded-full bg-black/60 hover:bg-black/90 px-3 py-1 font-mono text-[11px] sm:text-xs font-medium text-neutral-300 hover:text-rose-400 border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm'
-                  >
-                    give up
-                  </button>
+              {currentStep.isRest ? (
+                <div className='relative flex h-full w-full flex-col justify-between p-3 sm:p-5 bg-gradient-to-b from-neutral-900/90 via-neutral-950 to-black border border-amber-500/20 sm:rounded-3xl'>
+                  {/* Top Controls Overlay on rest card: give up (left), timer (center), mute (right) */}
+                  <div className='flex items-center justify-between'>
+                    <button
+                      type='button'
+                      onClick={() => setShowExitModal(true)}
+                      className='rounded-full bg-black/60 hover:bg-black/90 px-3 py-1 font-mono text-[11px] sm:text-xs font-medium text-neutral-300 hover:text-rose-400 border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm'
+                    >
+                      give up
+                    </button>
 
-                  <div
-                    className={`pointer-events-auto rounded-full bg-black/60 px-3 py-1 font-mono text-xs font-semibold border ${phaseTheme.timerPill} backdrop-blur-md tabular-nums tracking-wider shadow-sm transition-colors`}
-                  >
-                    {formatTime(totalElapsedSeconds)}
+                    <div
+                      className={`rounded-full bg-black/60 px-3 py-1 font-mono text-xs font-semibold border ${phaseTheme.timerPill} backdrop-blur-md tabular-nums tracking-wider shadow-sm transition-colors`}
+                    >
+                      {formatTime(totalElapsedSeconds)}
+                    </div>
+
+                    <button
+                      type='button'
+                      onClick={handleToggleMute}
+                      className='flex h-7 w-7 sm:h-7.5 sm:w-7.5 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 text-neutral-300 hover:text-white border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm'
+                      title={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
+                      aria-label={
+                        isMuted ? 'Unmute countdowns' : 'Mute countdowns'
+                      }
+                    >
+                      {isMuted ? (
+                        <VolumeX className='h-3.5 w-3.5' />
+                      ) : (
+                        <Volume2 className='h-3.5 w-3.5' />
+                      )}
+                    </button>
                   </div>
 
-                  <button
-                    type='button'
-                    onClick={handleToggleMute}
-                    className='pointer-events-auto flex h-7 w-7 sm:h-7.5 sm:w-7.5 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 text-neutral-300 hover:text-white border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm'
-                    title={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
-                    aria-label={
-                      isMuted ? 'Unmute countdowns' : 'Mute countdowns'
-                    }
-                  >
-                    {isMuted ? (
-                      <VolumeX className='h-3.5 w-3.5' />
-                    ) : (
-                      <Volume2 className='h-3.5 w-3.5' />
-                    )}
-                  </button>
-                </div>
-
-                {/* Title at bottom edge */}
-                <div className='absolute inset-x-0 bottom-0 z-10 px-4 sm:px-6 pb-2.5 sm:pb-3.5 pt-8 text-center flex flex-col items-center justify-end'>
-                  <h1 className='text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-balance leading-tight'>
-                    {currentStep.exercise.name}
-                  </h1>
-                  {currentStep.side && (
-                    <div className='mt-2 flex items-center gap-1.5'>
-                      <span
-                        className={`rounded-full px-3 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border ${
-                          currentStep.side === 'right'
-                            ? 'bg-amber-500/20 border-amber-400/50 text-amber-300'
-                            : 'bg-teal-500/20 border-teal-400/50 text-teal-300'
-                        }`}
-                      >
-                        {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
-                      </span>
+                  {/* Rest Center Graphics */}
+                  <div className='flex flex-col items-center justify-center my-auto'>
+                    <div className='flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_32px_rgba(251,191,36,0.2)] animate-pulse'>
+                      <Coffee className='h-8 w-8 sm:h-10 sm:w-10' />
                     </div>
-                  )}
+                  </div>
+
+                  {/* Title at bottom edge */}
+                  <div className='px-4 pb-1 text-center flex flex-col items-center justify-end'>
+                    <h1 className='text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-balance leading-tight'>
+                      Rest & Catch Your Breath
+                    </h1>
+                    <p className='mt-1 text-xs sm:text-sm font-medium text-amber-300/80'>
+                      Round 1 Complete • Breathe & Hydrate
+                    </p>
+                  </div>
                 </div>
-              </ExerciseVisual>
+              ) : (
+                <ExerciseVisual
+                  key={currentStep.exercise.id}
+                  exercise={currentStep.exercise}
+                  isPaused={isPaused}
+                  overlayGradient={true}
+                  className='h-full w-full'
+                >
+                  {/* Top Controls Overlay on image: give up (left), timer (center), mute (right) */}
+                  <div className='absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-20 flex items-center justify-between pointer-events-none'>
+                    <button
+                      type='button'
+                      onClick={() => setShowExitModal(true)}
+                      className='pointer-events-auto rounded-full bg-black/60 hover:bg-black/90 px-3 py-1 font-mono text-[11px] sm:text-xs font-medium text-neutral-300 hover:text-rose-400 border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm'
+                    >
+                      give up
+                    </button>
+
+                    <div
+                      className={`pointer-events-auto rounded-full bg-black/60 px-3 py-1 font-mono text-xs font-semibold border ${phaseTheme.timerPill} backdrop-blur-md tabular-nums tracking-wider shadow-sm transition-colors`}
+                    >
+                      {formatTime(totalElapsedSeconds)}
+                    </div>
+
+                    <button
+                      type='button'
+                      onClick={handleToggleMute}
+                      className='pointer-events-auto flex h-7 w-7 sm:h-7.5 sm:w-7.5 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 text-neutral-300 hover:text-white border border-neutral-800/80 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-sm'
+                      title={isMuted ? 'Unmute countdowns' : 'Mute countdowns'}
+                      aria-label={
+                        isMuted ? 'Unmute countdowns' : 'Mute countdowns'
+                      }
+                    >
+                      {isMuted ? (
+                        <VolumeX className='h-3.5 w-3.5' />
+                      ) : (
+                        <Volume2 className='h-3.5 w-3.5' />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Title at bottom edge */}
+                  <div className='absolute inset-x-0 bottom-0 z-10 px-4 sm:px-6 pb-2.5 sm:pb-3.5 pt-8 text-center flex flex-col items-center justify-end'>
+                    <h1 className='text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-balance leading-tight'>
+                      {currentStep.exercise.name}
+                    </h1>
+                    {currentStep.side && (
+                      <div className='mt-2 flex items-center gap-1.5'>
+                        <span
+                          className={`rounded-full px-3 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border ${
+                            currentStep.side === 'right'
+                              ? 'bg-amber-500/20 border-amber-400/50 text-amber-300'
+                              : 'bg-teal-500/20 border-teal-400/50 text-teal-300'
+                          }`}
+                        >
+                          {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </ExerciseVisual>
+              )}
             </div>
 
             {/* Central Display: Standard Set with Reps vs Timed Progress Ring (Plank/Holds) */}
@@ -438,13 +527,15 @@ export function WorkoutRunner({
                   <span
                     className={`rounded-full ${phaseTheme.badge} px-3.5 py-1 font-mono text-xs uppercase tracking-widest font-semibold shadow-sm transition-colors`}
                   >
-                    {currentStep.side
-                      ? currentStep.side === 'right'
-                        ? 'Right Side'
-                        : 'Left Side'
-                      : currentStep.round
-                        ? `Round ${currentStep.round} of 2`
-                        : 'Timed Hold'}
+                    {currentStep.isRest
+                      ? 'Inter-Round Rest'
+                      : currentStep.side
+                        ? currentStep.side === 'right'
+                          ? 'Right Side'
+                          : 'Left Side'
+                        : currentStep.round
+                          ? `Round ${currentStep.round} of 2`
+                          : 'Timed Hold'}
                   </span>
                 </div>
 
@@ -476,11 +567,13 @@ export function WorkoutRunner({
                       className={`transition-all duration-300 ${
                         secondsRemaining <= 3
                           ? 'stroke-rose-500'
-                          : currentStep.phase === 'warmup'
-                            ? 'stroke-emerald-400'
-                            : currentStep.phase === 'main'
-                              ? 'stroke-sky-400'
-                              : 'stroke-purple-400'
+                          : currentStep.isRest
+                            ? 'stroke-amber-400'
+                            : currentStep.phase === 'warmup'
+                              ? 'stroke-emerald-400'
+                              : currentStep.phase === 'main'
+                                ? 'stroke-sky-400'
+                                : 'stroke-purple-400'
                       }`}
                       strokeWidth='6'
                       strokeDasharray={276.46}
@@ -499,6 +592,18 @@ export function WorkoutRunner({
                     </span>
                   </div>
                 </div>
+
+                {/* Skip Rest button directly in the central display if in Rest step */}
+                {currentStep.isRest && (
+                  <button
+                    type='button'
+                    onClick={advance}
+                    className='mt-3.5 inline-flex items-center gap-1.5 rounded-full bg-neutral-900/90 hover:bg-neutral-800 border border-amber-500/30 px-4 py-1.5 font-mono text-xs font-semibold text-amber-300 hover:text-amber-200 transition-all active:scale-95 cursor-pointer shadow-sm'
+                  >
+                    <SkipForward className='h-3.5 w-3.5' />
+                    <span>Skip Rest • Start Round 2</span>
+                  </button>
+                )}
 
                 {/* 5-Second "Get into position" Intro Overlay - Layered directly above the workout timer, hiding it behind it */}
                 {introSecondsRemaining > 0 && (
@@ -566,19 +671,21 @@ export function WorkoutRunner({
             </ol>
 
             {/* Full Details Button Below Steps */}
-            <div className='mt-6 flex justify-center sm:justify-start'>
-              <button
-                type='button'
-                onClick={() => {
-                  setIsPaused(true);
-                  setShowDetailsModal(true);
-                }}
-                className='inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-300 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer'
-              >
-                <Info className='h-4 w-4 text-neutral-400' />
-                <span>Full Details</span>
-              </button>
-            </div>
+            {!currentStep.isRest && (
+              <div className='mt-6 flex justify-center sm:justify-start'>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setIsPaused(true);
+                    setShowDetailsModal(true);
+                  }}
+                  className='inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-medium text-neutral-300 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-full px-4 py-2 transition-all active:scale-95 shadow-sm cursor-pointer'
+                >
+                  <Info className='h-4 w-4 text-neutral-400' />
+                  <span>Full Details</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -634,8 +741,8 @@ export function WorkoutRunner({
             type='button'
             onClick={handleSkipForward}
             className={`flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 ${phaseTheme.controlHover} transition-all`}
-            title='Skip (Right Arrow)'
-            aria-label='Skip to next step'
+            title={currentStep.isRest ? 'Skip Rest (Right Arrow)' : 'Skip (Right Arrow)'}
+            aria-label={currentStep.isRest ? 'Skip rest' : 'Skip to next step'}
           >
             <SkipForward className='h-5 w-5' />
           </button>
