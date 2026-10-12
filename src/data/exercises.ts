@@ -16,25 +16,47 @@ export const getExerciseById = (id: string): Exercise | undefined => {
 };
 
 export const TWO_SIDED_EXERCISE_IDS = new Set<string>([
+  // Warmup unilateral
+  'Standing_Hip_Circles',
+  'Hip_Circles_prone',
+  'Front_Leg_Raises',
+  'Ankle_Circles',
+  'Knee_Circles',
+  'Worlds_Greatest_Stretch',
+
+  // Main circuit unilateral
+  'Single_Leg_Glute_Bridge',
+  'Side_Bridge',
+  'Glute_Kickback',
+  'Rear_Leg_Raises',
+  'Side_Leg_Raises',
+  'Split_Squats',
+  'Single-Arm_Push-Up',
+  'One_Arm_Against_Wall',
+  'Side_Jackknife',
+
+  // Cooldown unilateral
   'Triceps_Stretch',
   'Shoulder_Stretch',
   'Side_Neck_Stretch',
   'Middle_Back_Stretch',
   'Side-Lying_Floor_Stretch',
   'All_Fours_Quad_Stretch',
+  'On_Your_Side_Quad_Stretch',
   'Seated_Floor_Hamstring_Stretch',
   'Calf_Stretch_Hands_Against_Wall',
+  'Calf_Stretch_Elbows_Against_Wall',
   'Knee_Across_The_Body',
-  'On_Your_Side_Quad_Stretch',
   'Ankle_On_The_Knee',
   '90_90_Hamstring',
   'Standing_Gastrocnemius_Calf_Stretch',
   'Leg-Up_Hamstring_Stretch',
-  'Worlds_Greatest_Stretch',
-  'Standing_Hip_Circles',
-  'Front_Leg_Raises',
-  'Ankle_Circles',
-  'Hip_Circles_prone',
+  'Lying_Prone_Quadriceps',
+  'Seated_Hamstring',
+  'Lying_Glute',
+  'Seated_Glute',
+  'Overhead_Triceps',
+  'Seated_Front_Deltoid',
 ]);
 
 export const isTwoSidedExercise = (exerciseOrId?: Exercise | string | null): boolean => {

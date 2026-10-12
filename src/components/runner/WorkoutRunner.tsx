@@ -46,10 +46,6 @@ export function WorkoutRunner({
 
   const currentStep = workout.steps[currentStepIndex];
   const currentPhase = currentStep.phase;
-  const isTwoSided = Boolean(currentStep.isTwoSided && currentStep.phase !== 'main');
-  const sideDuration = isTwoSided
-    ? Math.round(currentStep.workDurationSeconds / 2)
-    : currentStep.workDurationSeconds;
 
   // Whole workout view adapts the colors of the active phase:
   // warmup: Emerald | main: Sky Blue | cooldown: Purple
@@ -114,14 +110,8 @@ export function WorkoutRunner({
     }
   }, [currentPhase]);
 
-  const [currentSide, setCurrentSide] = useState<1 | 2>(1);
-  const [switchSecondsRemaining, setSwitchSecondsRemaining] = useState<number>(0);
-
-  const currentSideRef = useRef<1 | 2>(1);
-  const switchRemainingRef = useRef<number>(0);
-
   const [secondsRemaining, setSecondsRemaining] = useState<number>(
-    () => (isTwoSided ? sideDuration : currentStep.workDurationSeconds),
+    () => currentStep.workDurationSeconds,
   );
   const [introSecondsRemaining, setIntroSecondsRemaining] = useState<number>(
     () => (currentStep.exercise.type === 'time' ? 5 : 0),
@@ -129,18 +119,12 @@ export function WorkoutRunner({
   const [totalElapsedSeconds, setTotalElapsedSeconds] = useState(0);
 
   const introRemainingRef = useRef(currentStep.exercise.type === 'time' ? 5 : 0);
-  const secondsRemainingRef = useRef(isTwoSided ? sideDuration : currentStep.workDurationSeconds);
+  const secondsRemainingRef = useRef(currentStep.workDurationSeconds);
 
   // Skip the 5s intro and start the exercise immediately if user taps
   const handleSkipIntro = useCallback(() => {
     introRemainingRef.current = 0;
     setIntroSecondsRemaining(0);
-  }, []);
-
-  // Skip the 3s switch countdown and start second side immediately if user taps
-  const handleSkipSwitch = useCallback(() => {
-    switchRemainingRef.current = 0;
-    setSwitchSecondsRemaining(0);
   }, []);
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -185,19 +169,11 @@ export function WorkoutRunner({
     if (currentStepIndex < workout.steps.length - 1) {
       const nextIdx = currentStepIndex + 1;
       const nextStep = workout.steps[nextIdx];
-      const nextIsTwoSided = Boolean(nextStep.isTwoSided && nextStep.phase !== 'main');
-      const nextDuration = nextIsTwoSided
-        ? Math.round(nextStep.workDurationSeconds / 2)
-        : nextStep.workDurationSeconds;
 
       setCurrentStepIndex(nextIdx);
-      currentSideRef.current = 1;
-      setCurrentSide(1);
-      switchRemainingRef.current = 0;
-      setSwitchSecondsRemaining(0);
-      secondsRemainingRef.current = nextDuration;
+      secondsRemainingRef.current = nextStep.workDurationSeconds;
       introRemainingRef.current = nextStep.exercise.type === 'time' ? 5 : 0;
-      setSecondsRemaining(nextDuration);
+      setSecondsRemaining(nextStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
       soundEngine.playTransitionChime();
     } else {
@@ -209,35 +185,16 @@ export function WorkoutRunner({
     }
   }, [currentStepIndex, workout, onComplete]);
 
-  // Skip forward button: if on Side 1 of a two-sided exercise, advance to Side 2; otherwise skip to next step
+  // Skip forward button: skip to next step
   const handleSkipForward = useCallback(() => {
-    if (isTwoSided && currentSideRef.current === 1) {
-      currentSideRef.current = 2;
-      setCurrentSide(2);
-      switchRemainingRef.current = 0;
-      setSwitchSecondsRemaining(0);
-      secondsRemainingRef.current = sideDuration;
-      setSecondsRemaining(sideDuration);
-      soundEngine.playSwitchSideChime();
-      return;
-    }
-
     if (currentStepIndex < workout.steps.length - 1) {
       const nextIdx = currentStepIndex + 1;
       const nextStep = workout.steps[nextIdx];
-      const nextIsTwoSided = Boolean(nextStep.isTwoSided && nextStep.phase !== 'main');
-      const nextDuration = nextIsTwoSided
-        ? Math.round(nextStep.workDurationSeconds / 2)
-        : nextStep.workDurationSeconds;
 
       setCurrentStepIndex(nextIdx);
-      currentSideRef.current = 1;
-      setCurrentSide(1);
-      switchRemainingRef.current = 0;
-      setSwitchSecondsRemaining(0);
-      secondsRemainingRef.current = nextDuration;
+      secondsRemainingRef.current = nextStep.workDurationSeconds;
       introRemainingRef.current = nextStep.exercise.type === 'time' ? 5 : 0;
-      setSecondsRemaining(nextDuration);
+      setSecondsRemaining(nextStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
     } else {
       onComplete({
@@ -245,48 +202,26 @@ export function WorkoutRunner({
         workout,
       });
     }
-  }, [currentStepIndex, workout, onComplete, totalElapsedSeconds, isTwoSided, sideDuration]);
+  }, [currentStepIndex, workout, onComplete, totalElapsedSeconds]);
 
-  // Go to previous exercise: if on Side 2 of a two-sided exercise, return to Side 1; otherwise previous step
+  // Go to previous exercise step
   const handleSkipBack = useCallback(() => {
-    if (isTwoSided && currentSideRef.current === 2) {
-      currentSideRef.current = 1;
-      setCurrentSide(1);
-      switchRemainingRef.current = 0;
-      setSwitchSecondsRemaining(0);
-      secondsRemainingRef.current = sideDuration;
-      setSecondsRemaining(sideDuration);
-      return;
-    }
-
     if (currentStepIndex > 0) {
       const prevIdx = currentStepIndex - 1;
       const prevStep = workout.steps[prevIdx];
-      const prevIsTwoSided = Boolean(prevStep.isTwoSided && prevStep.phase !== 'main');
-      const prevDuration = prevIsTwoSided
-        ? Math.round(prevStep.workDurationSeconds / 2)
-        : prevStep.workDurationSeconds;
 
       setCurrentStepIndex(prevIdx);
-      currentSideRef.current = 1;
-      setCurrentSide(1);
-      switchRemainingRef.current = 0;
-      setSwitchSecondsRemaining(0);
-      secondsRemainingRef.current = prevDuration;
+      secondsRemainingRef.current = prevStep.workDurationSeconds;
       introRemainingRef.current = prevStep.exercise.type === 'time' ? 5 : 0;
-      setSecondsRemaining(prevDuration);
+      setSecondsRemaining(prevStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
     } else {
-      currentSideRef.current = 1;
-      setCurrentSide(1);
-      switchRemainingRef.current = 0;
-      setSwitchSecondsRemaining(0);
-      secondsRemainingRef.current = sideDuration;
+      secondsRemainingRef.current = currentStep.workDurationSeconds;
       introRemainingRef.current = currentStep.exercise.type === 'time' ? 5 : 0;
-      setSecondsRemaining(sideDuration);
+      setSecondsRemaining(currentStep.workDurationSeconds);
       setIntroSecondsRemaining(introRemainingRef.current);
     }
-  }, [currentStepIndex, currentStep, workout.steps, isTwoSided, sideDuration]);
+  }, [currentStepIndex, currentStep, workout.steps]);
 
   // Main countdown timer interval
   const advanceRef = useRef(advance);
@@ -315,16 +250,6 @@ export function WorkoutRunner({
         return;
       }
 
-      if (switchRemainingRef.current > 0) {
-        switchRemainingRef.current -= 1;
-        const nextSwitch = switchRemainingRef.current;
-        setSwitchSecondsRemaining(nextSwitch);
-        if (nextSwitch === 0) {
-          soundEngine.playPip(880, 0.5);
-        }
-        return;
-      }
-
       secondsRemainingRef.current -= 1;
       const nextSec = secondsRemainingRef.current;
       setSecondsRemaining(nextSec);
@@ -334,22 +259,12 @@ export function WorkoutRunner({
       }
 
       if (nextSec <= 0) {
-        if (isTwoSided && currentSideRef.current === 1) {
-          currentSideRef.current = 2;
-          setCurrentSide(2);
-          secondsRemainingRef.current = sideDuration;
-          setSecondsRemaining(sideDuration);
-          switchRemainingRef.current = 3;
-          setSwitchSecondsRemaining(3);
-          soundEngine.playSwitchSideChime();
-        } else {
-          setTimeout(() => advanceRef.current(), 0);
-        }
+        setTimeout(() => advanceRef.current(), 0);
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPaused, currentStepIndex, currentStep.exercise.type, isTwoSided, sideDuration]);
+  }, [isPaused, currentStepIndex, currentStep.exercise.type]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -385,7 +300,7 @@ export function WorkoutRunner({
     showDetailsModal,
   ]);
 
-  const maxDuration = isTwoSided ? sideDuration : currentStep.workDurationSeconds;
+  const maxDuration = currentStep.workDurationSeconds;
   const strokePercent =
     maxDuration > 0 ? (secondsRemaining / maxDuration) * 100 : 0;
 
@@ -459,10 +374,16 @@ export function WorkoutRunner({
                   <h1 className='text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-balance leading-tight'>
                     {currentStep.exercise.name}
                   </h1>
-                  {isTwoSided && (
-                    <div className='mt-1.5 flex items-center gap-1.5'>
-                      <span className='rounded-full bg-black/60 border border-white/20 px-2.5 py-0.5 font-mono text-[11px] font-medium tracking-wider text-neutral-300 backdrop-blur-md'>
-                        {currentSide === 1 ? 'Side 1 of 2' : 'Side 2 of 2'}
+                  {currentStep.side && (
+                    <div className='mt-2 flex items-center gap-1.5'>
+                      <span
+                        className={`rounded-full px-3 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border ${
+                          currentStep.side === 'right'
+                            ? 'bg-amber-500/20 border-amber-400/50 text-amber-300'
+                            : 'bg-teal-500/20 border-teal-400/50 text-teal-300'
+                        }`}
+                      >
+                        {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
                       </span>
                     </div>
                   )}
@@ -510,29 +431,31 @@ export function WorkoutRunner({
                 </div>
               </div>
             ) : (
-              /* Timed Exercise Display: Round Progress Ring with "Get into position" Intro Overlay & "Switch Sides" Overlay */
+              /* Timed Exercise Display: Round Progress Ring with "Get into position" Intro Overlay */
               <div className='relative flex flex-col items-center justify-center shrink-0 my-4 sm:my-5 min-h-[140px] sm:min-h-[160px] w-full max-w-xs sm:max-w-sm'>
-                {/* Side Indicator Badge */}
-                {isTwoSided && (
-                  <div className='mb-2'>
-                    <span
-                      className={`rounded-full ${phaseTheme.badge} px-3.5 py-1 font-mono text-xs uppercase tracking-widest font-semibold shadow-sm transition-colors`}
-                    >
-                      {currentSide === 1
-                        ? 'Side 1 of 2 • First Side'
-                        : 'Side 2 of 2 • Other Side'}
-                    </span>
-                  </div>
-                )}
+                {/* Timed Exercise Indicator Badge */}
+                <div className='mb-2'>
+                  <span
+                    className={`rounded-full ${phaseTheme.badge} px-3.5 py-1 font-mono text-xs uppercase tracking-widest font-semibold shadow-sm transition-colors`}
+                  >
+                    {currentStep.side
+                      ? currentStep.side === 'right'
+                        ? 'Right Side'
+                        : 'Left Side'
+                      : currentStep.round
+                        ? `Round ${currentStep.round} of 2`
+                        : 'Timed Hold'}
+                  </span>
+                </div>
 
                 {/* Actual Workout Timer (Round Progress Bar) */}
                 <div
                   className={`relative flex h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 items-center justify-center transition-opacity duration-300 ${
-                    introSecondsRemaining > 0 || switchSecondsRemaining > 0
+                    introSecondsRemaining > 0
                       ? 'opacity-0 pointer-events-none'
                       : 'opacity-100'
                   }`}
-                  aria-hidden={introSecondsRemaining > 0 || switchSecondsRemaining > 0}
+                  aria-hidden={introSecondsRemaining > 0}
                 >
                   <svg
                     className='h-full w-full -rotate-90'
@@ -618,68 +541,6 @@ export function WorkoutRunner({
                     </span>
                   </div>
                 )}
-
-                {/* 3-Second "Switch Sides" Overlay - Appears between Side 1 and Side 2 */}
-                {switchSecondsRemaining > 0 && (
-                  <div
-                    onClick={handleSkipSwitch}
-                    role='status'
-                    aria-live='polite'
-                    className={`absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl border ${
-                      currentPhase === 'warmup'
-                        ? 'border-emerald-500/40'
-                        : 'border-purple-500/40'
-                    } bg-neutral-950 px-6 py-4 shadow-2xl backdrop-blur-md cursor-pointer transition-all duration-300`}
-                    title='Tap to start other side now'
-                  >
-                    <div className='mb-2'>
-                      <span
-                        className={`rounded-full px-3 py-1 font-mono text-[11px] sm:text-xs uppercase tracking-widest font-semibold shadow-sm ${
-                          currentPhase === 'warmup'
-                            ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300'
-                            : 'bg-purple-500/15 border border-purple-500/40 text-purple-300'
-                        }`}
-                      >
-                        Switch sides
-                      </span>
-                    </div>
-
-                    <div className='flex items-baseline gap-1 my-0.5'>
-                      <span className='font-mono text-5xl sm:text-6xl font-black tabular-nums tracking-tight text-white'>
-                        {switchSecondsRemaining}
-                      </span>
-                      <span
-                        className={`font-mono text-xs uppercase tracking-wider font-bold ${
-                          currentPhase === 'warmup'
-                            ? 'text-emerald-400'
-                            : 'text-purple-400'
-                        }`}
-                      >
-                        s
-                      </span>
-                    </div>
-
-                    {/* Horizontal Progress Bar */}
-                    <div className='w-full max-w-[200px] sm:max-w-[220px] mt-2'>
-                      <div className='h-2.5 w-full overflow-hidden rounded-full bg-neutral-800 border border-neutral-700/60 p-0.5'>
-                        <div
-                          className={`h-full rounded-full transition-all duration-1000 ease-linear ${
-                            currentPhase === 'warmup'
-                              ? 'bg-gradient-to-r from-emerald-500 to-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]'
-                              : 'bg-gradient-to-r from-purple-500 to-purple-400 shadow-[0_0_12px_rgba(192,132,252,0.5)]'
-                          }`}
-                          style={{
-                            width: `${(switchSecondsRemaining / 3) * 100}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <span className='text-[10px] font-mono text-neutral-400 uppercase tracking-wider mt-2 hover:text-neutral-300 transition-colors'>
-                      tap to start other side
-                    </span>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -747,16 +608,8 @@ export function WorkoutRunner({
             type='button'
             onClick={handleSkipBack}
             className={`flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 ${phaseTheme.controlHover} transition-all`}
-            title={
-              isTwoSided && currentSide === 2
-                ? 'Previous Side (Left Arrow)'
-                : 'Previous (Left Arrow)'
-            }
-            aria-label={
-              isTwoSided && currentSide === 2
-                ? 'Previous side'
-                : 'Previous step'
-            }
+            title='Previous (Left Arrow)'
+            aria-label='Previous step'
           >
             <SkipBack className='h-5 w-5' />
           </button>
@@ -781,16 +634,8 @@ export function WorkoutRunner({
             type='button'
             onClick={handleSkipForward}
             className={`flex h-12 w-12 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 ${phaseTheme.controlHover} transition-all`}
-            title={
-              isTwoSided && currentSide === 1
-                ? 'Next Side (Right Arrow)'
-                : 'Skip (Right Arrow)'
-            }
-            aria-label={
-              isTwoSided && currentSide === 1
-                ? 'Next side'
-                : 'Skip to next step'
-            }
+            title='Skip (Right Arrow)'
+            aria-label='Skip to next step'
           >
             <SkipForward className='h-5 w-5' />
           </button>

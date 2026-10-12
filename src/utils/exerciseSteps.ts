@@ -217,9 +217,10 @@ function cleanSentence(s: string): string {
 }
 
 export function getQuickSteps(exercise: Exercise): [string, string, string] {
-  // Check curated table first
-  if (CURATED_CUES[exercise.name]) {
-    return CURATED_CUES[exercise.name];
+  // Check curated table first (stripping any (Right) or (Left) suffix)
+  const baseName = exercise.name.replace(/\s*\((Right|Left)\)$/i, '').trim();
+  if (CURATED_CUES[baseName] || CURATED_CUES[exercise.name]) {
+    return CURATED_CUES[baseName] || CURATED_CUES[exercise.name];
   }
 
   // Filter out generic filler instructions

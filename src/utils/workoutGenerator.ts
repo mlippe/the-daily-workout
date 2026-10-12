@@ -75,28 +75,64 @@ export function calculateAdaptiveDurations(
   };
 }
 
-function buildStep(
+function buildStepsForExercise(
   exercise: Exercise,
   phase: 'warmup' | 'main' | 'cooldown',
   round?: number,
   stepIdx = 0,
-  workDurationSeconds = phase === 'main' ? 60 : 30,
+  workDurationSeconds = phase === 'main' ? 45 : 25,
   targetReps?: number
-): WorkoutStep {
-  const isTwoSided =
-    (phase === 'warmup' || phase === 'cooldown') &&
-    Boolean(exercise.isTwoSided || isTwoSidedExercise(exercise.id));
+): WorkoutStep[] {
+  const isTwoSided = Boolean(exercise.isTwoSided || isTwoSidedExercise(exercise.id));
 
-  return {
-    id: `${phase}-${round ? `r${round}-` : ''}${exercise.id}-${stepIdx}`,
-    exercise,
-    phase,
-    round,
-    workDurationSeconds,
-    restDurationSeconds: 0,
-    targetReps: exercise.type === 'reps' ? (targetReps ?? exercise.defaultReps ?? 12) : undefined,
-    isTwoSided: isTwoSided || undefined,
-  };
+  if (isTwoSided) {
+    // Unilateral exercise: First Right, then Left as separate steps
+    const rightExercise: Exercise = {
+      ...exercise,
+      name: `${exercise.name} (Right)`,
+    };
+    const leftExercise: Exercise = {
+      ...exercise,
+      name: `${exercise.name} (Left)`,
+    };
+
+    return [
+      {
+        id: `${phase}-${round ? `r${round}-` : ''}${exercise.id}-right-${stepIdx}`,
+        exercise: rightExercise,
+        phase,
+        round,
+        workDurationSeconds,
+        restDurationSeconds: 0,
+        targetReps: exercise.type === 'reps' ? (targetReps ?? exercise.defaultReps ?? 12) : undefined,
+        side: 'right',
+        isTwoSided: true,
+      },
+      {
+        id: `${phase}-${round ? `r${round}-` : ''}${exercise.id}-left-${stepIdx}`,
+        exercise: leftExercise,
+        phase,
+        round,
+        workDurationSeconds,
+        restDurationSeconds: 0,
+        targetReps: exercise.type === 'reps' ? (targetReps ?? exercise.defaultReps ?? 12) : undefined,
+        side: 'left',
+        isTwoSided: true,
+      },
+    ];
+  }
+
+  return [
+    {
+      id: `${phase}-${round ? `r${round}-` : ''}${exercise.id}-${stepIdx}`,
+      exercise,
+      phase,
+      round,
+      workDurationSeconds,
+      restDurationSeconds: 0,
+      targetReps: exercise.type === 'reps' ? (targetReps ?? exercise.defaultReps ?? 12) : undefined,
+    },
+  ];
 }
 
 export function createWorkoutFromExercises(
@@ -106,36 +142,51 @@ export function createWorkoutFromExercises(
   description: string,
   primaryPillar: WorkoutPillarFocus,
   warmupIds: string[],
-  mainIds: [string, string, string, string, string],
+  mainIds: string[],
   cooldownIds: string[]
 ): WorkoutPlan {
   const warmupExercises = warmupIds.map((eid) => findOrFallback(eid, 'warmup'));
-  const mainExercises = mainIds.map((eid) => findOrFallback(eid, 'main'));
+  const mainExercises = mainIds.map((eid) => findOrFallback(eid, 'main', primaryPillar === 'full_body' ? undefined : primaryPillar));
   const cooldownExercises = cooldownIds.map((eid) => findOrFallback(eid, 'cooldown'));
 
-  // Adaptive duration calculation based on default reps (12)
+  // 1. Warm-up Phase: Target 150 seconds (~2.5 minutes)
+  const preliminaryWarmupSteps = warmupExercises.flatMap((ex, idx) =>
+    buildStepsForExercise(ex, 'warmup', undefined, idx, 30)
+  );
+  const warmupStepDuration = Math.max(15, Math.round(150 / (preliminaryWarmupSteps.length || 1)));
+  const warmupSteps = warmupExercises.flatMap((ex, idx) =>
+    buildStepsForExercise(ex, 'warmup', undefined, idx, warmupStepDuration)
+  );
+
+  // 2. Main Circuit Phase: 2 Rounds, Target 600 seconds total (300 seconds per round)
   const defaultReps = 12;
-  const { repDurationSeconds, timedDurationSeconds } = calculateAdaptiveDurations(mainExercises, defaultReps);
+  const preliminaryRound1 = mainExercises.flatMap((ex, idx) =>
+    buildStepsForExercise(ex, 'main', 1, idx, 45, defaultReps)
+  );
+  const { repDurationSeconds, timedDurationSeconds } = calculateAdaptiveDurations(
+    preliminaryRound1.map((s) => s.exercise),
+    defaultReps
+  );
 
-  const steps: WorkoutStep[] = [];
-
-  // Phase 1: 4 Warm-up movements (4 * 30s = 120s)
-  warmupExercises.slice(0, 4).forEach((ex, idx) => {
-    steps.push(buildStep(ex, 'warmup', undefined, idx, 30));
-  });
-
-  // Phase 2: Main Circuit (2 rounds of 5 exercises)
+  const mainSteps: WorkoutStep[] = [];
   for (let round = 1; round <= 2; round++) {
-    mainExercises.slice(0, 5).forEach((ex, idx) => {
+    mainExercises.forEach((ex, idx) => {
       const duration = ex.type === 'reps' ? repDurationSeconds : timedDurationSeconds;
-      steps.push(buildStep(ex, 'main', round, idx, duration, defaultReps));
+      const stepsForEx = buildStepsForExercise(ex, 'main', round, idx, duration, defaultReps);
+      mainSteps.push(...stepsForEx);
     });
   }
 
-  // Phase 3: 4 Cool-down stretches (4 * 30s = 120s)
-  cooldownExercises.slice(0, 4).forEach((ex, idx) => {
-    steps.push(buildStep(ex, 'cooldown', undefined, idx, 30));
-  });
+  // 3. Cool-down Phase: Target 150 seconds (~2.5 minutes)
+  const preliminaryCooldownSteps = cooldownExercises.flatMap((ex, idx) =>
+    buildStepsForExercise(ex, 'cooldown', undefined, idx, 30)
+  );
+  const cooldownStepDuration = Math.max(15, Math.round(150 / (preliminaryCooldownSteps.length || 1)));
+  const cooldownSteps = cooldownExercises.flatMap((ex, idx) =>
+    buildStepsForExercise(ex, 'cooldown', undefined, idx, cooldownStepDuration)
+  );
+
+  const steps = [...warmupSteps, ...mainSteps, ...cooldownSteps];
 
   const targetMuscles = Array.from(
     new Set(steps.flatMap((s) => s.exercise.primaryMuscles))
@@ -164,9 +215,9 @@ export const WORKOUT_PUSH_1: WorkoutPlan = createWorkoutFromExercises(
   'Build chest, tricep, and shoulder strength',
   'A muscle-toning circuit focused on pressing strength, push-up variations, and shoulder stability.',
   'push',
-  ['Arm_Circles', 'Dynamic_Chest_Stretch', 'Elbow_Circles', 'Inchworm'],
-  ['Pushups', 'Bench_Dips', 'Incline_Push-Up', 'Push_Up_to_Side_Plank', 'Push-Ups_-_Close_Triceps_Position'],
-  ['Triceps_Stretch', 'Shoulder_Stretch', 'Childs_Pose', 'Cat_Stretch']
+  ['Shoulder_Circles', 'Cat_Stretch', 'Sit_Squats', 'Single_Leg_Glute_Bridge', 'Superman'],
+  ['Pushups', 'Side_Bridge', 'Push-Ups_-_Close_Triceps_Position', 'Incline_Push-Up', 'Plank'],
+  ['Spinal_Stretch', 'One_Arm_Against_Wall', 'Shoulder_Stretch', 'Triceps_Stretch']
 );
 
 export const WORKOUT_PUSH_2: WorkoutPlan = createWorkoutFromExercises(
@@ -175,9 +226,9 @@ export const WORKOUT_PUSH_2: WorkoutPlan = createWorkoutFromExercises(
   'Target triceps extension and front deltoid definition',
   'Isolates upper arm pressing muscles, tricep burn, and shoulder stability without weights.',
   'push',
-  ['Shoulder_Circles', 'Arm_Circles', 'Wrist_Circles', 'Inchworm'],
-  ['Bench_Dips', 'Push-Ups_-_Close_Triceps_Position', 'Incline_Push-Up_Close-Grip', 'Body_Tricep_Press', 'Pushups'],
-  ['Triceps_Stretch', 'Shoulder_Stretch', 'Childs_Pose', 'Side_Neck_Stretch']
+  ['Arm_Circles', 'Cat_Stretch', 'Wrist_Circles', 'Single_Leg_Glute_Bridge', 'Superman'],
+  ['Bench_Dips', 'Push-Ups_-_Close_Triceps_Position', 'Side_Bridge', 'Body_Tricep_Press', 'Plank'],
+  ['Triceps_Stretch', 'Shoulder_Stretch', 'Side_Neck_Stretch', 'Childs_Pose']
 );
 
 export const WORKOUT_PUSH_3: WorkoutPlan = createWorkoutFromExercises(
@@ -186,9 +237,9 @@ export const WORKOUT_PUSH_3: WorkoutPlan = createWorkoutFromExercises(
   'Emphasize chest fibers, wide angles, and core bracing',
   'Focuses on pectoral stretching and contracting through wide and tempo pressing movements.',
   'push',
-  ['Dynamic_Chest_Stretch', 'Elbow_Circles', 'Arm_Circles', 'Worlds_Greatest_Stretch'],
-  ['Push-Up_Wide', 'Incline_Push-Up_Wide', 'Clock_Push-Up', 'Pushups_Close_and_Wide_Hand_Positions', 'Bench_Dips'],
-  ['Shoulder_Stretch', 'Triceps_Stretch', 'Childs_Pose', 'Upper_Back_Stretch']
+  ['Shoulder_Circles', 'Dynamic_Chest_Stretch', 'Worlds_Greatest_Stretch', 'Sit_Squats'],
+  ['Push-Up_Wide', 'Incline_Push-Up_Wide', 'Side_Bridge', 'Pushups', 'Plank'],
+  ['One_Arm_Against_Wall', 'Triceps_Stretch', 'Shoulder_Stretch', 'Childs_Pose']
 );
 
 export const WORKOUT_PUSH_4: WorkoutPlan = createWorkoutFromExercises(
@@ -197,9 +248,9 @@ export const WORKOUT_PUSH_4: WorkoutPlan = createWorkoutFromExercises(
   'Multi-angle upper and lower chest conditioning',
   'Alternates incline and decline angles to develop balanced shoulder and pectoral strength.',
   'push',
-  ['Arm_Circles', 'Inchworm', 'Shoulder_Circles', 'Dynamic_Chest_Stretch'],
-  ['Decline_Push-Up', 'Incline_Push-Up', 'Pushups', 'Bench_Dips', 'Push_Up_to_Side_Plank'],
-  ['Triceps_Stretch', 'Shoulder_Stretch', 'Childs_Pose', 'Cat_Stretch']
+  ['Arm_Circles', 'Inchworm', 'Cat_Stretch', 'Single_Leg_Glute_Bridge'],
+  ['Decline_Push-Up', 'Incline_Push-Up', 'Side_Bridge', 'Pushups', 'Plank'],
+  ['One_Arm_Against_Wall', 'Shoulder_Stretch', 'Triceps_Stretch', 'Spinal_Stretch']
 );
 
 // ==========================================
@@ -211,9 +262,9 @@ export const WORKOUT_PULL_1: WorkoutPlan = createWorkoutFromExercises(
   'Strengthen posture muscles and reverse desk slouch',
   'Combats rounded shoulders and back tightness by strengthening your lats, rhomboids, and lower back.',
   'pull_back',
-  ['Arm_Circles', 'Dynamic_Back_Stretch', 'Shoulder_Circles', 'Cat_Stretch'],
-  ['Superman', 'Pelvic_Tilt_Into_Bridge', 'Butt_Lift_Bridge', 'Spinal_Stretch', 'Push_Up_to_Side_Plank'],
-  ['Childs_Pose', 'Middle_Back_Stretch', 'Upper_Back_Stretch', 'Hug_Knees_To_Chest']
+  ['Shoulder_Circles', 'Cat_Stretch', 'Dynamic_Back_Stretch', 'Single_Leg_Glute_Bridge', 'Superman'],
+  ['Superman', 'One_Arm_Against_Wall', 'Butt_Lift_Bridge', 'Pelvic_Tilt_Into_Bridge', 'Side_Bridge'],
+  ['Childs_Pose', 'Upper_Back_Stretch', 'Middle_Back_Stretch', 'Side_Neck_Stretch']
 );
 
 export const WORKOUT_PULL_2: WorkoutPlan = createWorkoutFromExercises(
@@ -222,8 +273,8 @@ export const WORKOUT_PULL_2: WorkoutPlan = createWorkoutFromExercises(
   'Lower back health, posterior chain, and spinal decompress',
   'Reinforces the spinal erectors and glute-lumbar connection for pain-free posture.',
   'pull_back',
-  ['Cat_Stretch', 'Shoulder_Circles', 'Dynamic_Back_Stretch', 'Standing_Hip_Circles'],
-  ['Superman', 'Lower_Back_Curl', 'Pelvic_Tilt_Into_Bridge', 'Butt_Lift_Bridge', 'Chair_Lower_Back_Stretch'],
+  ['Cat_Stretch', 'Standing_Hip_Circles', 'Dynamic_Back_Stretch', 'Superman'],
+  ['Superman', 'Lower_Back_Curl', 'Pelvic_Tilt_Into_Bridge', 'Butt_Lift_Bridge', 'Side_Bridge'],
   ['Childs_Pose', 'Hug_Knees_To_Chest', 'Middle_Back_Stretch', 'Side-Lying_Floor_Stretch']
 );
 
@@ -233,8 +284,8 @@ export const WORKOUT_PULL_3: WorkoutPlan = createWorkoutFromExercises(
   'Upper back retraction and shoulder girdle stability',
   'Activates middle back, rear delts, and thoracic spine to pull shoulders back naturally.',
   'pull_back',
-  ['Shoulder_Circles', 'Arm_Circles', 'Dynamic_Back_Stretch', 'Cat_Stretch'],
-  ['Superman', 'One_Arm_Against_Wall', 'Standing_Pelvic_Tilt', 'Butt_Lift_Bridge', 'Upper_Back-Leg_Grab'],
+  ['Shoulder_Circles', 'Arm_Circles', 'Cat_Stretch', 'Single_Leg_Glute_Bridge'],
+  ['Superman', 'One_Arm_Against_Wall', 'Standing_Pelvic_Tilt', 'Butt_Lift_Bridge', 'Side_Bridge'],
   ['Upper_Back_Stretch', 'Middle_Back_Stretch', 'Childs_Pose', 'Side_Neck_Stretch']
 );
 
@@ -244,8 +295,8 @@ export const WORKOUT_PULL_4: WorkoutPlan = createWorkoutFromExercises(
   'Relieve spinal compression and tone posterior muscles',
   'A flowing back circuit designed to release tight fascia while building enduring posture strength.',
   'pull_back',
-  ['Dynamic_Back_Stretch', 'Cat_Stretch', 'Standing_Hip_Circles', 'Arm_Circles'],
-  ['Pelvic_Tilt_Into_Bridge', 'Superman', 'Side-Lying_Floor_Stretch', 'Butt_Lift_Bridge', 'Spinal_Stretch'],
+  ['Dynamic_Back_Stretch', 'Cat_Stretch', 'Standing_Hip_Circles', 'Superman'],
+  ['Pelvic_Tilt_Into_Bridge', 'Superman', 'Side-Lying_Floor_Stretch', 'Butt_Lift_Bridge', 'Side_Bridge'],
   ['Childs_Pose', 'Hug_Knees_To_Chest', 'Upper_Back_Stretch', 'Chin_To_Chest_Stretch']
 );
 
@@ -258,9 +309,9 @@ export const WORKOUT_LEGS_1: WorkoutPlan = createWorkoutFromExercises(
   'Leg endurance, glute activation, and knee stability',
   'A functional lower-body workout targeting quadriceps, hamstrings, glutes, and calves with zero joint impact.',
   'legs',
-  ['Standing_Hip_Circles', 'Front_Leg_Raises', 'Groiners', 'Ankle_Circles'],
-  ['Bodyweight_Squat', 'Bodyweight_Walking_Lunge', 'Single_Leg_Glute_Bridge', 'Glute_Kickback', 'Leg_Lift'],
-  ['All_Fours_Quad_Stretch', 'Seated_Floor_Hamstring_Stretch', 'Calf_Stretch_Hands_Against_Wall', 'Knee_Across_The_Body']
+  ['Standing_Hip_Circles', 'Worlds_Greatest_Stretch', 'Sit_Squats', 'Dynamic_Back_Stretch', 'Split_Squats'],
+  ['Bodyweight_Walking_Lunge', 'Glute_Kickback', 'Bodyweight_Squat', 'Single_Leg_Glute_Bridge', 'Russian_Twist'],
+  ['Ankle_On_The_Knee', 'Side-Lying_Floor_Stretch', 'Knee_Across_The_Body', 'Seated_Floor_Hamstring_Stretch']
 );
 
 export const WORKOUT_LEGS_2: WorkoutPlan = createWorkoutFromExercises(
@@ -280,9 +331,9 @@ export const WORKOUT_LEGS_3: WorkoutPlan = createWorkoutFromExercises(
   'Unilateral leg drive, ankle stability, and hip symmetry',
   'Corrects left-right strength imbalances with single-leg lunges, split squats, and glute bridges.',
   'legs',
-  ['Ankle_Circles', 'Knee_Circles', 'Standing_Hip_Circles', 'Front_Leg_Raises'],
-  ['Bodyweight_Walking_Lunge', 'Split_Squats', 'Single_Leg_Glute_Bridge', 'Step-up_with_Knee_Raise', 'Standing_Hip_Flexors'],
-  ['All_Fours_Quad_Stretch', '90_90_Hamstring', 'Standing_Toe_Touches', 'Calf_Stretch_Elbows_Against_Wall']
+  ['Ankle_Circles', 'Standing_Hip_Circles', 'Front_Leg_Raises', 'Sit_Squats'],
+  ['Bodyweight_Walking_Lunge', 'Split_Squats', 'Single_Leg_Glute_Bridge', 'Glute_Kickback', 'Bodyweight_Squat'],
+  ['All_Fours_Quad_Stretch', '90_90_Hamstring', 'Standing_Toe_Touches', 'Calf_Stretch_Hands_Against_Wall']
 );
 
 export const WORKOUT_LEGS_4: WorkoutPlan = createWorkoutFromExercises(
@@ -305,9 +356,9 @@ export const WORKOUT_CORE_1: WorkoutPlan = createWorkoutFromExercises(
   'Build deep abdominal strength and lumbar support',
   'Engages the deep transverse abdominis and obliques while safeguarding your lower back.',
   'core',
-  ['Worlds_Greatest_Stretch', 'Inchworm', 'Standing_Hip_Circles', 'Arm_Circles'],
-  ['Plank', 'Air_Bike', 'Dead_Bug', 'Russian_Twist', 'Side_Bridge'],
-  ['Childs_Pose', 'Cat_Stretch', 'Knee_Across_The_Body', 'All_Fours_Quad_Stretch']
+  ['Cat_Stretch', 'Arm_Circles', 'Sit_Squats', 'Single_Leg_Glute_Bridge', 'Superman'],
+  ['Plank', 'Side_Bridge', 'Reverse_Crunch', 'Russian_Twist', 'Dead_Bug'],
+  ['Spinal_Stretch', 'Ankle_On_The_Knee', 'Shoulder_Stretch', 'Childs_Pose']
 );
 
 export const WORKOUT_CORE_2: WorkoutPlan = createWorkoutFromExercises(
@@ -316,8 +367,8 @@ export const WORKOUT_CORE_2: WorkoutPlan = createWorkoutFromExercises(
   'Side ab definition, lateral bridges, and rotational torso power',
   'Directly sculpts the internal and external obliques for a tapered waist and strong lateral core.',
   'core',
-  ['Standing_Hip_Circles', 'Arm_Circles', 'Dynamic_Chest_Stretch', 'Cat_Stretch'],
-  ['Side_Bridge', 'Russian_Twist', 'Oblique_Crunches_-_On_The_Floor', 'Cross-Body_Crunch', 'Plank'],
+  ['Standing_Hip_Circles', 'Arm_Circles', 'Cat_Stretch', 'Dynamic_Back_Stretch'],
+  ['Side_Bridge', 'Russian_Twist', 'Side_Jackknife', 'Cross-Body_Crunch', 'Plank'],
   ['Childs_Pose', 'Knee_Across_The_Body', 'Middle_Back_Stretch', 'Shoulder_Stretch']
 );
 
@@ -352,9 +403,9 @@ export const WORKOUT_FULL_BODY_1: WorkoutPlan = createWorkoutFromExercises(
   'Balanced total-body movement across all 4 pillars',
   'An all-round reset working push, pull, legs, and core in harmony. Ideal after rest days or for general fitness.',
   'full_body',
-  ['Inchworm', 'Arm_Circles', 'Groiners', 'Dynamic_Chest_Stretch'],
-  ['Bodyweight_Squat', 'Pushups', 'Superman', 'Plank', 'Bodyweight_Walking_Lunge'],
-  ['Childs_Pose', 'Seated_Floor_Hamstring_Stretch', 'All_Fours_Quad_Stretch', 'Shoulder_Stretch']
+  ['Inchworm', 'Arm_Circles', 'Worlds_Greatest_Stretch', 'Sit_Squats', 'Cat_Stretch'],
+  ['Bodyweight_Squat', 'Pushups', 'Superman', 'Side_Bridge', 'Bodyweight_Walking_Lunge'],
+  ['Childs_Pose', 'One_Arm_Against_Wall', 'Seated_Floor_Hamstring_Stretch', 'Shoulder_Stretch']
 );
 
 export const WORKOUT_FULL_BODY_2: WorkoutPlan = createWorkoutFromExercises(

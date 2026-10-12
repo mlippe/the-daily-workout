@@ -33,18 +33,22 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
             <span className="text-sm font-medium text-white truncate">
               {index + 1}. {step.exercise.name}
             </span>
-            {step.isTwoSided && (
-              <span className="rounded bg-neutral-900 border border-neutral-800 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-neutral-400 shrink-0">
-                2 sides
+            {step.side && (
+              <span
+                className={`rounded border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider shrink-0 ${
+                  step.side === 'right'
+                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                    : 'bg-teal-500/15 border-teal-400/40 text-teal-300'
+                }`}
+              >
+                {step.side}
               </span>
             )}
           </div>
           <span className="font-mono text-xs text-neutral-400 shrink-0 pl-2">
             {step.exercise.type === 'reps'
               ? `${step.targetReps ?? 12} reps`
-              : step.isTwoSided
-                ? `${step.workDurationSeconds}s (2 × ${Math.round(step.workDurationSeconds / 2)}s)`
-                : `${step.workDurationSeconds}s`}
+              : `${step.workDurationSeconds}s`}
           </span>
         </div>
         <div className="text-xs text-neutral-400 truncate">
