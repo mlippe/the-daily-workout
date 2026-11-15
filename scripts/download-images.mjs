@@ -55,7 +55,7 @@ async function run() {
 
   console.log(`Starting download of ${tasks.length} images...`);
 
-  const CONCURRENCY = 12;
+  const CONCURRENCY = 24;
   let index = 0;
   let completed = 0;
   let failed = 0;
@@ -66,7 +66,7 @@ async function run() {
       try {
         await downloadFile(current.url, current.dest);
         completed++;
-        if (completed % 20 === 0 || completed === tasks.length) {
+        if (completed % 100 === 0 || completed === tasks.length) {
           console.log(`Downloaded ${completed}/${tasks.length} images`);
         }
       } catch (err) {

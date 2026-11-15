@@ -246,7 +246,96 @@ async function run() {
   addItems(coreNames, 'main', 'core');
   addItems(cooldownNames, 'cooldown');
 
-  console.log(`Total curated exercises: ${curated.length}`);
+  console.log(`Curated base exercises: ${curated.length}`);
+
+  // Add all remaining exercises from free-exercise-db so the entire database is available
+  let remainingCount = 0;
+  for (const match of rawExercises) {
+    if (!match.id || addedIds.has(match.id)) {
+      continue;
+    }
+    if (!match.images || match.images.length < 2) {
+      continue;
+    }
+    addedIds.add(match.id);
+
+    const isStretching = match.category === 'stretching';
+    const isRepBased =
+      match.category === 'strength' ||
+      match.category === 'powerlifting' ||
+      match.category === 'olympic weightlifting' ||
+      match.category === 'plyometrics';
+
+    let category = 'main';
+    if (isStretching) {
+      const lowerName = match.name.toLowerCase();
+      const isDynamic =
+        lowerName.includes('circle') ||
+        lowerName.includes('dynamic') ||
+        lowerName.includes('skipping') ||
+        lowerName.includes('jump') ||
+        lowerName.includes('inchworm') ||
+        lowerName.includes('bound');
+      category = isDynamic ? 'warmup' : 'cooldown';
+    }
+
+    // Determine pillar by primary muscles
+    const muscles = (match.primaryMuscles || []).map((m) => m.toLowerCase());
+    let pillar = undefined;
+    if (category === 'main') {
+      if (muscles.some((m) => ['chest', 'triceps', 'shoulders'].includes(m))) {
+        pillar = 'push';
+      } else if (
+        muscles.some((m) =>
+          ['lats', 'middle back', 'lower back', 'traps', 'neck', 'biceps', 'forearms'].includes(m)
+        )
+      ) {
+        pillar = 'pull_back';
+      } else if (
+        muscles.some((m) =>
+          ['quadriceps', 'hamstrings', 'calves', 'glutes', 'adductors', 'abductors'].includes(m)
+        )
+      ) {
+        pillar = 'legs';
+      } else if (muscles.some((m) => ['abdominals'].includes(m))) {
+        pillar = 'core';
+      } else {
+        pillar = 'push';
+      }
+    }
+
+    const defaultDuration = category === 'warmup' || category === 'cooldown' ? 30 : 40;
+    const defaultReps = isRepBased ? 10 : undefined;
+
+    const exercise = {
+      id: match.id,
+      name: match.name,
+      category,
+      ...(pillar ? { pillar } : {}),
+      primaryMuscles: match.primaryMuscles || [],
+      secondaryMuscles: match.secondaryMuscles || [],
+      equipment: match.equipment || 'body only',
+      level: match.level || 'beginner',
+      type: isRepBased ? 'reps' : 'time',
+      ...(defaultDuration ? { defaultDuration } : {}),
+      ...(defaultReps ? { defaultReps } : {}),
+      instructions: match.instructions || [],
+      images: [
+        `/exercises/${match.id}/0.jpg`,
+        `/exercises/${match.id}/1.jpg`,
+      ],
+      rawImageUrls: [
+        `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${match.images[0]}`,
+        `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${match.images[1]}`,
+      ],
+    };
+
+    curated.push(exercise);
+    remainingCount++;
+  }
+
+  console.log(`Added ${remainingCount} additional exercises from database.`);
+  console.log(`Total exercises available: ${curated.length}`);
 
   // Create directories
   fs.mkdirSync(DATA_DIR, { recursive: true });

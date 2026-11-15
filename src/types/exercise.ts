@@ -4,7 +4,16 @@ export type EquipmentType =
   | 'body only'
   | 'dumbbell'
   | 'pull-up bar'
-  | 'resistance bands';
+  | 'resistance bands'
+  | 'barbell'
+  | 'kettlebells'
+  | 'bands'
+  | 'cable'
+  | 'machine'
+  | 'medicine ball'
+  | 'exercise ball'
+  | 'foam roll'
+  | 'other';
 
 export interface Exercise {
   id: string;

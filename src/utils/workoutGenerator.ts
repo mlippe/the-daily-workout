@@ -260,9 +260,9 @@ export const WORKOUT_PUSH_1: WorkoutPlan = createWorkoutFromExercises(
   'Build chest, tricep, and shoulder strength',
   'A muscle-toning circuit focused on pressing strength, push-up variations, and shoulder stability.',
   'push',
-  ['Dynamic_Chest_Stretch', 'Arm_Circles', 'Shoulder_Circles'],
-  ['Pushups', 'Incline_Push-Up', 'Push-Up_Wide', 'Isometric_Chest_Squeezes'],
-  ['One_Arm_Against_Wall', 'Shoulder_Stretch', 'Triceps_Stretch']
+  ['Shoulder_Circles', 'Cat_Stretch', 'Single_Leg_Glute_Bridge'],
+  ['Pushups', 'Incline_Push-Up', 'Push-Up_Wide', 'Plank'],
+  ['Cat_Stretch', 'One_Arm_Against_Wall', 'Shoulder_Stretch']
 );
 
 export const WORKOUT_PUSH_2: WorkoutPlan = createWorkoutFromExercises(
@@ -271,9 +271,9 @@ export const WORKOUT_PUSH_2: WorkoutPlan = createWorkoutFromExercises(
   'Target triceps extension and front deltoid definition',
   'Isolates upper arm pressing muscles, tricep burn, and shoulder stability without weights.',
   'push',
-  ['Wrist_Circles', 'Arm_Circles', 'Inchworm'],
+  ['Arm_Circles', 'Cat_Stretch', 'Wrist_Circles'],
   ['Bench_Dips', 'Push-Ups_-_Close_Triceps_Position', 'Body_Tricep_Press', 'Incline_Push-Up_Close-Grip'],
-  ['Triceps_Stretch', 'Shoulder_Stretch', 'One_Arm_Against_Wall']
+  ['Triceps_Stretch', 'One_Arm_Against_Wall', 'Overhead_Triceps']
 );
 
 export const WORKOUT_PUSH_3: WorkoutPlan = createWorkoutFromExercises(
@@ -282,9 +282,9 @@ export const WORKOUT_PUSH_3: WorkoutPlan = createWorkoutFromExercises(
   'Emphasize chest fibers, wide angles, and core bracing',
   'Focuses on pectoral stretching and contracting through wide and tempo pressing movements.',
   'push',
-  ['Dynamic_Chest_Stretch', 'Arm_Circles', 'Inchworm'],
-  ['Push-Up_Wide', 'Incline_Push-Up_Wide', 'Push_Up_to_Side_Plank', 'Pushups'],
-  ['One_Arm_Against_Wall', 'Shoulder_Stretch', 'Childs_Pose']
+  ['Shoulder_Circles', 'Cat_Stretch', 'Dynamic_Chest_Stretch'],
+  ['Push-Up_Wide', 'Push-Ups_-_Close_Triceps_Position', 'Push_Up_to_Side_Plank', 'Pushups'],
+  ['Cat_Stretch', 'One_Arm_Against_Wall', 'Childs_Pose']
 );
 
 export const WORKOUT_PUSH_4: WorkoutPlan = createWorkoutFromExercises(
@@ -293,7 +293,7 @@ export const WORKOUT_PUSH_4: WorkoutPlan = createWorkoutFromExercises(
   'Multi-angle upper and lower chest conditioning',
   'Alternates incline and decline angles to develop balanced shoulder and pectoral strength.',
   'push',
-  ['Wrist_Circles', 'Arm_Circles', 'Shoulder_Circles'],
+  ['Shoulder_Circles', 'Cat_Stretch', 'Single_Leg_Glute_Bridge'],
   ['Decline_Push-Up', 'Incline_Push-Up', 'Clock_Push-Up', 'Bench_Dips'],
   ['Shoulder_Stretch', 'Triceps_Stretch', 'One_Arm_Against_Wall']
 );
@@ -307,9 +307,9 @@ export const WORKOUT_PULL_1: WorkoutPlan = createWorkoutFromExercises(
   'Strengthen posture muscles and reverse desk slouch',
   'Combats rounded shoulders and back tightness by strengthening your lats, rhomboids, and lower back.',
   'pull_back',
-  ['Dynamic_Back_Stretch', 'Cat_Stretch', 'Shoulder_Circles'],
-  ['Superman', 'Pelvic_Tilt_Into_Bridge', 'Butt_Lift_Bridge', 'Lower_Back_Curl'],
-  ['Upper_Back_Stretch', 'Childs_Pose', 'Side_Neck_Stretch']
+  ['Cat_Stretch', 'Shoulder_Circles', 'Single_Leg_Glute_Bridge'],
+  ['Superman', 'Pelvic_Tilt_Into_Bridge', 'Lower_Back_Curl', 'Bench_Dips'],
+  ['Upper_Back_Stretch', 'Childs_Pose', 'Cat_Stretch']
 );
 
 export const WORKOUT_PULL_2: WorkoutPlan = createWorkoutFromExercises(
@@ -318,7 +318,7 @@ export const WORKOUT_PULL_2: WorkoutPlan = createWorkoutFromExercises(
   'Lower back health, posterior chain, and spinal decompress',
   'Reinforces the spinal erectors and glute-lumbar connection for pain-free posture.',
   'pull_back',
-  ['Cat_Stretch', 'Dynamic_Back_Stretch', 'Groiners'],
+  ['Cat_Stretch', 'Standing_Hip_Circles', 'Groiners'],
   ['Lower_Back_Curl', 'Superman', 'Pelvic_Tilt_Into_Bridge', 'Single_Leg_Glute_Bridge'],
   ['Hug_Knees_To_Chest', 'Childs_Pose', 'Spinal_Stretch']
 );
@@ -329,9 +329,9 @@ export const WORKOUT_PULL_3: WorkoutPlan = createWorkoutFromExercises(
   'Upper back retraction and shoulder girdle stability',
   'Activates middle back, rear delts, and thoracic spine to pull shoulders back naturally.',
   'pull_back',
-  ['Shoulder_Circles', 'Arm_Circles', 'Cat_Stretch'],
+  ['Shoulder_Circles', 'Cat_Stretch', 'Arm_Circles'],
   ['Superman', 'Spider_Crawl', 'Butt_Lift_Bridge', 'Pelvic_Tilt_Into_Bridge'],
-  ['Upper_Back_Stretch', 'Side_Neck_Stretch', 'Childs_Pose']
+  ['Upper_Back_Stretch', 'Middle_Back_Stretch', 'Childs_Pose']
 );
 
 export const WORKOUT_PULL_4: WorkoutPlan = createWorkoutFromExercises(
@@ -340,7 +340,7 @@ export const WORKOUT_PULL_4: WorkoutPlan = createWorkoutFromExercises(
   'Relieve spinal compression and tone posterior muscles',
   'A flowing back circuit designed to release tight fascia while building enduring posture strength.',
   'pull_back',
-  ['Dynamic_Back_Stretch', 'Cat_Stretch', 'Standing_Hip_Circles'],
+  ['Cat_Stretch', 'Standing_Hip_Circles', 'Dynamic_Back_Stretch'],
   ['Pelvic_Tilt_Into_Bridge', 'Superman', 'Single_Leg_Glute_Bridge', 'Lower_Back_Curl'],
   ['Hug_Knees_To_Chest', 'Upper_Back_Stretch', 'Childs_Pose']
 );
@@ -354,9 +354,9 @@ export const WORKOUT_LEGS_1: WorkoutPlan = createWorkoutFromExercises(
   'Leg endurance, glute activation, and knee stability',
   'A functional lower-body workout targeting quadriceps, hamstrings, glutes, and calves with zero joint impact.',
   'legs',
-  ['Standing_Hip_Circles', 'Knee_Circles', 'Worlds_Greatest_Stretch'],
-  ['Bodyweight_Squat', 'Bodyweight_Walking_Lunge', 'Single_Leg_Glute_Bridge', 'Glute_Kickback'],
-  ['All_Fours_Quad_Stretch', 'Seated_Floor_Hamstring_Stretch', 'Calf_Stretch_Hands_Against_Wall']
+  ['Standing_Hip_Circles', 'Worlds_Greatest_Stretch', 'Pelvic_Tilt_Into_Bridge'],
+  ['Bodyweight_Squat', 'Bodyweight_Walking_Lunge', 'Glute_Kickback', 'Pelvic_Tilt_Into_Bridge'],
+  ['Ankle_On_The_Knee', 'Seated_Floor_Hamstring_Stretch', 'Cat_Stretch']
 );
 
 export const WORKOUT_LEGS_2: WorkoutPlan = createWorkoutFromExercises(
@@ -365,9 +365,9 @@ export const WORKOUT_LEGS_2: WorkoutPlan = createWorkoutFromExercises(
   'Gluteus medius, hip stabilizer, and pelvic control',
   'Isolates glute activation, lateral hip power, and pelvis alignment to relieve hip flexor tightness.',
   'legs',
-  ['Standing_Hip_Circles', 'Groiners', 'Front_Leg_Raises'],
+  ['Standing_Hip_Circles', 'Worlds_Greatest_Stretch', 'Groiners'],
   ['Glute_Kickback', 'Side_Leg_Raises', 'Single_Leg_Glute_Bridge', 'Bodyweight_Squat'],
-  ['Ankle_On_The_Knee', 'On_Your_Side_Quad_Stretch', 'Seated_Floor_Hamstring_Stretch']
+  ['Ankle_On_The_Knee', 'On_Your_Side_Quad_Stretch', 'Side-Lying_Floor_Stretch']
 );
 
 export const WORKOUT_LEGS_3: WorkoutPlan = createWorkoutFromExercises(
@@ -376,9 +376,9 @@ export const WORKOUT_LEGS_3: WorkoutPlan = createWorkoutFromExercises(
   'Unilateral leg drive, ankle stability, and hip symmetry',
   'Corrects left-right strength imbalances with single-leg lunges, split squats, and glute bridges.',
   'legs',
-  ['Knee_Circles', 'Front_Leg_Raises', 'Worlds_Greatest_Stretch'],
+  ['Standing_Hip_Circles', 'Worlds_Greatest_Stretch', 'Knee_Circles'],
   ['Split_Squats', 'Bodyweight_Walking_Lunge', 'Single_Leg_Glute_Bridge', 'Glute_Kickback'],
-  ['All_Fours_Quad_Stretch', 'Standing_Toe_Touches', 'Calf_Stretch_Hands_Against_Wall']
+  ['Ankle_On_The_Knee', 'All_Fours_Quad_Stretch', 'Calf_Stretch_Hands_Against_Wall']
 );
 
 export const WORKOUT_LEGS_4: WorkoutPlan = createWorkoutFromExercises(
@@ -387,7 +387,7 @@ export const WORKOUT_LEGS_4: WorkoutPlan = createWorkoutFromExercises(
   'Deep squats, explosive drive, and calf endurance',
   'High-volume bodyweight leg training for athletic power, quad hypertrophy, and muscular stamina.',
   'legs',
-  ['Fast_Skipping', 'Groiners', 'Scissors_Jump'],
+  ['Fast_Skipping', 'Groiners', 'Worlds_Greatest_Stretch'],
   ['Freehand_Jump_Squat', 'Bodyweight_Squat', 'Lateral_Bound', 'Bodyweight_Walking_Lunge'],
   ['The_Straddle', 'All_Fours_Quad_Stretch', 'Seated_Floor_Hamstring_Stretch']
 );
@@ -401,9 +401,9 @@ export const WORKOUT_CORE_1: WorkoutPlan = createWorkoutFromExercises(
   'Build deep abdominal strength and lumbar support',
   'Engages the deep transverse abdominis and obliques while safeguarding your lower back.',
   'core',
-  ['Cat_Stretch', 'Inchworm', 'Standing_Hip_Circles'],
+  ['Cat_Stretch', 'Standing_Hip_Circles', 'Worlds_Greatest_Stretch'],
   ['Dead_Bug', 'Plank', 'Reverse_Crunch', 'Side_Bridge'],
-  ['Childs_Pose', 'Spinal_Stretch', 'Knee_Across_The_Body']
+  ['Cat_Stretch', 'Spinal_Stretch', 'Childs_Pose']
 );
 
 export const WORKOUT_CORE_2: WorkoutPlan = createWorkoutFromExercises(
@@ -412,8 +412,8 @@ export const WORKOUT_CORE_2: WorkoutPlan = createWorkoutFromExercises(
   'Side ab definition, lateral bridges, and rotational torso power',
   'Directly sculpts the internal and external obliques for a tapered waist and strong lateral core.',
   'core',
-  ['Standing_Hip_Circles', 'Groiners', 'Inchworm'],
-  ['Russian_Twist', 'Side_Bridge', 'Cross-Body_Crunch', 'Air_Bike'],
+  ['Standing_Hip_Circles', 'Cat_Stretch', 'Inchworm'],
+  ['Russian_Twist', 'Side_Bridge', 'Cross-Body_Crunch', 'Reverse_Crunch'],
   ['Knee_Across_The_Body', 'Spinal_Stretch', 'Childs_Pose']
 );
 
@@ -423,9 +423,9 @@ export const WORKOUT_CORE_3: WorkoutPlan = createWorkoutFromExercises(
   'Direct upper and lower abdominal burn with zero back strain',
   'Focused anterior core training targeting the six-pack wall through controlled flexion and hollow bracing.',
   'core',
-  ['Inchworm', 'Cat_Stretch', 'Dynamic_Back_Stretch'],
+  ['Cat_Stretch', 'Inchworm', 'Dynamic_Back_Stretch'],
   ['Crunches', 'Reverse_Crunch', 'Air_Bike', 'Flutter_Kicks'],
-  ['Spinal_Stretch', 'Hug_Knees_To_Chest', 'Childs_Pose']
+  ['Hug_Knees_To_Chest', 'Cat_Stretch', 'Childs_Pose']
 );
 
 export const WORKOUT_CORE_4: WorkoutPlan = createWorkoutFromExercises(
@@ -434,7 +434,7 @@ export const WORKOUT_CORE_4: WorkoutPlan = createWorkoutFromExercises(
   'Static tension, anti-extension, and hollow endurance',
   'Builds unshakeable core resilience with static planks, bridges, and slow-tempo control.',
   'core',
-  ['Worlds_Greatest_Stretch', 'Inchworm', 'Cat_Stretch'],
+  ['Worlds_Greatest_Stretch', 'Cat_Stretch', 'Standing_Hip_Circles'],
   ['Mountain_Climbers', 'Plank', 'Dead_Bug', 'Spider_Crawl'],
   ['Childs_Pose', 'Knee_Across_The_Body', 'Hug_Knees_To_Chest']
 );
@@ -448,7 +448,7 @@ export const WORKOUT_FULL_BODY_1: WorkoutPlan = createWorkoutFromExercises(
   'Balanced total-body movement across all 4 pillars',
   'An all-round reset working push, pull, legs, and core in harmony. Ideal after rest days or for general fitness.',
   'full_body',
-  ['Inchworm', 'Worlds_Greatest_Stretch', 'Cat_Stretch'],
+  ['Worlds_Greatest_Stretch', 'Cat_Stretch', 'Shoulder_Circles'],
   ['Bodyweight_Squat', 'Pushups', 'Superman', 'Dead_Bug'],
   ['Childs_Pose', 'One_Arm_Against_Wall', 'Seated_Floor_Hamstring_Stretch']
 );
@@ -459,9 +459,9 @@ export const WORKOUT_FULL_BODY_2: WorkoutPlan = createWorkoutFromExercises(
   'High-energy full-body stamina and functional power',
   'Fast-flowing compound circuit engaging every major muscle group for total metabolic conditioning.',
   'full_body',
-  ['Fast_Skipping', 'Groiners', 'Inchworm'],
-  ['Freehand_Jump_Squat', 'Pushups', 'Mountain_Climbers', 'Superman'],
-  ['Calf_Stretch_Hands_Against_Wall', 'All_Fours_Quad_Stretch', 'Childs_Pose']
+  ['Fast_Skipping', 'Groiners', 'Worlds_Greatest_Stretch'],
+  ['Freehand_Jump_Squat', 'Push-Ups_-_Close_Triceps_Position', 'Mountain_Climbers', 'Superman'],
+  ['Cat_Stretch', 'All_Fours_Quad_Stretch', 'One_Arm_Against_Wall']
 );
 
 export const WORKOUT_FULL_BODY_3: WorkoutPlan = createWorkoutFromExercises(
@@ -470,7 +470,7 @@ export const WORKOUT_FULL_BODY_3: WorkoutPlan = createWorkoutFromExercises(
   'Pressing strength, posterior chain, and glute tone',
   'Focuses on foundational compound bodyweight movements to build functional total-body strength.',
   'full_body',
-  ['Dynamic_Back_Stretch', 'Standing_Hip_Circles', 'Inchworm'],
+  ['Cat_Stretch', 'Standing_Hip_Circles', 'Shoulder_Circles'],
   ['Incline_Push-Up', 'Superman', 'Split_Squats', 'Russian_Twist'],
   ['Upper_Back_Stretch', 'Knee_Across_The_Body', 'Seated_Floor_Hamstring_Stretch']
 );
@@ -483,7 +483,7 @@ export const WORKOUT_FULL_BODY_4: WorkoutPlan = createWorkoutFromExercises(
   'full_body',
   ['Worlds_Greatest_Stretch', 'Cat_Stretch', 'Arm_Circles'],
   ['Glute_Kickback', 'Bench_Dips', 'Plank', 'Bodyweight_Squat'],
-  ['All_Fours_Quad_Stretch', 'Spinal_Stretch', 'Childs_Pose']
+  ['Ankle_On_The_Knee', 'One_Arm_Against_Wall', 'Childs_Pose']
 );
 
 // Map of 4 curated variations per category
