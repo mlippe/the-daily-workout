@@ -209,7 +209,7 @@ async function run() {
 
       const isRepBased = match.category === 'strength' || match.category === 'powerlifting';
       const defaultDuration = category === 'warmup' ? 30 : category === 'cooldown' ? 30 : 45;
-      const defaultReps = isRepBased ? 12 : undefined;
+      const defaultReps = isRepBased ? 10 : undefined;
 
       const exercise = {
         id: match.id,

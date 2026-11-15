@@ -1,5 +1,6 @@
 import { ArrowRight, Play } from 'lucide-react';
 import type { WorkoutPlan } from '../../types/workout';
+import { DEFAULT_TARGET_REPS } from '../../utils/storage';
 
 interface RoutineListProps {
   workouts: WorkoutPlan[];
@@ -26,7 +27,7 @@ export function RoutineList({
     <section className='pt-8 pb-16 border-t border-neutral-900'>
       <div className='flex items-center justify-between mb-4'>
         <h3 className='font-mono text-xs uppercase tracking-widest text-neutral-400'>
-          All 15-Minute Routines
+          All Daily Routines
         </h3>
         <span className='font-mono text-[11px] text-neutral-400'>
           5 routines
@@ -86,7 +87,7 @@ export function RoutineList({
 
               <div className='flex items-center gap-3 shrink-0'>
                 <span className='font-mono text-xs text-neutral-400'>
-                  15m • {repTargets?.[w.primaryPillar] ?? repTargets?.[w.id] ?? 12} reps
+                  {Math.round(w.totalDurationSeconds / 60)}m • {repTargets?.[w.primaryPillar] ?? repTargets?.[w.id] ?? DEFAULT_TARGET_REPS} reps
                 </span>
                 <button
                   type='button'

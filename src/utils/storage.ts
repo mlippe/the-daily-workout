@@ -148,7 +148,7 @@ export function getStreakStats(): { currentStreak: number; lastWorkoutDate: stri
 
 // Workout Rep Targets & Progression
 const STORAGE_KEY_REP_TARGETS = 'the_daily_workout_rep_targets_v1';
-export const DEFAULT_TARGET_REPS = 12;
+export const DEFAULT_TARGET_REPS = 10;
 
 export function getAllWorkoutTargetReps(): Record<string, number> {
   if (!isStorageAvailable()) return {};

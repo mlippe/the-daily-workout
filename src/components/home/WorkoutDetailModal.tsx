@@ -50,7 +50,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
           </div>
           <span className="font-mono text-xs text-neutral-400 shrink-0 pl-2">
             {step.exercise.type === 'reps'
-              ? `${step.targetReps ?? 12} reps`
+              ? `${step.targetReps ?? 10} reps`
               : `${step.workDurationSeconds}s`}
           </span>
         </div>
@@ -68,7 +68,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
         <div className="flex items-start justify-between p-6 border-b border-neutral-900">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-widest text-neutral-400">
-              Routine Overview • 15 Min
+              Routine Overview • {Math.round(workout.totalDurationSeconds / 60)} Min
             </div>
             <h3 className="mt-1 text-2xl font-semibold text-white tracking-tight">
               {workout.title}
@@ -104,7 +104,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
           <div>
             <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-2 border-b border-neutral-900">
               <span>Phase 2 • Main Circuit (2 Rounds)</span>
-              <span>10 Min</span>
+              <span>8 Min</span>
             </div>
             <div className="divide-y divide-neutral-900/60">
               {mainSteps.map((step, idx) => renderExerciseRow(step, idx))}

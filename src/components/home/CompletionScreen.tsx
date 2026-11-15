@@ -1,6 +1,12 @@
 import { Check, ArrowLeft } from 'lucide-react';
 import type { WorkoutPlan } from '../../types/workout';
 
+const formatTime = (secs: number) => {
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};
+
 interface CompletionScreenProps {
   workout: WorkoutPlan;
   streak: number;
@@ -25,7 +31,7 @@ export function CompletionScreen({
         </div>
 
         <div className="mt-6 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
-          15:00 Completed
+          {formatTime(workout.totalDurationSeconds)} Completed
         </div>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">

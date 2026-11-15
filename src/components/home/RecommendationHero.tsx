@@ -43,13 +43,13 @@ export function RecommendationHero({
                 Today's Recommendation
               </span>
               <span>•</span>
-              <span>15 Minutes</span>
+              <span>{Math.round(workout.totalDurationSeconds / 60)} Minutes</span>
             </>
           ) : (
             <>
               <span className="text-neutral-300">Selected Routine</span>
               <span>•</span>
-              <span>15 Minutes</span>
+              <span>{Math.round(workout.totalDurationSeconds / 60)} Minutes</span>
             </>
           )}
         </div>
@@ -165,7 +165,7 @@ export function RecommendationHero({
           className="inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all shadow-lg"
         >
           <Play className="h-4 w-4 fill-current ml-0.5" />
-          Start 15-Min Workout
+          Start {Math.round(workout.totalDurationSeconds / 60)}-Min Workout
         </button>
 
         <button

@@ -183,7 +183,7 @@ export default function App() {
           totalCompleted={stats.totalCompleted}
         />
 
-        {/* Hero Section: Today's 15-Minute Session */}
+        {/* Hero Section */}
         <RecommendationHero
           workout={heroWorkout}
           isRecommended={isRecommended}
@@ -218,7 +218,7 @@ export default function App() {
 
         {/* Minimal footer */}
         <footer className="pt-8 pb-12 text-center text-xs font-mono text-neutral-400">
-          15 minutes • Bodyweight only • 100% private
+          12 minutes • Bodyweight only • 100% private
         </footer>
       </div>
 
