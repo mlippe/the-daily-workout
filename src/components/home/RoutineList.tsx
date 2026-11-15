@@ -1,5 +1,5 @@
 import { Play } from 'lucide-react';
-import type { WorkoutPlan } from '../../types/workout';
+import type { WorkoutDifficulty, WorkoutPlan } from '../../types/workout';
 import { DEFAULT_TARGET_REPS } from '../../utils/storage';
 
 interface RoutineListProps {
@@ -8,6 +8,8 @@ interface RoutineListProps {
   recommendedWorkoutId: string;
   activePillar?: string;
   recommendedPillar?: string;
+  activeDifficulty: WorkoutDifficulty;
+  onChangeDifficulty: (difficulty: WorkoutDifficulty) => void;
   repTargets?: Record<string, number>;
   onSelect: (workout: WorkoutPlan) => void;
   onStart: (workout: WorkoutPlan) => void;
@@ -19,6 +21,8 @@ export function RoutineList({
   recommendedWorkoutId,
   activePillar,
   recommendedPillar,
+  activeDifficulty,
+  onChangeDifficulty,
   repTargets,
   onSelect,
   onStart,
@@ -29,9 +33,25 @@ export function RoutineList({
         <h2 className="font-mono text-xs uppercase tracking-widest text-neutral-400">
           Routines
         </h2>
-        <span className="font-mono text-[11px] text-neutral-500">
-          {workouts.length} total
-        </span>
+        <div className="flex items-center gap-1 font-mono text-[11px]">
+          {(['easy', 'medium', 'hard'] as WorkoutDifficulty[]).map((level) => {
+            const isSelected = activeDifficulty === level;
+            return (
+              <button
+                key={level}
+                type="button"
+                onClick={() => onChangeDifficulty(level)}
+                className={`px-2 py-0.5 rounded uppercase tracking-wider transition-colors cursor-pointer ${
+                  isSelected
+                    ? 'bg-neutral-800 text-white font-semibold'
+                    : 'text-neutral-500 hover:text-neutral-300'
+                }`}
+              >
+                {level}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="divide-y divide-neutral-900 border-y border-neutral-900">

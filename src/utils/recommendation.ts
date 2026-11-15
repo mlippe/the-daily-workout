@@ -1,11 +1,12 @@
 import type { MusclePillar } from '../types/exercise';
-import type { WorkoutPlan, WorkoutPillarFocus } from '../types/workout';
-import { getWorkoutHistory } from './storage';
+import type { WorkoutDifficulty, WorkoutPlan, WorkoutPillarFocus } from '../types/workout';
+import { getUserPreferences, getWorkoutHistory } from './storage';
 import { getRandomVariation } from './workoutGenerator';
 
 export interface RecommendationResult {
   workout: WorkoutPlan;
   reason: string;
+  difficultyLevel: WorkoutDifficulty;
   pillarBreakdown: Record<MusclePillar, number>;
   daysSinceLastWorkout: number | null;
 }
@@ -17,7 +18,8 @@ const PILLAR_NAMES: Record<MusclePillar, string> = {
   core: 'Core & Stability',
 };
 
-export function getDailyRecommendation(): RecommendationResult {
+export function getDailyRecommendation(difficultyOverride?: WorkoutDifficulty): RecommendationResult {
+  const difficultyLevel = difficultyOverride ?? getUserPreferences().difficultyLevel;
   const history = getWorkoutHistory().filter((entry) => entry.completed);
 
   // Initialize breakdown count of completed workouts
@@ -31,8 +33,9 @@ export function getDailyRecommendation(): RecommendationResult {
   // Case 1: First-time user with no history
   if (history.length === 0) {
     return {
-      workout: getRandomVariation('full_body'),
+      workout: getRandomVariation('full_body', undefined, difficultyLevel),
       reason: 'Welcome! Start with this full-body reset to wake up all major muscle groups.',
+      difficultyLevel,
       pillarBreakdown,
       daysSinceLastWorkout: null,
     };
@@ -79,8 +82,9 @@ export function getDailyRecommendation(): RecommendationResult {
   // Case 2: Inactivity break (> 3 days since last session)
   if (diffDays >= 4) {
     return {
-      workout: getRandomVariation('full_body'),
+      workout: getRandomVariation('full_body', undefined, difficultyLevel),
       reason: `Welcome back! Re-activate your whole body after ${diffDays} days of rest.`,
+      difficultyLevel,
       pillarBreakdown,
       daysSinceLastWorkout: diffDays,
     };
@@ -91,32 +95,36 @@ export function getDailyRecommendation(): RecommendationResult {
   if (diffDays <= 1) {
     if (lastPillar === 'push') {
       return {
-        workout: getRandomVariation('pull_back'),
+        workout: getRandomVariation('pull_back', undefined, difficultyLevel),
         reason: "Balances yesterday's Upper Push with posterior back and posture work.",
+        difficultyLevel,
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
       };
     }
     if (lastPillar === 'pull_back') {
       return {
-        workout: getRandomVariation('legs'),
+        workout: getRandomVariation('legs', undefined, difficultyLevel),
         reason: 'Gives your upper back recovery while mobilizing lower body and glutes.',
+        difficultyLevel,
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
       };
     }
     if (lastPillar === 'legs') {
       return {
-        workout: getRandomVariation('core'),
+        workout: getRandomVariation('core', undefined, difficultyLevel),
         reason: 'Rests leg muscles with focused pelvic and spinal stability.',
+        difficultyLevel,
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
       };
     }
     if (lastPillar === 'core') {
       return {
-        workout: getRandomVariation('push'),
+        workout: getRandomVariation('push', undefined, difficultyLevel),
         reason: 'Builds upper body pushing power with a fresh, stabilized core.',
+        difficultyLevel,
         pillarBreakdown,
         daysSinceLastWorkout: diffDays,
       };
@@ -137,10 +145,11 @@ export function getDailyRecommendation(): RecommendationResult {
   const restedDays = daysSincePillar[selectedPillar];
 
   return {
-    workout: getRandomVariation(selectedPillar),
+    workout: getRandomVariation(selectedPillar, undefined, difficultyLevel),
     reason: restedDays < 999 
       ? `${PILLAR_NAMES[selectedPillar]} hasn't been targeted in ${restedDays} days.`
       : `${PILLAR_NAMES[selectedPillar]} is ready for focus to maintain muscle balance.`,
+    difficultyLevel,
     pillarBreakdown,
     daysSinceLastWorkout: diffDays,
   };

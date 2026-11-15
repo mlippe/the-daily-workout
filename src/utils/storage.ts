@@ -1,16 +1,30 @@
-import type { WorkoutHistoryEntry } from '../types/workout';
+import type {
+  WorkoutDifficulty,
+  WorkoutFeedback,
+  WorkoutHistoryEntry,
+  WorkoutPillarFocus,
+} from '../types/workout';
 
 const STORAGE_KEY_HISTORY = 'the_daily_workout_history_v1';
 const STORAGE_KEY_PREFERENCES = 'the_daily_workout_preferences_v1';
 
+export interface FeedbackStreak {
+  rating: WorkoutFeedback | null;
+  count: number;
+}
+
 export interface UserPreferences {
   soundEnabled: boolean;
   screenWakeLockEnabled: boolean;
+  difficultyLevel: WorkoutDifficulty;
+  feedbackStreak: FeedbackStreak;
 }
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   soundEnabled: true,
   screenWakeLockEnabled: true,
+  difficultyLevel: 'easy',
+  feedbackStreak: { rating: null, count: 0 },
 };
 
 function isStorageAvailable(): boolean {
@@ -46,6 +60,8 @@ export function saveWorkoutCompletion(entry: Omit<WorkoutHistoryEntry, 'id' | 'd
     primaryPillar: entry.primaryPillar,
     completed: entry.completed,
     totalTimeSeconds: entry.totalTimeSeconds,
+    ...(entry.difficulty ? { difficulty: entry.difficulty } : {}),
+    ...(entry.feedback ? { feedback: entry.feedback } : {}),
   };
 
   if (!isStorageAvailable()) return fullEntry;
@@ -74,11 +90,28 @@ export function getUserPreferences(): UserPreferences {
   if (!isStorageAvailable()) return DEFAULT_PREFERENCES;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY_PREFERENCES);
-    if (!raw) return DEFAULT_PREFERENCES;
-    return { ...DEFAULT_PREFERENCES, ...JSON.parse(raw) };
+    const parsed = raw ? JSON.parse(raw) : {};
+    // Preserve fair starting bracket for returning users whose history pre-dates difficulty tracking
+    const fallbackLevel: WorkoutDifficulty =
+      !parsed.difficultyLevel && getWorkoutHistory().some((h) => h.completed && !h.difficulty)
+        ? 'medium'
+        : DEFAULT_PREFERENCES.difficultyLevel;
+    return {
+      ...DEFAULT_PREFERENCES,
+      difficultyLevel: fallbackLevel,
+      ...parsed,
+      feedbackStreak: parsed.feedbackStreak ?? DEFAULT_PREFERENCES.feedbackStreak,
+    };
   } catch {
     return DEFAULT_PREFERENCES;
   }
+}
+
+export function setDifficultyLevel(difficultyLevel: WorkoutDifficulty): UserPreferences {
+  return saveUserPreferences({
+    difficultyLevel,
+    feedbackStreak: { rating: null, count: 0 },
+  });
 }
 
 export function saveUserPreferences(prefs: Partial<UserPreferences>): UserPreferences {
@@ -186,5 +219,133 @@ export function saveWorkoutTargetReps(workoutId: string, reps: number): number {
 export function incrementWorkoutTargetReps(workoutId: string, amount: number = 1): number {
   const current = getWorkoutTargetReps(workoutId);
   return saveWorkoutTargetReps(workoutId, current + amount);
+}
+
+export interface FeedbackAdaptationResult {
+  feedback: WorkoutFeedback;
+  previousDifficulty: WorkoutDifficulty;
+  nextDifficulty: WorkoutDifficulty;
+  bracketChanged: boolean;
+  direction: 'up' | 'down' | 'same';
+  nextReps: number;
+  streakCount: number;
+}
+
+const STEP_UP: Record<WorkoutDifficulty, WorkoutDifficulty> = {
+  easy: 'medium',
+  medium: 'hard',
+  hard: 'hard',
+};
+
+const STEP_DOWN: Record<WorkoutDifficulty, WorkoutDifficulty> = {
+  easy: 'easy',
+  medium: 'easy',
+  hard: 'medium',
+};
+
+export function recordWorkoutFeedback(
+  entryId: string,
+  primaryPillar: WorkoutPillarFocus,
+  workoutId: string,
+  feedback: WorkoutFeedback
+): FeedbackAdaptationResult {
+  // Attach feedback to saved history entry
+  if (isStorageAvailable()) {
+    try {
+      const history = getWorkoutHistory();
+      const updated = history.map((h) => (h.id === entryId ? { ...h, feedback } : h));
+      window.localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(updated));
+    } catch (err) {
+      console.error('Failed to save workout feedback:', err);
+    }
+  }
+
+  const prefs = getUserPreferences();
+  const previousDifficulty = prefs.difficultyLevel;
+  const currentReps = getWorkoutTargetReps(primaryPillar);
+
+  if (feedback === 'okay') {
+    saveUserPreferences({ feedbackStreak: { rating: null, count: 0 } });
+    return {
+      feedback,
+      previousDifficulty,
+      nextDifficulty: previousDifficulty,
+      bracketChanged: false,
+      direction: 'same',
+      nextReps: currentReps,
+      streakCount: 0,
+    };
+  }
+
+  const prevCount = prefs.feedbackStreak?.rating === feedback ? prefs.feedbackStreak.count : 0;
+  const nextCount = prevCount + 1;
+
+  if (feedback === 'easy') {
+    if (nextCount >= 2 && previousDifficulty !== 'hard') {
+      const nextDifficulty = STEP_UP[previousDifficulty];
+      saveUserPreferences({
+        difficultyLevel: nextDifficulty,
+        feedbackStreak: { rating: null, count: 0 },
+      });
+      // Reset to baseline reps when stepping into harder movements
+      const resetReps = saveWorkoutTargetReps(primaryPillar, DEFAULT_TARGET_REPS);
+      saveWorkoutTargetReps(workoutId, resetReps);
+      return {
+        feedback,
+        previousDifficulty,
+        nextDifficulty,
+        bracketChanged: true,
+        direction: 'up',
+        nextReps: resetReps,
+        streakCount: 0,
+      };
+    }
+
+    saveUserPreferences({ feedbackStreak: { rating: 'easy', count: nextCount } });
+    const nextReps = saveWorkoutTargetReps(primaryPillar, Math.min(14, currentReps + 1));
+    saveWorkoutTargetReps(workoutId, nextReps);
+    return {
+      feedback,
+      previousDifficulty,
+      nextDifficulty: previousDifficulty,
+      bracketChanged: false,
+      direction: 'same',
+      nextReps,
+      streakCount: nextCount,
+    };
+  }
+
+  // feedback === 'hard'
+  if (nextCount >= 2 && previousDifficulty !== 'easy') {
+    const nextDifficulty = STEP_DOWN[previousDifficulty];
+    saveUserPreferences({
+      difficultyLevel: nextDifficulty,
+      feedbackStreak: { rating: null, count: 0 },
+    });
+    const resetReps = saveWorkoutTargetReps(primaryPillar, DEFAULT_TARGET_REPS);
+    saveWorkoutTargetReps(workoutId, resetReps);
+    return {
+      feedback,
+      previousDifficulty,
+      nextDifficulty,
+      bracketChanged: true,
+      direction: 'down',
+      nextReps: resetReps,
+      streakCount: 0,
+    };
+  }
+
+  saveUserPreferences({ feedbackStreak: { rating: 'hard', count: nextCount } });
+  const nextReps = saveWorkoutTargetReps(primaryPillar, Math.max(8, currentReps - 1));
+  saveWorkoutTargetReps(workoutId, nextReps);
+  return {
+    feedback,
+    previousDifficulty,
+    nextDifficulty: previousDifficulty,
+    bracketChanged: false,
+    direction: 'same',
+    nextReps,
+    streakCount: nextCount,
+  };
 }
 

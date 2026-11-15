@@ -13,7 +13,7 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Press back up explosively, driving through your chest and palms.',
   ],
   'Incline Push-Up': [
-    'Place hands shoulder-width apart on a sturdy elevated surface or platform.',
+    'Place hands shoulder-width apart on the sturdy edge of your couch or an elevated platform.',
     'Keeping your body in a rigid straight line, lower your chest to the edge.',
     'Press up to full arm extension while keeping your core braced.',
   ],
@@ -70,7 +70,7 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
   'Glute Kickback': [
     'Start on all fours with wrists under shoulders and knees under hips.',
     'Keeping your knee bent at 90 degrees, drive one foot upward toward the ceiling.',
-    'Squeeze your glute at peak contraction, then lower knee without touching the floor.',
+    'Squeeze your glute at peak contraction, lower smoothly, then switch legs when prompted.',
   ],
   'Dead Bug': [
     'Lie on your back with arms pointed at ceiling and knees bent at 90 degrees.',
@@ -78,9 +78,9 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Slowly extend opposite arm and leg outward without letting lower back lift.',
   ],
   'Mountain Climbers': [
-    'Start in a solid high plank with shoulders directly above wrists.',
-    'Drive one knee quickly toward your chest while keeping hips low and level.',
-    'Alternate legs in a rhythmic, controlled running motion while bracing core.',
+    'Hold a strong high plank with wrists stacked under shoulders and core braced.',
+    'Draw one knee smoothly toward chest without letting hips bounce or sag.',
+    'Alternate legs at a deliberate, quiet tempo rather than stomping the floor.',
   ],
   'Air Bike': [
     'Lie on back with hands behind head and legs lifted in tabletop position.',
@@ -214,8 +214,8 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
   ],
   'Cross-Body Crunch': [
     'Lie on back with knees bent and hands lightly supporting head.',
-    'Lift shoulder blade off floor and rotate elbow across toward opposite knee.',
-    'Squeeze obliques at peak crunch, lower slowly, and complete side before switching.',
+    'Curl one shoulder across your torso toward the opposite knee while engaging your abs.',
+    'Lower with control and alternate smoothly between sides each repetition.',
   ],
   'Spider Crawl': [
     'Start in a push-up position with body in a straight, rigid line.',
@@ -258,19 +258,24 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Squeeze your side waist at the top, lower slowly, and finish side before switching.',
   ],
   'Side Leg Raises': [
-    'Lie straight on your side with hips stacked vertically.',
-    'Lift top leg upward toward ceiling keeping toes pointed forward.',
-    'Pause for a gluteus medius contraction, lower with control, then switch sides.',
+    'Stand tall next to a wall or chair for light balance support.',
+    'Keep one leg straight as you smoothly swing it out to the side, then cross lightly in front.',
+    'Keep your torso upright throughout the set, then switch legs when prompted.',
   ],
   'Rear Leg Raises': [
     'Begin on all fours with wrists under shoulders and spine neutral.',
     'Extend one leg straight back and lift heel toward ceiling without arching back.',
     'Squeeze glute at top, lower slowly, and switch legs when prompted.',
   ],
-  'Split Squats': [
-    'Take a long split stance with feet hip-width apart and torso upright.',
-    'Lower back knee straight down toward floor until front thigh is parallel.',
-    'Drive through front heel to return to top, finishing side before switching.',
+  'Jumping Split Squats': [
+    'Lower into a long split lunge with front thigh parallel and torso tall.',
+    'Explode upward lightly to switch your front and back legs in mid-air.',
+    'Land softly on bent knees to absorb impact smoothly.',
+  ],
+  'Split Squat with Dumbbells': [
+    'Rest the top of your back foot on your couch edge behind you, dumbbells held at sides.',
+    'Lower your back knee straight down until front thigh is parallel and torso stays tall.',
+    'Drive through your front heel to stand; finish all reps on this side before switching.',
   ],
   'Lower Back Curl': [
     'Lie face down on the mat with arms relaxed by your sides.',
@@ -288,9 +293,9 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Breathe deeply into your abdomen, allowing spinal muscles to fully relax.',
   ],
   'Spinal Stretch': [
-    'Lie on your back with arms extended wide in a T-shape.',
-    'Bend knees and let them drop gently to one side while keeping shoulders flat.',
-    'Breathe into the rotational stretch along your spine, then switch sides.',
+    'Sit tall near the front edge of your couch or a chair with feet planted flat.',
+    'Interlace hands lightly behind head and rotate torso smoothly to one side.',
+    'Breathe into the spinal rotation, return upright, then twist to the opposite side.',
   ],
   'Upper Back Stretch': [
     'Clasp hands together in front of chest and round your upper back forward.',
@@ -298,9 +303,9 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Breathe into your mid-back, holding the gentle stretch with relaxed shoulders.',
   ],
   'One Arm Against Wall': [
-    'Place palm and forearm flat against a wall at shoulder height.',
-    'Gently rotate torso away from wall until feeling a chest and anterior shoulder stretch.',
-    'Breathe steadily into the stretch, then turn to stretch the opposite arm.',
+    'Stand beside a wall or doorframe with one bent forearm pressed flat at shoulder height.',
+    'Gently turn your torso away and lean slightly forward until feeling chest and lats open.',
+    'Breathe steadily into the stretch, then switch to the opposite side when prompted.',
   ],
   'Dynamic Chest Stretch': [
     'Stand tall and open arms wide horizontally, expanding your chest.',
@@ -308,19 +313,129 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Continue rhythmic opening and crossing motions at a controlled tempo.',
   ],
   'Dynamic Back Stretch': [
-    'Stand tall with feet wide and reach arms forward with rounded back.',
-    'Pull elbows back behind torso, squeezing shoulder blades together.',
-    'Flow smoothly between reaching forward and retracting back with your breath.',
+    'Stand tall with feet wide and swing straight arms overhead smoothly.',
+    'Lower arms and pull elbows gently backward on the return swing.',
+    'Gradually widen shoulder and upper-back range of motion with your breath.',
   ],
   'Wrist Circles': [
-    'Interlace fingers or hold loose fists in front of your chest.',
-    'Rotate wrists in smooth, gentle circular motions through full range.',
-    'Warm up joint lubrication and forearm tendons before pressing sets.',
+    'Extend arms straight out to the sides in a T-pose at shoulder height.',
+    'Keeping arms steady, draw slow full circles in both directions with your wrists.',
+    'Warm up wrist joints and forearm tendons before weight-bearing sets.',
   ],
   'Elbow Circles': [
     'Place fingertips lightly on the tops of your shoulders.',
     'Draw large circular motions with your elbows in both directions.',
     'Mobilize the shoulder joint and thoracic capsule with tall posture.',
+  ],
+  'Dumbbell Floor Press': [
+    'Lie flat on your mat with knees bent and dumbbells pressed straight over chest.',
+    'Tuck elbows roughly 45 degrees and lower until triceps gently tap the floor.',
+    'Pause briefly on the mat, then press dumbbells smoothly back up with stacked wrists.',
+  ],
+  'Dumbbell Shoulder Press': [
+    'Stand tall with core and glutes braced, holding dumbbells at shoulder height.',
+    'Press weights overhead without flaring your ribs or arching your lower back.',
+    'Lower under steady 2-second control back to shoulder level.',
+  ],
+  'Arnold Dumbbell Press': [
+    'Hold dumbbells in front of shoulders with palms facing your chest and elbows tucked.',
+    'Press upward while smoothly rotating palms forward as arms travel overhead.',
+    'Reverse the rotation slowly as you lower weights back to starting position.',
+  ],
+  'Dumbbell Scaption': [
+    'Hold dumbbells lightly at your sides with thumbs pointing upward.',
+    'Raise straight arms forward and slightly out (30 degrees) to shoulder height.',
+    'Lower smoothly without shrugging your neck to strengthen shoulder stabilizers.',
+  ],
+  'Standing Dumbbell Triceps Extension': [
+    'Stand braced with glutes tight, holding one dumbbell overhead with both palms.',
+    'Keep elbows tucked close beside your head and lower dumbbell smoothly behind neck.',
+    'Extend forearms straight back up using triceps tension, keeping torso still.',
+  ],
+  'Tricep Dumbbell Kickback': [
+    'Hinge torso forward about 45 degrees with flat back and upper arms pinned to sides.',
+    'Extend forearms straight back until arms lock out fully beside your hips.',
+    'Pause 1 second squeezing triceps, then fold elbows forward with control.',
+  ],
+  'Decline Push-Up': [
+    'Rest toes securely on your couch edge and place hands shoulder-width on the mat.',
+    'Brace core tightly so hips stay level, and lower upper chest toward floor.',
+    'Press through palms back to top without letting your lower back sag.',
+  ],
+  'Bent Over Two-Dumbbell Row': [
+    'Hinge hips back with a flat neutral spine and dumbbells hanging below shoulders.',
+    'Pull elbows smoothly toward your hip crease while squeezing shoulder blades together.',
+    'Lower dumbbells under control without rounding your upper or lower back.',
+  ],
+  'Bent Over Two-Dumbbell Row With Palms In': [
+    'Hinge forward with knees soft, flat back, and palms facing each other.',
+    'Row both dumbbells up close beside your ribcage, retracting shoulder blades.',
+    'Pause briefly at top contraction before lowering arms straight down.',
+  ],
+  'One-Arm Dumbbell Row': [
+    'Brace one hand and knee on your couch edge with spine flat and parallel to floor.',
+    'Pull dumbbell vertically toward your hip without twisting your shoulders.',
+    'Lower smoothly to full arm hang; finish side before switching arms.',
+  ],
+  'Seated Bent-Over Rear Delt Raise': [
+    'Sit near the front edge of your couch and hinge chest toward thighs with flat back.',
+    'Raise dumbbells out to the sides with softly bent elbows until parallel to floor.',
+    'Squeeze upper mid-back between shoulder blades, then lower slowly.',
+  ],
+  'Alternate Hammer Curl': [
+    'Stand tall holding dumbbells at sides with palms facing inward toward thighs.',
+    'Curl one dumbbell up keeping elbow pinned at your side without swinging torso.',
+    'Lower under control and alternate arms smoothly each repetition.',
+  ],
+  'Stiff-Legged Dumbbell Deadlift': [
+    'Stand tall holding dumbbells against thighs with knees softly unlocked.',
+    'Push hips straight back, sliding dumbbells close down shins with a flat spine.',
+    'Feel a deep hamstring stretch below knees, then drive hips forward to stand tall.',
+  ],
+  'Dumbbell Squat': [
+    'Hold dumbbells at your sides with chest lifted and feet shoulder-width apart.',
+    'Sit hips back and bend knees cleanly until thighs reach parallel.',
+    'Drive through midfoot and heels to stand tall while keeping knees tracking toes.',
+  ],
+  'Dumbbell Squat To A Bench': [
+    'Stand just ahead of your couch edge holding dumbbells neatly at your sides.',
+    'Sit back until glutes lightly tap the couch without relaxing onto the seat.',
+    'Drive briskly back to standing, keeping chest upright throughout.',
+  ],
+  'Dumbbell Rear Lunge': [
+    'Hold dumbbells at sides and take a controlled step backward into a split stance.',
+    'Lower back knee toward floor while keeping front shin vertical and torso tall.',
+    'Push firmly through front heel to return; finish reps on this leg before switching.',
+  ],
+  'Dumbbell Step Ups': [
+    'Place lead foot squarely on top of your couch cushion or sturdy low step.',
+    'Drive through that top heel to stand up tall without bouncing off the back toe.',
+    'Step down slowly with control; complete all reps on one leg before switching.',
+  ],
+  'Standing Dumbbell Calf Raise': [
+    'Stand tall holding dumbbells at sides with core braced and weight centered.',
+    'Rise smoothly onto the balls of both feet as high as ankle mobility allows.',
+    'Pause 1 second flexing calves, then lower heels slowly back to mat.',
+  ],
+  'Kneeling Forearm Stretch': [
+    'Kneel on your mat and place palms flat with fingers pointing back toward knees.',
+    'Gently shift hips slightly backward until feeling a mild forearm and wrist stretch.',
+    'Keep shoulders relaxed and breathe slowly without forcing wrist pain.',
+  ],
+  'Elbows Back': [
+    'Stand tall and rest both palms on your lower back with fingers pointing down.',
+    'Gently draw shoulder blades and elbows backward toward each other.',
+    'Hold the chest-opening stretch while breathing deeply into your ribs.',
+  ],
+  'One Knee To Chest': [
+    'Lie flat on your back with one leg straight along the mat.',
+    'Interlace hands under the other knee and hug it gently toward chest.',
+    'Relax your shoulders into the floor, then switch sides when prompted.',
+  ],
+  'Tricep Side Stretch': [
+    'Bring one straight arm across chest above opposite shoulder, cradling elbow.',
+    'Gently draw elbow across until feeling stretch in triceps and outer shoulder.',
+    'Keep shoulder dropped away from ear, then switch arms when prompted.',
   ],
 };
 

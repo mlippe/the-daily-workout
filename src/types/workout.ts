@@ -17,12 +17,16 @@ export interface WorkoutStep {
 
 export type WorkoutPillarFocus = MusclePillar | 'full_body';
 
+export type WorkoutDifficulty = 'easy' | 'medium' | 'hard';
+export type WorkoutFeedback = 'easy' | 'okay' | 'hard';
+
 export interface WorkoutPlan {
   id: string;
   title: string;
   subtitle: string;
   description: string;
   primaryPillar: WorkoutPillarFocus;
+  difficulty: WorkoutDifficulty;
   targetMuscles: string[];
   totalDurationSeconds: number; // Duration of workout session (seconds)
   steps: WorkoutStep[];
@@ -36,4 +40,6 @@ export interface WorkoutHistoryEntry {
   primaryPillar: WorkoutPillarFocus;
   completed: boolean;
   totalTimeSeconds: number;
+  difficulty?: WorkoutDifficulty;
+  feedback?: WorkoutFeedback;
 }

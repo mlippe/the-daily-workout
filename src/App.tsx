@@ -1,17 +1,20 @@
 import { useState, useMemo, useCallback } from 'react';
-import type { WorkoutPlan } from './types/workout';
+import type { WorkoutDifficulty, WorkoutFeedback, WorkoutPlan } from './types/workout';
 import {
-  ALL_WORKOUT_PLANS,
   applyTargetRepsToWorkout,
   getRandomVariation,
+  getWorkoutsForDifficulty,
 } from './utils/workoutGenerator';
 import { getDailyRecommendation } from './utils/recommendation';
 import {
   getStreakStats,
+  getUserPreferences,
+  setDifficultyLevel,
+  recordWorkoutFeedback,
   saveWorkoutCompletion,
   saveWorkoutTargetReps,
-  incrementWorkoutTargetReps,
   getAllWorkoutTargetReps,
+  getWorkoutTargetReps,
   DEFAULT_TARGET_REPS,
 } from './utils/storage';
 import { StreakHeader } from './components/home/StreakHeader';
@@ -28,13 +31,18 @@ export default function App() {
   const [activeWorkout, setActiveWorkout] = useState<WorkoutPlan | null>(null);
   const [previewWorkout, setPreviewWorkout] = useState<WorkoutPlan | null>(null);
   const [completedWorkout, setCompletedWorkout] = useState<WorkoutPlan | null>(null);
-  const [nextTargetReps, setNextTargetReps] = useState<number | undefined>(undefined);
+  const [completedEntryId, setCompletedEntryId] = useState<string | null>(null);
 
   // Selected routine to display in the hero (defaults to daily recommendation)
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutPlan | null>(null);
 
   // Stats & recommendation from local storage
   const [statsVersion, setStatsVersion] = useState(0);
+
+  const preferences = useMemo(() => {
+    void statsVersion;
+    return getUserPreferences();
+  }, [statsVersion]);
 
   const stats = useMemo(() => {
     void statsVersion;
@@ -43,13 +51,17 @@ export default function App() {
 
   const recommendation = useMemo(() => {
     void statsVersion;
-    return getDailyRecommendation();
-  }, [statsVersion]);
+    return getDailyRecommendation(preferences.difficultyLevel);
+  }, [statsVersion, preferences.difficultyLevel]);
 
   const allRepTargets = useMemo(() => {
     void statsVersion;
     return getAllWorkoutTargetReps();
   }, [statsVersion]);
+
+  const routineListWorkouts = useMemo(() => {
+    return getWorkoutsForDifficulty(preferences.difficultyLevel);
+  }, [preferences.difficultyLevel]);
 
   // Current hero routine (either selected by user, or today's recommendation)
   const baseHeroWorkout = selectedWorkout || recommendation.workout;
@@ -84,27 +96,27 @@ export default function App() {
     [baseHeroWorkout.primaryPillar, baseHeroWorkout.id]
   );
 
+  // Manual difficulty bracket switch
+  const handleChangeDifficulty = useCallback((level: WorkoutDifficulty) => {
+    setDifficultyLevel(level);
+    setSelectedWorkout(null);
+    setStatsVersion((v) => v + 1);
+  }, []);
+
   // Shuffle another variation for the current hero workout category
   const handleShuffleVariation = useCallback(() => {
     const nextVariation = getRandomVariation(
       baseHeroWorkout.primaryPillar,
-      baseHeroWorkout.id
+      baseHeroWorkout.id,
+      preferences.difficultyLevel
     );
     setSelectedWorkout(nextVariation);
-  }, [baseHeroWorkout.primaryPillar, baseHeroWorkout.id]);
+  }, [baseHeroWorkout.primaryPillar, baseHeroWorkout.id, preferences.difficultyLevel]);
 
-  // When a category in the list is selected, shuffle in a variation for that category
-  const handleSelectCategory = useCallback(
-    (categoryWorkout: WorkoutPlan) => {
-      const excludeId =
-        selectedWorkout?.primaryPillar === categoryWorkout.primaryPillar
-          ? selectedWorkout.id
-          : undefined;
-      const variation = getRandomVariation(categoryWorkout.primaryPillar, excludeId);
-      setSelectedWorkout(variation);
-    },
-    [selectedWorkout]
-  );
+  // When a category in the list is selected, switch to that routine
+  const handleSelectCategory = useCallback((categoryWorkout: WorkoutPlan) => {
+    setSelectedWorkout(categoryWorkout);
+  }, []);
 
   // Start workout action
   const handleStartWorkout = useCallback((workout: WorkoutPlan) => {
@@ -125,30 +137,47 @@ export default function App() {
     setPreviewWorkout(workoutWithReps);
   }, []);
 
-  // Completion action
+  // Completion action (saves completion immediately so streak/history are preserved)
   const handleCompleteWorkout = useCallback((summary: { totalTimeSeconds: number; workout: WorkoutPlan }) => {
-    saveWorkoutCompletion({
+    const saved = saveWorkoutCompletion({
       workoutId: summary.workout.id,
       workoutTitle: summary.workout.title,
       primaryPillar: summary.workout.primaryPillar,
       completed: true,
       totalTimeSeconds: summary.totalTimeSeconds,
+      difficulty: summary.workout.difficulty,
     });
 
-    // Automatic progression: automatically increment target reps by +1 for the next session
-    const nextReps = incrementWorkoutTargetReps(summary.workout.primaryPillar, 1);
-    saveWorkoutTargetReps(summary.workout.id, nextReps);
-    setNextTargetReps(nextReps);
-
+    setCompletedEntryId(saved.id);
     setCompletedWorkout(summary.workout);
     setStatsVersion((v) => v + 1);
     setView('completed');
   }, []);
 
-  // Return to home
-  const handleReturnHome = useCallback(() => {
+  // Apply user's post-workout feedback and return to home
+  const handleFinishFeedback = useCallback(
+    (feedback: WorkoutFeedback) => {
+      if (completedWorkout && completedEntryId) {
+        recordWorkoutFeedback(
+          completedEntryId,
+          completedWorkout.primaryPillar,
+          completedWorkout.id,
+          feedback
+        );
+      }
+      setActiveWorkout(null);
+      setCompletedWorkout(null);
+      setCompletedEntryId(null);
+      setSelectedWorkout(null);
+      setStatsVersion((v) => v + 1);
+      setView('home');
+    },
+    [completedWorkout, completedEntryId]
+  );
+
+  // Return to home on manual early exit
+  const handleExitRunner = useCallback(() => {
     setActiveWorkout(null);
-    setCompletedWorkout(null);
     setView('home');
   }, []);
 
@@ -157,19 +186,26 @@ export default function App() {
       <WorkoutRunner
         workout={activeWorkout}
         onComplete={handleCompleteWorkout}
-        onExit={handleReturnHome}
+        onExit={handleExitRunner}
       />
     );
   }
 
   if (view === 'completed' && completedWorkout) {
+    const currentReps =
+      allRepTargets[completedWorkout.primaryPillar] ??
+      allRepTargets[completedWorkout.id] ??
+      getWorkoutTargetReps(completedWorkout.primaryPillar);
+
     return (
       <CompletionScreen
         workout={completedWorkout}
         streak={stats.currentStreak}
         totalCompleted={stats.totalCompleted}
-        nextTargetReps={nextTargetReps}
-        onReturnHome={handleReturnHome}
+        currentTargetReps={currentReps}
+        currentDifficulty={preferences.difficultyLevel}
+        feedbackStreak={preferences.feedbackStreak}
+        onFinish={handleFinishFeedback}
       />
     );
   }
@@ -199,26 +235,27 @@ export default function App() {
 
         {/* Routine Selector List */}
         <RoutineList
-          workouts={ALL_WORKOUT_PLANS}
+          workouts={routineListWorkouts}
           activeWorkoutId={heroWorkout.id}
           recommendedWorkoutId={recommendation.workout.id}
           activePillar={heroWorkout.primaryPillar}
           recommendedPillar={recommendation.workout.primaryPillar}
+          activeDifficulty={preferences.difficultyLevel}
+          onChangeDifficulty={handleChangeDifficulty}
           repTargets={allRepTargets}
           onSelect={handleSelectCategory}
           onStart={(w) => {
-            if (w.primaryPillar === heroWorkout.primaryPillar) {
+            if (w.id === heroWorkout.id) {
               handleStartWorkout(heroWorkout);
             } else {
-              const variation = getRandomVariation(w.primaryPillar);
-              handleStartWorkout(variation);
+              handleStartWorkout(w);
             }
           }}
         />
 
         {/* Minimal footer */}
         <footer className="pt-6 pb-12 text-center text-xs font-mono text-neutral-600">
-          12 minutes • Bodyweight only • Local & private
+          12 minutes • Mat, couch &amp; 7kg dumbbells • Local &amp; private
         </footer>
       </div>
 

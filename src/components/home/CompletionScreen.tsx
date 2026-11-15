@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Check, ArrowLeft } from 'lucide-react';
-import type { WorkoutPlan } from '../../types/workout';
+import type { WorkoutDifficulty, WorkoutFeedback, WorkoutPlan } from '../../types/workout';
+import type { FeedbackStreak } from '../../utils/storage';
 
 const formatTime = (secs: number) => {
   const m = Math.floor(secs / 60);
@@ -7,21 +9,87 @@ const formatTime = (secs: number) => {
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 };
 
+const NEXT_LEVEL: Record<WorkoutDifficulty, WorkoutDifficulty | null> = {
+  easy: 'medium',
+  medium: 'hard',
+  hard: null,
+};
+
+const PREV_LEVEL: Record<WorkoutDifficulty, WorkoutDifficulty | null> = {
+  easy: null,
+  medium: 'easy',
+  hard: 'medium',
+};
+
+const LABEL: Record<WorkoutDifficulty, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
+};
+
 interface CompletionScreenProps {
   workout: WorkoutPlan;
   streak: number;
   totalCompleted: number;
-  nextTargetReps?: number;
-  onReturnHome: () => void;
+  currentTargetReps: number;
+  currentDifficulty: WorkoutDifficulty;
+  feedbackStreak: FeedbackStreak;
+  onFinish: (feedback: WorkoutFeedback) => void;
 }
 
 export function CompletionScreen({
   workout,
   streak,
   totalCompleted,
-  nextTargetReps,
-  onReturnHome,
+  currentTargetReps,
+  currentDifficulty,
+  feedbackStreak,
+  onFinish,
 }: CompletionScreenProps) {
+  const [selected, setSelected] = useState<WorkoutFeedback>('okay');
+
+  const getAdaptationPreview = () => {
+    if (selected === 'easy') {
+      const nextCount = feedbackStreak.rating === 'easy' ? feedbackStreak.count + 1 : 1;
+      const up = NEXT_LEVEL[currentDifficulty];
+      if (up && nextCount >= 2) {
+        return `Level up -> ${LABEL[up]} routines (10 reps)`;
+      }
+      if (up) {
+        return `+1 rep (${Math.min(14, currentTargetReps + 1)}r) • 1 more Easy -> ${LABEL[up]}`;
+      }
+      return `Top tier • Next target ${Math.min(14, currentTargetReps + 1)} reps`;
+    }
+
+    if (selected === 'hard') {
+      const nextCount = feedbackStreak.rating === 'hard' ? feedbackStreak.count + 1 : 1;
+      const down = PREV_LEVEL[currentDifficulty];
+      if (down && nextCount >= 2) {
+        return `Stepping down -> ${LABEL[down]} routines (10 reps)`;
+      }
+      if (down) {
+        return `-1 rep (${Math.max(8, currentTargetReps - 1)}r) • 1 more Hard -> ${LABEL[down]}`;
+      }
+      return `Keeping ${LABEL[currentDifficulty]} • Next target ${Math.max(8, currentTargetReps - 1)} reps`;
+    }
+
+    return `Steady at ${LABEL[currentDifficulty]} • ${currentTargetReps} reps`;
+  };
+
+  const previewNextReps = () => {
+    if (selected === 'easy') {
+      const nextCount = feedbackStreak.rating === 'easy' ? feedbackStreak.count + 1 : 1;
+      if (NEXT_LEVEL[currentDifficulty] && nextCount >= 2) return 10;
+      return Math.min(14, currentTargetReps + 1);
+    }
+    if (selected === 'hard') {
+      const nextCount = feedbackStreak.rating === 'hard' ? feedbackStreak.count + 1 : 1;
+      if (PREV_LEVEL[currentDifficulty] && nextCount >= 2) return 10;
+      return Math.max(8, currentTargetReps - 1);
+    }
+    return currentTargetReps;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-black text-white">
       <div className="w-full max-w-sm text-center">
@@ -31,7 +99,7 @@ export function CompletionScreen({
         </div>
 
         <div className="mt-5 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
-          {formatTime(workout.totalDurationSeconds)} Completed
+          {formatTime(workout.totalDurationSeconds)} Completed • {LABEL[workout.difficulty]}
         </div>
 
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">
@@ -58,7 +126,7 @@ export function CompletionScreen({
           </div>
           <div>
             <div className="text-lg font-semibold text-white tabular-nums">
-              {nextTargetReps ?? 10}
+              {previewNextReps()}
             </div>
             <div className="text-[10px] text-neutral-500 uppercase tracking-wider mt-0.5">
               Next Reps
@@ -66,15 +134,44 @@ export function CompletionScreen({
           </div>
         </div>
 
+        {/* Effort Feedback */}
+        <div className="mt-7 text-left">
+          <div className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 text-center">
+            How did that feel?
+          </div>
+          <div className="mt-2.5 grid grid-cols-3 gap-2">
+            {(['easy', 'okay', 'hard'] as WorkoutFeedback[]).map((rating) => {
+              const active = selected === rating;
+              return (
+                <button
+                  key={rating}
+                  type="button"
+                  onClick={() => setSelected(rating)}
+                  className={`rounded-xl py-2.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border ${
+                    active
+                      ? 'border-white bg-white text-neutral-950 font-semibold'
+                      : 'border-neutral-800 bg-neutral-900/50 text-neutral-300 hover:border-neutral-700 hover:text-white'
+                  }`}
+                >
+                  {rating}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2.5 text-center font-mono text-[11px] text-neutral-500">
+            {getAdaptationPreview()}
+          </p>
+        </div>
+
         {/* Action */}
-        <div className="mt-8">
+        <div className="mt-7">
           <button
             type="button"
-            onClick={onReturnHome}
+            onClick={() => onFinish(selected)}
             className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Done</span>
+            <span>Save &amp; Done</span>
           </button>
         </div>
       </div>

@@ -38,6 +38,8 @@ export function RecommendationHero({
           </span>
           <span>•</span>
           <span>{durationMinutes} Min</span>
+          <span>•</span>
+          <span>{workout.difficulty}</span>
         </div>
 
         <div className="flex items-center gap-3">
