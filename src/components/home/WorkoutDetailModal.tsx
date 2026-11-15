@@ -18,43 +18,39 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
   const cooldownSteps = workout.steps.filter((s) => s.phase === 'cooldown');
   const hasRest = workout.steps.some((s) => s.isRest);
 
+  const durationMin = Math.round(workout.totalDurationSeconds / 60);
+
   const renderExerciseRow = (step: WorkoutStep, index: number) => (
     <div
       key={step.id}
-      className="flex items-center gap-3 py-2.5 border-b border-neutral-900 last:border-0"
+      className="flex items-center gap-3 py-2 border-b border-neutral-900 last:border-0"
     >
-      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-neutral-900">
+      <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-neutral-900 border border-neutral-800">
         <img
           src={step.exercise.images[0]}
           alt=""
-          className="h-full w-full object-contain p-1"
+          className="h-full w-full object-contain p-0.5"
         />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-sm font-medium text-white truncate">
+            <span className="text-xs font-medium text-white truncate">
               {index + 1}. {step.exercise.name}
             </span>
             {step.side && (
-              <span
-                className={`rounded border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider shrink-0 ${
-                  step.side === 'right'
-                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-                    : 'bg-teal-500/15 border-teal-400/40 text-teal-300'
-                }`}
-              >
-                {step.side}
+              <span className="text-[10px] font-mono text-neutral-400">
+                ({step.side === 'right' ? 'R' : 'L'})
               </span>
             )}
           </div>
-          <span className="font-mono text-xs text-neutral-400 shrink-0 pl-2">
+          <span className="font-mono text-xs text-neutral-400 shrink-0 pl-2 tabular-nums">
             {step.exercise.type === 'reps'
               ? `${step.targetReps ?? 10} reps`
               : `${step.workDurationSeconds}s`}
           </span>
         </div>
-        <div className="text-xs text-neutral-400 truncate">
+        <div className="text-[11px] text-neutral-500 truncate">
           {step.exercise.primaryMuscles.join(', ')}
         </div>
       </div>
@@ -63,24 +59,24 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-      <div className="flex max-h-[85vh] w-full max-w-md flex-col rounded-3xl border border-neutral-800 bg-neutral-950 shadow-2xl overflow-hidden">
+      <div className="flex max-h-[85vh] w-full max-w-md flex-col rounded-2xl border border-neutral-800 bg-neutral-950 overflow-hidden">
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-neutral-900">
+        <div className="flex items-start justify-between p-5 border-b border-neutral-900">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-widest text-neutral-400">
-              Routine Overview • {Math.round(workout.totalDurationSeconds / 60)} Min
+              Overview • {durationMin} Min
             </div>
-            <h3 className="mt-1 text-2xl font-semibold text-white tracking-tight">
+            <h3 className="mt-1 text-xl font-semibold text-white tracking-tight">
               {workout.title}
             </h3>
-            <p className="mt-1 text-xs text-neutral-400">
+            <p className="mt-0.5 text-xs text-neutral-400">
               {workout.subtitle}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1 text-neutral-400 hover:text-white transition-colors"
+            className="rounded-lg p-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
@@ -88,11 +84,11 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
         </div>
 
         {/* Exercises Scroll View */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+        <div className="flex-1 overflow-y-auto px-5 py-3 space-y-5">
           {/* Phase 1: Warm-up */}
           <div>
-            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-2 border-b border-neutral-900">
-              <span>Phase 1 • Warm-Up</span>
+            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-1.5 border-b border-neutral-900">
+              <span>Warm-Up</span>
               <span>2 Min</span>
             </div>
             <div className="divide-y divide-neutral-900/60">
@@ -102,30 +98,25 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
 
           {/* Phase 2: Main Circuit */}
           <div>
-            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-2 border-b border-neutral-900">
-              <span>Phase 2 • Main Circuit (2 Rounds)</span>
+            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-1.5 border-b border-neutral-900">
+              <span>Main Circuit (2 Rounds)</span>
               <span>8 Min</span>
             </div>
             <div className="divide-y divide-neutral-900/60">
               {mainSteps.map((step, idx) => renderExerciseRow(step, idx))}
             </div>
             {hasRest && (
-              <div className="mt-2.5 flex items-center justify-between rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs font-mono text-amber-300">
-                <span className="flex items-center gap-1.5">
-                  <span>☕</span>
-                  <span className="font-sans font-medium text-amber-200">
-                    20s Rest between Round 1 & Round 2
-                  </span>
-                </span>
-                <span className="text-amber-400/80">Active Recovery</span>
+              <div className="mt-2 flex items-center justify-between text-xs font-mono text-neutral-400 py-1.5 border-t border-dashed border-neutral-800">
+                <span>Inter-Round Recovery</span>
+                <span>20s</span>
               </div>
             )}
           </div>
 
           {/* Phase 3: Cool-down */}
           <div>
-            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-2 border-b border-neutral-900">
-              <span>Phase 3 • Cool-Down</span>
+            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-1.5 border-b border-neutral-900">
+              <span>Cool-Down</span>
               <span>2 Min</span>
             </div>
             <div className="divide-y divide-neutral-900/60">
@@ -139,7 +130,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 text-xs text-neutral-400 hover:text-white transition-colors"
+            className="px-3 py-2 text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer"
           >
             Close
           </button>
@@ -150,7 +141,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
               onClose();
               onStart(workout);
             }}
-            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-xs font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-95 transition-all cursor-pointer"
           >
             <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
             Start Workout

@@ -25,74 +25,56 @@ export function CompletionScreen({
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-black text-white">
       <div className="w-full max-w-sm text-center">
-        {/* Subtle Checkmark */}
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900/50 text-white">
-          <Check className="h-6 w-6" />
+        {/* Simple Checkmark */}
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-white">
+          <Check className="h-5 w-5" />
         </div>
 
-        <div className="mt-6 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
+        <div className="mt-5 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
           {formatTime(workout.totalDurationSeconds)} Completed
         </div>
 
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">
           {workout.title}
         </h1>
 
-        <p className="mt-2 text-sm text-neutral-400 leading-relaxed">
+        <p className="mt-1.5 text-xs text-neutral-400 leading-relaxed">
           {workout.subtitle}
         </p>
 
-        {/* Minimal stats block */}
-        <div
-          className={`mt-8 grid ${
-            nextTargetReps ? 'grid-cols-3' : 'grid-cols-2'
-          } divide-x divide-neutral-900 border-y border-neutral-900 py-4 font-mono text-center`}
-        >
+        {/* Stats */}
+        <div className="mt-8 grid grid-cols-3 divide-x divide-neutral-900 border-y border-neutral-900 py-3 font-mono text-center">
           <div>
-            <div className="text-xl font-semibold text-white">{streak}</div>
-            <div className="text-[11px] text-neutral-400 uppercase tracking-wider mt-0.5">
-              Day Streak
+            <div className="text-lg font-semibold text-white tabular-nums">{streak}</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider mt-0.5">
+              Streak
             </div>
           </div>
           <div>
-            <div className="text-xl font-semibold text-white">{totalCompleted}</div>
-            <div className="text-[11px] text-neutral-400 uppercase tracking-wider mt-0.5">
-              Total Done
+            <div className="text-lg font-semibold text-white tabular-nums">{totalCompleted}</div>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider mt-0.5">
+              Done
             </div>
           </div>
-          {nextTargetReps && (
-            <div>
-              <div className="text-xl font-semibold text-emerald-400 flex items-center justify-center gap-1">
-                <span>{nextTargetReps}</span>
-                <span className="text-[11px] text-emerald-500/80 font-normal">(+1)</span>
-              </div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider mt-0.5">
-                Next Reps
-              </div>
+          <div>
+            <div className="text-lg font-semibold text-white tabular-nums">
+              {nextTargetReps ?? 10}
             </div>
-          )}
-        </div>
-
-        {nextTargetReps && (
-          <div className="mt-3 inline-flex items-center gap-1.5 font-mono text-xs text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3.5 py-1">
-            <span>Progression auto-advanced to {nextTargetReps} reps for next session!</span>
+            <div className="text-[10px] text-neutral-500 uppercase tracking-wider mt-0.5">
+              Next Reps
+            </div>
           </div>
-        )}
-
-        {/* Muscles line */}
-        <div className="mt-6 text-xs text-neutral-400">
-          Targeted: {workout.targetMuscles.slice(0, 4).join(', ')}
         </div>
 
-        {/* Back home action */}
-        <div className="mt-10">
+        {/* Action */}
+        <div className="mt-8">
           <button
             type="button"
             onClick={onReturnHome}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-white py-3 text-sm font-medium text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Home
+            <span>Done</span>
           </button>
         </div>
       </div>

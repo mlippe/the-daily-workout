@@ -217,8 +217,8 @@ export default function App() {
         />
 
         {/* Minimal footer */}
-        <footer className="pt-8 pb-12 text-center text-xs font-mono text-neutral-400">
-          12 minutes • Bodyweight only • 100% private
+        <footer className="pt-6 pb-12 text-center text-xs font-mono text-neutral-600">
+          12 minutes • Bodyweight only • Local & private
         </footer>
       </div>
 
