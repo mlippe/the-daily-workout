@@ -515,13 +515,223 @@ export const WORKOUT_FULL_BODY_4: WorkoutPlan = createWorkoutFromExercises(
   ['One_Arm_Against_Wall', 'Childs_Pose', 'Cat_Stretch']
 );
 
-// Map of 4 curated variations per category
+// ==========================================
+// 6. Bodyweight-Only Additions (All Categories, All Tiers)
+// ==========================================
+export const WORKOUT_PUSH_BW_EASY: WorkoutPlan = createWorkoutFromExercises(
+  'workout-push-bw-easy',
+  'Bodyweight Couch Push & Core',
+  'Gentle incline pressing, chest squeezes, and wrist recovery breaks',
+  'Zero-equipment push progression using your couch edge alongside isometric chest work and supine core stability.',
+  'push',
+  'easy',
+  ['Shoulder_Circles', 'Elbow_Circles', 'Wrist_Circles'],
+  ['Incline_Push-Up_Wide', 'Isometric_Chest_Squeezes', 'Incline_Push-Up_Close-Grip', 'Dead_Bug'],
+  ['Elbows_Back', 'Shoulder_Stretch']
+);
+
+export const WORKOUT_PUSH_BW_MEDIUM: WorkoutPlan = createWorkoutFromExercises(
+  'workout-push-bw-medium',
+  'Bodyweight Chest & Triceps Flow',
+  'Mixes floor push-ups, static pec contractions, and plank-to-press triceps',
+  'Develops chest and triceps endurance on the mat while giving wrists relief with standing squeezes and forearm planks.',
+  'push',
+  'medium',
+  ['Arm_Circles', 'Dynamic_Chest_Stretch', 'Wrist_Circles'],
+  ['Pushups', 'Isometric_Chest_Squeezes', 'Push-Up_Wide', 'Body-Up'],
+  ['Kneeling_Forearm_Stretch', 'Triceps_Stretch']
+);
+
+export const WORKOUT_PUSH_BW_HARD: WorkoutPlan = createWorkoutFromExercises(
+  'workout-push-bw-hard',
+  'Bodyweight Decline & Wiper Push',
+  'Couch-elevated push-ups, lateral wipers, body-ups, and side-plank rotation',
+  'High-demand bodyweight upper push workout challenging unilateral leverage, triceps lockout, and anti-rotation stability.',
+  'push',
+  'hard',
+  ['Arm_Circles', 'Dynamic_Chest_Stretch', 'Wrist_Circles'],
+  ['Decline_Push-Up', 'Body-Up', 'Isometric_Wipers', 'Push_Up_to_Side_Plank'],
+  ['Kneeling_Forearm_Stretch', 'One_Arm_Against_Wall', 'Childs_Pose']
+);
+
+export const WORKOUT_PULL_BW_EASY: WorkoutPlan = createWorkoutFromExercises(
+  'workout-pull-bw-easy',
+  'Bodyweight Posture & Bridge Reset',
+  'Zero-equipment posterior awakening alternating bridges, prone lifts, and core',
+  'Counters desk posture cleanly on the mat by pairing supine glute bridges and pelvic control with light thoracic extension.',
+  'pull_back',
+  'easy',
+  ['Shoulder_Circles', 'Dynamic_Back_Stretch', 'Standing_Hip_Circles'],
+  ['Butt_Lift_Bridge', 'Lower_Back_Curl', 'Dead_Bug', 'Pelvic_Tilt_Into_Bridge'],
+  ['Upper_Back_Stretch', 'Childs_Pose', 'One_Knee_To_Chest']
+);
+
+export const WORKOUT_PULL_BW_MEDIUM: WorkoutPlan = createWorkoutFromExercises(
+  'workout-pull-bw-medium',
+  'Bodyweight Posterior Chain Balance',
+  'Single-leg bridges, hip extension, and mid-back strength on the mat',
+  'Alternates glute-focused lower body stability with prone upper and lower back strength without weights.',
+  'pull_back',
+  'medium',
+  ['Dynamic_Back_Stretch', 'Elbow_Circles', 'Hip_Circles_prone'],
+  ['Single_Leg_Glute_Bridge', 'Lower_Back_Curl', 'Glute_Kickback', 'Superman'],
+  ['Hug_Knees_To_Chest', 'Side-Lying_Floor_Stretch', 'Childs_Pose']
+);
+
+export const WORKOUT_PULL_BW_HARD: WorkoutPlan = createWorkoutFromExercises(
+  'workout-pull-bw-hard',
+  'Bodyweight Glute & Spine Stamina',
+  'Unilateral bridges, extended-leg glute work, Supermans, and plank bracing',
+  'Builds enduring posterior-chain and trunk posture stamina by pairing single-leg lifts and prone extensions with rigid planks.',
+  'pull_back',
+  'hard',
+  ['Arm_Circles', 'Dynamic_Back_Stretch', 'Inchworm'],
+  ['Single_Leg_Glute_Bridge', 'Superman', 'Rear_Leg_Raises', 'Plank'],
+  ['Hug_Knees_To_Chest', 'Knee_Across_The_Body', 'Childs_Pose']
+);
+
+export const WORKOUT_LEGS_BW_EASY: WorkoutPlan = createWorkoutFromExercises(
+  'workout-legs-bw-easy',
+  'Bodyweight Squats & Glute Tone',
+  'Quiet zero-impact squats, bridges, kickbacks, and standing glute balance',
+  'Strengthens quads, glutes, and hamstrings gently on the knees with full mat and standing stability support.',
+  'legs',
+  'easy',
+  ['Ankle_Circles', 'Standing_Hip_Circles'],
+  ['Bodyweight_Squat', 'Butt_Lift_Bridge', 'Glute_Kickback', 'Leg_Lift'],
+  ['Ankle_On_The_Knee', 'Seated_Floor_Hamstring_Stretch']
+);
+
+export const WORKOUT_LEGS_BW_MEDIUM: WorkoutPlan = createWorkoutFromExercises(
+  'workout-legs-bw-medium',
+  'Bodyweight Lunge & Couch Step',
+  'Walking lunges, couch step-ups, single-leg bridges, and controlled squats',
+  'Zero-impact unilateral leg control building symmetry across glutes, thighs, and hips using only your couch and mat.',
+  'legs',
+  'medium',
+  ['Standing_Hip_Circles', 'Worlds_Greatest_Stretch'],
+  ['Bodyweight_Walking_Lunge', 'Single_Leg_Glute_Bridge', 'Step-up_with_Knee_Raise', 'Bodyweight_Squat'],
+  ['Kneeling_Hip_Flexor', 'Leg-Up_Hamstring_Stretch']
+);
+
+export const WORKOUT_LEGS_BW_HARD: WorkoutPlan = createWorkoutFromExercises(
+  'workout-legs-bw-hard',
+  'Bodyweight Unilateral Leg Stamina',
+  'High-output couch step-ups, crossover reverse lunges, and single-leg bridges',
+  'Sustained zero-jump lower-body work targeting single-leg power, hip control, and glute-hamstring endurance.',
+  'legs',
+  'hard',
+  ['Front_Leg_Raises', 'Worlds_Greatest_Stretch'],
+  ['Step-up_with_Knee_Raise', 'Crossover_Reverse_Lunge', 'Single_Leg_Glute_Bridge', 'Bodyweight_Walking_Lunge'],
+  ['All_Fours_Quad_Stretch', 'Calf_Stretch_Hands_Against_Wall']
+);
+
+export const WORKOUT_CORE_BW_EASY: WorkoutPlan = createWorkoutFromExercises(
+  'workout-core-bw-easy',
+  'Breath Control & Transverse Core',
+  'Zero-neck-strain deep core activation, heel touchers, and pelvic bridges',
+  'Activates deep transverse abdominals and obliques smoothly while keeping your neck and lower back relaxed.',
+  'core',
+  'easy',
+  ['Shoulder_Circles', 'Dynamic_Back_Stretch', 'Hip_Circles_prone'],
+  ['Stomach_Vacuum', 'Dead_Bug', 'Alternate_Heel_Touchers', 'Pelvic_Tilt_Into_Bridge'],
+  ['Cat_Stretch', 'Knee_Across_The_Body', 'Childs_Pose']
+);
+
+export const WORKOUT_CORE_BW_HARD: WorkoutPlan = createWorkoutFromExercises(
+  'workout-core-bw-hard',
+  'Pike, Hollow & Lateral Core',
+  'Forearm butt-ups, hollow cocoons, side planks, and spider crawls',
+  'Challenging bodyweight trunk circuit integrating anterior compression, lateral bracing, and plank hip mobility.',
+  'core',
+  'hard',
+  ['Worlds_Greatest_Stretch', 'Inchworm', 'Wrist_Circles'],
+  ['Butt-Ups', 'Cocoons', 'Side_Bridge', 'Spider_Crawl'],
+  ['Childs_Pose', 'Kneeling_Forearm_Stretch', 'One_Knee_To_Chest']
+);
+
+export const WORKOUT_FULL_BODY_BW_EASY: WorkoutPlan = createWorkoutFromExercises(
+  'workout-full-body-bw-easy',
+  'Bodyweight Morning Flow & Reset',
+  'Gentle squats, couch push-ups, glute bridges, and dead bugs without weights',
+  'Balanced 12-minute bodyweight session waking up every major joint and stabilizer smoothly.',
+  'full_body',
+  'easy',
+  ['Shoulder_Circles', 'Standing_Hip_Circles', 'Inchworm'],
+  ['Bodyweight_Squat', 'Incline_Push-Up', 'Butt_Lift_Bridge', 'Dead_Bug'],
+  ['Childs_Pose', 'Upper_Back_Stretch', 'Ankle_On_The_Knee']
+);
+
+export const WORKOUT_FULL_BODY_BW_MEDIUM: WorkoutPlan = createWorkoutFromExercises(
+  'workout-full-body-bw-medium',
+  'Total Bodyweight Conditioning',
+  'Rotational reverse lunges, push-ups, Supermans, and forearm planks',
+  'Complete mat-based strength and posture flow with zero equipment and zero jumping.',
+  'full_body',
+  'medium',
+  ['Arm_Circles', 'Dynamic_Back_Stretch', 'Worlds_Greatest_Stretch'],
+  ['Crossover_Reverse_Lunge', 'Pushups', 'Superman', 'Plank'],
+  ['Knee_Across_The_Body', 'Seated_Floor_Hamstring_Stretch']
+);
+
+export const WORKOUT_FULL_BODY_BW_HARD: WorkoutPlan = createWorkoutFromExercises(
+  'workout-full-body-bw-hard',
+  'Athletic Bodyweight Compound',
+  'Couch step-ups, push-up side planks, single-leg bridges, and climbers',
+  'Demanding quiet bodyweight conditioning hitting unilateral legs, pressing rotation, posterior chain, and core.',
+  'full_body',
+  'hard',
+  ['Worlds_Greatest_Stretch', 'Inchworm', 'Dynamic_Chest_Stretch'],
+  ['Step-up_with_Knee_Raise', 'Push_Up_to_Side_Plank', 'Single_Leg_Glute_Bridge', 'Mountain_Climbers'],
+  ['Kneeling_Hip_Flexor', 'Kneeling_Forearm_Stretch', 'Childs_Pose']
+);
+
+// Curated variations per pillar (mixed dumbbell & bodyweight options across all difficulty tiers)
 export const WORKOUT_VARIATIONS_BY_PILLAR: Record<WorkoutPillarFocus, WorkoutPlan[]> = {
-  push: [WORKOUT_PUSH_1, WORKOUT_PUSH_2, WORKOUT_PUSH_3, WORKOUT_PUSH_4],
-  pull_back: [WORKOUT_PULL_1, WORKOUT_PULL_2, WORKOUT_PULL_3, WORKOUT_PULL_4],
-  legs: [WORKOUT_LEGS_1, WORKOUT_LEGS_2, WORKOUT_LEGS_3, WORKOUT_LEGS_4],
-  core: [WORKOUT_CORE_1, WORKOUT_CORE_2, WORKOUT_CORE_3, WORKOUT_CORE_4],
-  full_body: [WORKOUT_FULL_BODY_1, WORKOUT_FULL_BODY_2, WORKOUT_FULL_BODY_3, WORKOUT_FULL_BODY_4],
+  push: [
+    WORKOUT_PUSH_BW_EASY,
+    WORKOUT_PUSH_2,
+    WORKOUT_PUSH_BW_MEDIUM,
+    WORKOUT_PUSH_1,
+    WORKOUT_PUSH_3,
+    WORKOUT_PUSH_BW_HARD,
+    WORKOUT_PUSH_4,
+  ],
+  pull_back: [
+    WORKOUT_PULL_BW_EASY,
+    WORKOUT_PULL_1,
+    WORKOUT_PULL_BW_MEDIUM,
+    WORKOUT_PULL_2,
+    WORKOUT_PULL_3,
+    WORKOUT_PULL_BW_HARD,
+    WORKOUT_PULL_4,
+  ],
+  legs: [
+    WORKOUT_LEGS_BW_EASY,
+    WORKOUT_LEGS_1,
+    WORKOUT_LEGS_BW_MEDIUM,
+    WORKOUT_LEGS_2,
+    WORKOUT_LEGS_3,
+    WORKOUT_LEGS_BW_HARD,
+    WORKOUT_LEGS_4,
+  ],
+  core: [
+    WORKOUT_CORE_1,
+    WORKOUT_CORE_BW_EASY,
+    WORKOUT_CORE_2,
+    WORKOUT_CORE_3,
+    WORKOUT_CORE_4,
+    WORKOUT_CORE_BW_HARD,
+  ],
+  full_body: [
+    WORKOUT_FULL_BODY_BW_EASY,
+    WORKOUT_FULL_BODY_1,
+    WORKOUT_FULL_BODY_BW_MEDIUM,
+    WORKOUT_FULL_BODY_3,
+    WORKOUT_FULL_BODY_4,
+    WORKOUT_FULL_BODY_BW_HARD,
+    WORKOUT_FULL_BODY_2,
+  ],
 };
 
 // Aliases for backwards compatibility

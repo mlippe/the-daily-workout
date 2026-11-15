@@ -437,6 +437,56 @@ const CURATED_CUES: Record<string, [string, string, string]> = {
     'Gently draw elbow across until feeling stretch in triceps and outer shoulder.',
     'Keep shoulder dropped away from ear, then switch arms when prompted.',
   ],
+  'Incline Push-Up Close-Grip': [
+    'Place hands close together inside shoulder width on the sturdy edge of your couch.',
+    'Keep elbows tucked beside your ribcage as you lower chest toward the edge.',
+    'Drive through palms to straighten arms and squeeze triceps without hips sagging.',
+  ],
+  'Incline Push-Up Wide': [
+    'Place hands wider than shoulder width along the sturdy edge of your couch.',
+    'Keep body in a straight plank line and lower chest smoothly toward your hands.',
+    'Press back up cleanly through chest and shoulders with braced core.',
+  ],
+  'Body-Up': [
+    'Start in a strong forearm plank on your mat with feet hip-width apart and hips level.',
+    'Press through palms to extend elbows smoothly into a high plank using triceps tension.',
+    'Lower forearms back onto the mat under steady control without swaying your hips.',
+  ],
+  'Isometric Wipers': [
+    'Start in a solid push-up plank with hands slightly wider than shoulder width.',
+    'Shift torso smoothly toward one hand while bending that elbow to load the chest and arm.',
+    'Press straight back to center and alternate smoothly to the opposite side.',
+  ],
+  'Leg Lift': [
+    'Stand tall holding a wall or the back of your couch lightly for balance.',
+    'Keeping stance leg straight and core tight, sweep working leg straight back squeezing glute.',
+    'Lower slowly without touching floor; complete all reps on this side before switching.',
+  ],
+  'Stomach Vacuum': [
+    'Stand tall with hands on hips and take a slow, full inhale.',
+    'Exhale steadily while drawing your navel deep inward toward your spine without hunching.',
+    'Hold strong deep abdominal tension while continuing shallow controlled breaths.',
+  ],
+  'Alternate Heel Touchers': [
+    'Lie on your back with knees bent, feet flat on the floor, and shoulders lifted slightly.',
+    'Crunch laterally to tap your right heel with your right hand while squeezing side waist.',
+    'Return smoothly to center and tap your left heel; alternate steadily without pulling neck.',
+  ],
+  'Butt-Ups': [
+    'Hold a forearm plank on your mat with abs braced tight and legs straight.',
+    'Pull ribcage toward hips to pike glutes cleanly up toward the ceiling.',
+    'Lower back to a flat plank with control without letting your lower back sag.',
+  ],
+  Cocoons: [
+    'Lie flat on your back with arms extended overhead and legs stretched lightly off floor.',
+    'Tuck knees smoothly toward chest while curling torso forward and reaching hands to shins.',
+    'Extend back out under slow, controlled tension keeping lower back quiet.',
+  ],
+  'Crossover Reverse Lunge': [
+    'Stand tall with feet hip-width apart and hands braced in front of chest.',
+    'Step smoothly back into a reverse lunge while rotating torso gently over the front thigh.',
+    'Drive through front heel to stand tall and alternate sides each repetition.',
+  ],
 };
 
 function cleanSentence(s: string): string {

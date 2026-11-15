@@ -1,15 +1,14 @@
 import { useState, useMemo, useCallback } from 'react';
-import type { WorkoutDifficulty, WorkoutFeedback, WorkoutPlan } from './types/workout';
+import type { WorkoutFeedback, WorkoutPlan } from './types/workout';
 import {
+  ALL_VARIATIONS,
   applyTargetRepsToWorkout,
   getRandomVariation,
-  getWorkoutsForDifficulty,
 } from './utils/workoutGenerator';
 import { getDailyRecommendation } from './utils/recommendation';
 import {
   getStreakStats,
   getUserPreferences,
-  setDifficultyLevel,
   recordWorkoutFeedback,
   saveWorkoutCompletion,
   saveWorkoutTargetReps,
@@ -61,10 +60,6 @@ export default function App() {
     return getAllWorkoutTargetReps();
   }, [repTargetsVersion, statsVersion]);
 
-  const routineListWorkouts = useMemo(() => {
-    return getWorkoutsForDifficulty(preferences.difficultyLevel);
-  }, [preferences.difficultyLevel]);
-
   // Current hero routine (either selected by user, or today's recommendation)
   const baseHeroWorkout = selectedWorkout || recommendation.workout;
   const isRecommended = baseHeroWorkout.id === recommendation.workout.id;
@@ -97,26 +92,20 @@ export default function App() {
     [baseHeroWorkout.primaryPillar, baseHeroWorkout.id]
   );
 
-  // Manual difficulty bracket switch
-  const handleChangeDifficulty = useCallback((level: WorkoutDifficulty) => {
-    setDifficultyLevel(level);
-    setSelectedWorkout(null);
-    setStatsVersion((v) => v + 1);
-  }, []);
-
-  // Shuffle another variation for the current hero workout category
+  // Shuffle another variation within the current workout's body area & difficulty
   const handleShuffleVariation = useCallback(() => {
     const nextVariation = getRandomVariation(
       baseHeroWorkout.primaryPillar,
       baseHeroWorkout.id,
-      preferences.difficultyLevel
+      baseHeroWorkout.difficulty
     );
     setSelectedWorkout(nextVariation);
-  }, [baseHeroWorkout.primaryPillar, baseHeroWorkout.id, preferences.difficultyLevel]);
+  }, [baseHeroWorkout.primaryPillar, baseHeroWorkout.id, baseHeroWorkout.difficulty]);
 
-  // When a category in the list is selected, switch to that routine
-  const handleSelectCategory = useCallback((categoryWorkout: WorkoutPlan) => {
-    setSelectedWorkout(categoryWorkout);
+  // When a routine in the overview is selected, display it in the hero
+  const handleSelectRoutine = useCallback((workout: WorkoutPlan) => {
+    setSelectedWorkout(workout);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   // Start workout action
@@ -234,17 +223,14 @@ export default function App() {
           onPreview={handlePreviewWorkout}
         />
 
-        {/* Routine Selector List */}
+        {/* All Workouts Overview by Body Area & Difficulty */}
         <RoutineList
-          workouts={routineListWorkouts}
+          workouts={ALL_VARIATIONS}
           activeWorkoutId={heroWorkout.id}
           recommendedWorkoutId={recommendation.workout.id}
-          activePillar={heroWorkout.primaryPillar}
-          recommendedPillar={recommendation.workout.primaryPillar}
-          activeDifficulty={preferences.difficultyLevel}
-          onChangeDifficulty={handleChangeDifficulty}
+          recommendedDifficulty={preferences.difficultyLevel}
           repTargets={allRepTargets}
-          onSelect={handleSelectCategory}
+          onSelect={handleSelectRoutine}
           onStart={(w) => {
             if (w.id === heroWorkout.id) {
               handleStartWorkout(heroWorkout);

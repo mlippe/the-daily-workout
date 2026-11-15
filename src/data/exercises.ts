@@ -101,6 +101,7 @@ export const TWO_SIDED_EXERCISE_IDS = new Set<string>([
   'Single-Arm_Push-Up',
   'Side_Jackknife',
   'Step-up_with_Knee_Raise',
+  'Leg_Lift',
   'Dumbbell_Step_Ups',
   'Split_Squat_with_Dumbbells',
   'Dumbbell_Lunges',
