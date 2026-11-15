@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import type { WorkoutFeedback, WorkoutPlan } from './types/workout';
+import type { WorkoutFeedback, WorkoutPillarFocus, WorkoutPlan } from './types/workout';
 import {
   ALL_VARIATIONS,
   applyTargetRepsToWorkout,
@@ -19,6 +19,7 @@ import {
 import { StreakHeader } from './components/home/StreakHeader';
 import { RecommendationHero } from './components/home/RecommendationHero';
 import { RoutineList } from './components/home/RoutineList';
+import { BodyAreaModal } from './components/home/BodyAreaModal';
 import { WorkoutDetailModal } from './components/home/WorkoutDetailModal';
 import { WorkoutRunner } from './components/runner/WorkoutRunner';
 import { CompletionScreen } from './components/home/CompletionScreen';
@@ -29,6 +30,7 @@ export default function App() {
   const [view, setView] = useState<AppView>('home');
   const [activeWorkout, setActiveWorkout] = useState<WorkoutPlan | null>(null);
   const [previewWorkout, setPreviewWorkout] = useState<WorkoutPlan | null>(null);
+  const [selectedBodyArea, setSelectedBodyArea] = useState<WorkoutPillarFocus | null>(null);
   const [completedWorkout, setCompletedWorkout] = useState<WorkoutPlan | null>(null);
   const [completedEntryId, setCompletedEntryId] = useState<string | null>(null);
 
@@ -223,13 +225,30 @@ export default function App() {
           onPreview={handlePreviewWorkout}
         />
 
-        {/* All Workouts Overview by Body Area & Difficulty */}
+        {/* Simple 5 Body Area Selector List */}
         <RoutineList
+          workouts={ALL_VARIATIONS}
+          activePillar={heroWorkout.primaryPillar}
+          recommendedPillar={recommendation.workout.primaryPillar}
+          onSelectArea={setSelectedBodyArea}
+        />
+
+        {/* Minimal footer */}
+        <footer className="pt-6 pb-12 text-center text-xs font-mono text-neutral-600">
+          12 minutes • Mat, couch &amp; 7kg dumbbells • Local &amp; private
+        </footer>
+      </div>
+
+      {/* Body Area Workouts Popup */}
+      {selectedBodyArea && (
+        <BodyAreaModal
+          pillar={selectedBodyArea}
           workouts={ALL_VARIATIONS}
           activeWorkoutId={heroWorkout.id}
           recommendedWorkoutId={recommendation.workout.id}
           recommendedDifficulty={preferences.difficultyLevel}
           repTargets={allRepTargets}
+          onClose={() => setSelectedBodyArea(null)}
           onSelect={handleSelectRoutine}
           onStart={(w) => {
             if (w.id === heroWorkout.id) {
@@ -239,12 +258,7 @@ export default function App() {
             }
           }}
         />
-
-        {/* Minimal footer */}
-        <footer className="pt-6 pb-12 text-center text-xs font-mono text-neutral-600">
-          12 minutes • Mat, couch &amp; 7kg dumbbells • Local &amp; private
-        </footer>
-      </div>
+      )}
 
       {/* Routine Detail Preview Modal */}
       {previewWorkout && (

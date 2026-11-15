@@ -749,6 +749,14 @@ export const ALL_WORKOUT_PLANS: WorkoutPlan[] = [
   WORKOUT_FULL_BODY_1,
 ];
 
+export const BODY_AREA_LABELS: Record<WorkoutPillarFocus, string> = {
+  push: 'Upper Body (Push)',
+  pull_back: 'Back & Posture (Pull)',
+  legs: 'Lower Body',
+  core: 'Core & Stability',
+  full_body: 'Full Body',
+};
+
 export const ALL_VARIATIONS: WorkoutPlan[] = Object.values(WORKOUT_VARIATIONS_BY_PILLAR).flat();
 
 export function getWorkoutById(id: string): WorkoutPlan {
