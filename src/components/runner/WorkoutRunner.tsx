@@ -197,9 +197,9 @@ export function WorkoutRunner({
   const isRepBased = currentStep.exercise.type === 'reps';
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-black text-white select-none">
+    <div className="fixed inset-0 h-dvh z-50 flex flex-col justify-between bg-black text-white select-none">
       {/* Top Header: Progress and status bar */}
-      <header className="border-b border-neutral-900 bg-black/95 px-4 sm:px-6 pt-3 pb-3 backdrop-blur-md">
+      <header className="border-b border-neutral-900 bg-black/95 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2.5 backdrop-blur-md">
         <div className="mx-auto max-w-2xl">
           <ProgressBar
             workout={workout}
@@ -207,11 +207,11 @@ export function WorkoutRunner({
             nextStep={workout.steps[currentStepIndex + 1]}
           />
 
-          <div className="mt-3 flex items-center justify-between text-xs font-mono text-neutral-400">
+          <div className="mt-2 flex items-center justify-between text-xs font-mono text-neutral-400">
             <button
               type="button"
               onClick={() => setShowExitModal(true)}
-              className="flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 min-h-9 px-2 -ml-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />
               <span>Exit</span>
@@ -224,7 +224,7 @@ export function WorkoutRunner({
             <button
               type="button"
               onClick={handleToggleMute}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="flex h-9 w-9 -mr-2 items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition-colors cursor-pointer"
               title={isMuted ? 'Unmute' : 'Mute'}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
@@ -239,9 +239,9 @@ export function WorkoutRunner({
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto px-4 py-4 flex flex-col items-center justify-between max-w-2xl mx-auto w-full">
+      <main className="flex-1 overflow-y-auto px-4 py-3 sm:py-4 flex flex-col items-center justify-between max-w-2xl mx-auto w-full">
         {/* Stage 1: Exercise Visual */}
-        <div className="w-full aspect-3/2 max-h-[38vh] sm:max-h-[44vh] relative rounded-2xl overflow-hidden bg-neutral-950 border border-neutral-900 flex items-center justify-center shrink-0">
+        <div className="w-full aspect-3/2 max-h-[32dvh] sm:max-h-[42dvh] relative rounded-2xl overflow-hidden bg-neutral-950 border border-neutral-900 flex items-center justify-center shrink-0">
           {currentStep.isRest ? (
             <div className="text-center p-6">
               <span className="font-mono text-xs uppercase tracking-widest text-neutral-500">
@@ -262,25 +262,26 @@ export function WorkoutRunner({
         </div>
 
         {/* Stage 2: Exercise Name & Details */}
-        <div className="text-center mt-3 mb-2 shrink-0">
+        <div className="text-center mt-2.5 sm:mt-3 mb-1.5 shrink-0 px-1">
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-white leading-snug">
               {currentStep.exercise.name}
             </h1>
           </div>
           {currentStep.side && (
-            <span className="mt-1 inline-block font-mono text-xs uppercase tracking-wider text-neutral-400">
+            <span className="mt-0.5 inline-block font-mono text-[11px] sm:text-xs uppercase tracking-wider text-neutral-400">
               {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
             </span>
           )}
         </div>
 
         {/* Stage 3: Target Metric Display */}
-        <div className="my-auto py-2 flex flex-col items-center justify-center shrink-0">
+        <div className="my-auto py-1.5 sm:py-2 flex flex-col items-center justify-center w-full shrink-0">
           {isRepBased ? (
-            <div
+            <button
+              type="button"
               onClick={advance}
-              className="group flex flex-col items-center justify-center rounded-2xl border border-neutral-800 bg-neutral-900/50 hover:bg-neutral-900 px-8 py-4 transition-colors cursor-pointer active:scale-95"
+              className="group w-full max-w-[260px] flex flex-col items-center justify-center rounded-2xl border border-neutral-800 bg-neutral-900/50 hover:bg-neutral-900 px-8 py-3.5 sm:py-4 transition-all cursor-pointer active:scale-95"
               title="Click or press Enter when done"
             >
               <div className="flex items-baseline gap-2">
@@ -291,15 +292,15 @@ export function WorkoutRunner({
                   Reps
                 </span>
               </div>
-              <span className="mt-1.5 text-xs font-mono text-neutral-400 group-hover:text-white transition-colors">
+              <span className="mt-1 text-xs font-mono text-neutral-400 group-hover:text-white transition-colors">
                 Tap when done
               </span>
-            </div>
+            </button>
           ) : (
             <div className="flex flex-col items-center justify-center">
               <div className="flex items-baseline gap-2">
                 <span
-                  className={`font-mono text-6xl sm:text-7xl font-bold tabular-nums tracking-tight ${
+                  className={`font-mono text-5xl sm:text-7xl font-bold tabular-nums tracking-tight ${
                     secondsRemaining <= 3 ? 'text-rose-400' : 'text-white'
                   }`}
                 >
@@ -314,9 +315,9 @@ export function WorkoutRunner({
                 <button
                   type="button"
                   onClick={advance}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1 font-mono text-xs text-neutral-300 hover:text-white transition-colors cursor-pointer"
+                  className="mt-3 min-h-10 inline-flex items-center gap-1.5 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-2 font-mono text-xs text-neutral-300 hover:text-white active:scale-95 transition-all cursor-pointer"
                 >
-                  <SkipForward className="h-3 w-3" />
+                  <SkipForward className="h-3.5 w-3.5" />
                   <span>Skip Rest</span>
                 </button>
               )}
@@ -326,26 +327,26 @@ export function WorkoutRunner({
 
         {/* Stage 4: Form Cues (Directly visible, no bouncing modals required) */}
         {!currentStep.isRest && (
-          <div className="w-full max-w-lg mt-2 mb-2 px-2 shrink-0">
-            <ul className="space-y-1.5 text-xs text-neutral-400">
+          <div className="w-full max-w-lg mt-1 mb-1 px-1 shrink-0">
+            <ul className="space-y-1 text-xs text-neutral-400 leading-relaxed">
               {quickSteps.slice(0, 2).map((stepText, idx) => (
                 <li key={idx} className="flex items-start gap-2">
-                  <span className="text-neutral-600 font-mono text-[10px]">•</span>
+                  <span className="text-neutral-600 font-mono text-[10px] mt-0.5">•</span>
                   <span>{stepText}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-2 text-center">
+            <div className="mt-1 text-center">
               <button
                 type="button"
                 onClick={() => {
                   setIsPaused(true);
                   setShowDetailsModal(true);
                 }}
-                className="inline-flex items-center gap-1 font-mono text-[11px] text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 min-h-9 px-3 rounded-lg font-mono text-[11px] text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900/50 transition-colors cursor-pointer"
               >
-                <Info className="h-3 w-3" />
+                <Info className="h-3.5 w-3.5" />
                 <span>Instructions</span>
               </button>
             </div>
@@ -354,12 +355,12 @@ export function WorkoutRunner({
       </main>
 
       {/* Bottom Controls Bar */}
-      <footer className="border-t border-neutral-900 bg-black px-6 py-4">
-        <div className="mx-auto flex max-w-xs items-center justify-between gap-4">
+      <footer className="border-t border-neutral-900 bg-black px-6 pt-3 pb-[max(0.85rem,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-sm items-center justify-between gap-4">
           <button
             type="button"
             onClick={handleSkipBack}
-            className="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 active:scale-95 transition-all cursor-pointer"
             title="Previous (Arrow Left)"
             aria-label="Previous step"
           >
@@ -383,7 +384,7 @@ export function WorkoutRunner({
           <button
             type="button"
             onClick={handleSkipForward}
-            className="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 active:scale-95 transition-all cursor-pointer"
             title="Skip (Arrow Right)"
             aria-label="Skip step"
           >
@@ -413,7 +414,7 @@ export function WorkoutRunner({
               <button
                 type="button"
                 onClick={() => setShowExitModal(false)}
-                className="flex-1 rounded-xl bg-neutral-800 py-2 text-xs font-medium text-white hover:bg-neutral-700 transition-colors cursor-pointer"
+                className="flex-1 min-h-11 rounded-xl bg-neutral-800 py-2.5 text-xs font-medium text-white hover:bg-neutral-700 transition-colors cursor-pointer"
               >
                 Continue
               </button>
@@ -423,7 +424,7 @@ export function WorkoutRunner({
                   setShowExitModal(false);
                   onExit();
                 }}
-                className="flex-1 rounded-xl bg-rose-500/15 text-rose-300 border border-rose-500/20 py-2 text-xs font-medium hover:bg-rose-500/25 transition-colors cursor-pointer"
+                className="flex-1 min-h-11 rounded-xl bg-rose-500/15 text-rose-300 border border-rose-500/20 py-2.5 text-xs font-medium hover:bg-rose-500/25 transition-colors cursor-pointer"
               >
                 Leave
               </button>

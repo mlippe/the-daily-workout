@@ -203,8 +203,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-neutral-100 antialiased selection:bg-neutral-800 selection:text-white">
-      <div className="mx-auto max-w-2xl px-6 py-6 sm:px-8 sm:py-10">
+    <div className="min-h-dvh bg-black text-neutral-100 antialiased selection:bg-neutral-800 selection:text-white">
+      <div className="mx-auto max-w-2xl px-4 py-4 sm:px-8 sm:py-10">
         {/* Minimal header */}
         <StreakHeader
           currentStreak={stats.currentStreak}

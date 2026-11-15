@@ -37,19 +37,19 @@ export function ProgressBar({ workout, currentStep, nextStep }: ProgressBarProps
       </div>
 
       {/* Status line */}
-      <div className="mt-2 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-2 text-neutral-400">
+      <div className="mt-2 flex items-center justify-between gap-3 text-[11px] sm:text-xs font-mono">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-neutral-400">
           <span className="font-semibold text-neutral-200 uppercase tracking-wider">
             {phaseLabel}
           </span>
           <span>•</span>
-          <span>
-            {stepInPhaseIndex + 1} of {phaseSteps.length}
+          <span className="tabular-nums">
+            {stepInPhaseIndex + 1}/{phaseSteps.length}
           </span>
         </div>
 
         {nextStep && (
-          <div className="text-neutral-500 truncate max-w-[50%] text-right">
+          <div className="min-w-0 flex-1 text-neutral-500 truncate text-right">
             <span className="text-neutral-600">Next: </span>
             <span className="text-neutral-400">
               {nextStep.isRest

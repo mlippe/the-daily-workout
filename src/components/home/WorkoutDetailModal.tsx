@@ -1,4 +1,4 @@
-import { X, Play } from 'lucide-react';
+import { X, Play, Dumbbell } from 'lucide-react';
 import type { WorkoutPlan, WorkoutStep } from '../../types/workout';
 
 interface WorkoutDetailModalProps {
@@ -59,26 +59,37 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-      <div className="flex max-h-[85vh] w-full max-w-md flex-col rounded-2xl border border-neutral-800 bg-neutral-950 overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 sm:p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[90dvh] w-full max-w-md flex-col rounded-2xl border border-neutral-800 bg-neutral-950 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-start justify-between p-5 border-b border-neutral-900">
-          <div>
+        <div className="flex items-start justify-between gap-3 p-4 sm:p-5 border-b border-neutral-900">
+          <div className="min-w-0">
             <div className="font-mono text-[11px] uppercase tracking-widest text-neutral-400">
               Overview • {durationMin} Min • {workout.difficulty}
-              {workout.requiresDumbbells ? ' • Dumbbells' : ''}
             </div>
-            <h3 className="mt-1 text-xl font-semibold text-white tracking-tight">
+            <h3 className="mt-1 text-lg sm:text-xl font-semibold text-white tracking-tight">
               {workout.title}
             </h3>
-            <p className="mt-0.5 text-xs text-neutral-400">
+            <p className="mt-0.5 text-xs text-neutral-400 leading-relaxed">
               {workout.subtitle}
             </p>
+            {workout.requiresDumbbells && (
+              <div className="mt-2 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-neutral-200">
+                <Dumbbell className="h-3 w-3" />
+                <span>Requires dumbbells</span>
+              </div>
+            )}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+            className="flex h-9 w-9 shrink-0 -mt-1 -mr-1 items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
@@ -86,7 +97,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
         </div>
 
         {/* Exercises Scroll View */}
-        <div className="flex-1 overflow-y-auto px-5 py-3 space-y-5">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3 space-y-5">
           {/* Phase 1: Warm-up */}
           <div>
             <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-neutral-400 pb-1.5 border-b border-neutral-900">
@@ -132,7 +143,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-2 text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer"
+            className="min-h-10 px-4 py-2 rounded-xl text-xs font-medium text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors cursor-pointer"
           >
             Close
           </button>
@@ -143,7 +154,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
               onClose();
               onStart(workout);
             }}
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-95 transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 min-h-10 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-95 transition-all cursor-pointer"
           >
             <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
             Start Workout

@@ -39,8 +39,8 @@ export function RoutineList({
               key={pillar}
               type="button"
               onClick={() => onSelectArea(pillar)}
-              className={`w-full group flex items-center justify-between py-3.5 px-3 -mx-3 rounded-lg text-left transition-colors cursor-pointer ${
-                isSelected ? 'bg-neutral-900/70' : 'hover:bg-neutral-900/30'
+              className={`w-full min-h-[52px] group flex items-center justify-between gap-3 py-3.5 px-3 -mx-3 rounded-lg text-left transition-colors cursor-pointer ${
+                isSelected ? 'bg-neutral-900/70' : 'hover:bg-neutral-900/30 active:bg-neutral-900/60'
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">

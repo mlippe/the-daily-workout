@@ -91,7 +91,7 @@ export function CompletionScreen({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-black text-white">
+    <div className="min-h-dvh flex items-center justify-center p-4 sm:p-6 bg-black text-white">
       <div className="w-full max-w-sm text-center">
         {/* Simple Checkmark */}
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-white">
@@ -147,7 +147,7 @@ export function CompletionScreen({
                   key={rating}
                   type="button"
                   onClick={() => setSelected(rating)}
-                  className={`rounded-xl py-2.5 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border ${
+                  className={`min-h-11 rounded-xl py-3 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer border ${
                     active
                       ? 'border-white bg-white text-neutral-950 font-semibold'
                       : 'border-neutral-800 bg-neutral-900/50 text-neutral-300 hover:border-neutral-700 hover:text-white'
@@ -168,7 +168,7 @@ export function CompletionScreen({
           <button
             type="button"
             onClick={() => onFinish(selected)}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer"
+            className="w-full min-h-12 inline-flex items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-sm font-semibold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Save &amp; Done</span>
