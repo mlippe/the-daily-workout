@@ -244,6 +244,7 @@ export function createWorkoutFromExercises(
   );
 
   const totalDurationSeconds = steps.reduce((acc, s) => acc + s.workDurationSeconds, 0);
+  const requiresDumbbells = steps.some((s) => s.exercise.equipment === 'dumbbell');
 
   return {
     id,
@@ -252,6 +253,7 @@ export function createWorkoutFromExercises(
     description,
     primaryPillar,
     difficulty,
+    requiresDumbbells,
     targetMuscles,
     totalDurationSeconds,
     steps,

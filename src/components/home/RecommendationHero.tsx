@@ -32,7 +32,7 @@ export function RecommendationHero({
     <section className="py-8 sm:py-10">
       {/* Category / kicker line */}
       <div className="flex items-center justify-between gap-3 text-xs font-mono uppercase tracking-widest text-neutral-400">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-neutral-300 font-semibold">
             {isRecommended ? "Today's Focus" : 'Selected Routine'}
           </span>
@@ -40,6 +40,12 @@ export function RecommendationHero({
           <span>{durationMinutes} Min</span>
           <span>•</span>
           <span>{workout.difficulty}</span>
+          {workout.requiresDumbbells && (
+            <>
+              <span>•</span>
+              <span className="text-neutral-200">Dumbbells</span>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-3">

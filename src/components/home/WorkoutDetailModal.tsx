@@ -52,6 +52,7 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
         </div>
         <div className="text-[11px] text-neutral-500 truncate">
           {step.exercise.primaryMuscles.join(', ')}
+          {step.exercise.equipment === 'dumbbell' ? ' • Dumbbell' : ''}
         </div>
       </div>
     </div>
@@ -64,7 +65,8 @@ export function WorkoutDetailModal({ workout, isOpen, onClose, onStart }: Workou
         <div className="flex items-start justify-between p-5 border-b border-neutral-900">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-widest text-neutral-400">
-              Overview • {durationMin} Min
+              Overview • {durationMin} Min • {workout.difficulty}
+              {workout.requiresDumbbells ? ' • Dumbbells' : ''}
             </div>
             <h3 className="mt-1 text-xl font-semibold text-white tracking-tight">
               {workout.title}

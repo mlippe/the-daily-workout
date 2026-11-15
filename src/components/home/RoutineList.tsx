@@ -96,6 +96,7 @@ export function RoutineList({
 
               <div className="flex items-center gap-3 shrink-0">
                 <span className="font-mono text-xs text-neutral-400 tabular-nums">
+                  {w.requiresDumbbells ? 'DB • ' : ''}
                   {durationMin}m • {reps}r
                 </span>
                 <button

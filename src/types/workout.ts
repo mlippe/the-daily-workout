@@ -27,6 +27,7 @@ export interface WorkoutPlan {
   description: string;
   primaryPillar: WorkoutPillarFocus;
   difficulty: WorkoutDifficulty;
+  requiresDumbbells: boolean;
   targetMuscles: string[];
   totalDurationSeconds: number; // Duration of workout session (seconds)
   steps: WorkoutStep[];

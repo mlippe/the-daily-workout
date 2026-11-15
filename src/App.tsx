@@ -38,6 +38,7 @@ export default function App() {
 
   // Stats & recommendation from local storage
   const [statsVersion, setStatsVersion] = useState(0);
+  const [repTargetsVersion, setRepTargetsVersion] = useState(0);
 
   const preferences = useMemo(() => {
     void statsVersion;
@@ -55,9 +56,10 @@ export default function App() {
   }, [statsVersion, preferences.difficultyLevel]);
 
   const allRepTargets = useMemo(() => {
+    void repTargetsVersion;
     void statsVersion;
     return getAllWorkoutTargetReps();
-  }, [statsVersion]);
+  }, [repTargetsVersion, statsVersion]);
 
   const routineListWorkouts = useMemo(() => {
     return getWorkoutsForDifficulty(preferences.difficultyLevel);
@@ -68,7 +70,6 @@ export default function App() {
   const isRecommended = baseHeroWorkout.id === recommendation.workout.id;
 
   const heroTargetReps = useMemo(() => {
-    void statsVersion;
     if (typeof allRepTargets[baseHeroWorkout.primaryPillar] === 'number') {
       return allRepTargets[baseHeroWorkout.primaryPillar];
     }
@@ -76,7 +77,7 @@ export default function App() {
       return allRepTargets[baseHeroWorkout.id];
     }
     return DEFAULT_TARGET_REPS;
-  }, [allRepTargets, baseHeroWorkout.primaryPillar, baseHeroWorkout.id, statsVersion]);
+  }, [allRepTargets, baseHeroWorkout.primaryPillar, baseHeroWorkout.id]);
 
   const heroWorkout = useMemo(() => {
     return applyTargetRepsToWorkout(baseHeroWorkout, heroTargetReps);
@@ -91,7 +92,7 @@ export default function App() {
     (newReps: number) => {
       saveWorkoutTargetReps(baseHeroWorkout.primaryPillar, newReps);
       saveWorkoutTargetReps(baseHeroWorkout.id, newReps);
-      setStatsVersion((v) => v + 1);
+      setRepTargetsVersion((v) => v + 1);
     },
     [baseHeroWorkout.primaryPillar, baseHeroWorkout.id]
   );
