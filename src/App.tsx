@@ -234,7 +234,7 @@ export default function App() {
         />
 
         {/* Minimal footer */}
-        <footer className="pt-6 pb-12 text-center text-xs font-mono text-neutral-600">
+        <footer className="pt-6 pb-12 text-center text-base font-mono text-neutral-500">
           12 minutes • Mat, couch &amp; 7kg dumbbells • Local &amp; private
         </footer>
       </div>
