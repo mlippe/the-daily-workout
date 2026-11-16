@@ -92,54 +92,54 @@ export function CompletionScreen({
 
   return (
     <div className="min-h-dvh flex items-center justify-center p-4 sm:p-6 bg-black text-white">
-      <div className="w-full max-w-md text-center">
+      <div className="w-full max-w-sm text-center">
         {/* Simple Checkmark */}
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950 text-white">
-          <Check className="h-6 w-6" />
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 text-white">
+          <Check className="h-5 w-5" />
         </div>
 
-        <div className="mt-5 font-mono text-lg uppercase tracking-wider text-neutral-300">
+        <div className="mt-5 font-mono text-xs uppercase tracking-widest text-neutral-400">
           {formatTime(workout.totalDurationSeconds)} Completed • {LABEL[workout.difficulty]}
         </div>
 
-        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-[-0.025em] text-white leading-tight">
+        <h1 className="mt-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-white">
           {workout.title}
         </h1>
 
-        <p className="mt-2 text-lg text-neutral-300 leading-snug">
+        <p className="mt-1.5 text-sm sm:text-base text-neutral-400 leading-relaxed">
           {workout.subtitle}
         </p>
 
         {/* Stats */}
-        <div className="mt-8 grid grid-cols-3 divide-x divide-neutral-800 border-y border-neutral-800 py-4 font-mono text-center">
+        <div className="mt-8 grid grid-cols-3 divide-x divide-neutral-900 border-y border-neutral-900 py-3.5 font-mono text-center">
           <div>
-            <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">{streak}</div>
-            <div className="text-base text-neutral-400 uppercase tracking-wider mt-1">
+            <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">{streak}</div>
+            <div className="text-xs text-neutral-500 uppercase tracking-wider mt-1">
               Streak
             </div>
           </div>
           <div>
-            <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">{totalCompleted}</div>
-            <div className="text-base text-neutral-400 uppercase tracking-wider mt-1">
+            <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">{totalCompleted}</div>
+            <div className="text-xs text-neutral-500 uppercase tracking-wider mt-1">
               Done
             </div>
           </div>
           <div>
-            <div className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
+            <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">
               {previewNextReps()}
             </div>
-            <div className="text-base text-neutral-400 uppercase tracking-wider mt-1">
+            <div className="text-xs text-neutral-500 uppercase tracking-wider mt-1">
               Next Reps
             </div>
           </div>
         </div>
 
         {/* Effort Feedback */}
-        <div className="mt-8 text-left">
-          <div className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-200 text-center">
+        <div className="mt-7 text-left">
+          <div className="font-mono text-xs uppercase tracking-widest text-neutral-400 text-center">
             How did that feel?
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-2.5">
+          <div className="mt-2.5 grid grid-cols-3 gap-2">
             {(['easy', 'okay', 'hard'] as WorkoutFeedback[]).map((rating) => {
               const active = selected === rating;
               return (
@@ -147,10 +147,10 @@ export function CompletionScreen({
                   key={rating}
                   type="button"
                   onClick={() => setSelected(rating)}
-                  className={`min-h-13 rounded-lg py-3 text-lg font-mono uppercase tracking-wider transition-colors cursor-pointer border ${
+                  className={`min-h-11 rounded-lg py-3 text-sm font-mono uppercase tracking-wider transition-colors cursor-pointer border ${
                     active
                       ? 'border-white bg-white text-neutral-950 font-bold'
-                      : 'border-neutral-700 bg-neutral-950 text-neutral-300 hover:border-white hover:text-white'
+                      : 'border-neutral-800 bg-neutral-950 text-neutral-300 hover:border-neutral-600 hover:text-white'
                   }`}
                 >
                   {rating}
@@ -158,19 +158,19 @@ export function CompletionScreen({
               );
             })}
           </div>
-          <p className="mt-3 text-center font-mono text-lg text-neutral-400">
+          <p className="mt-2.5 text-center font-mono text-xs text-neutral-500">
             {getAdaptationPreview()}
           </p>
         </div>
 
         {/* Action */}
-        <div className="mt-8">
+        <div className="mt-7">
           <button
             type="button"
             onClick={() => onFinish(selected)}
-            className="w-full min-h-14 inline-flex items-center justify-center gap-2.5 rounded-lg bg-white py-3.5 text-xl font-bold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer"
+            className="w-full min-h-12 inline-flex items-center justify-center gap-2 rounded-lg bg-white py-3.5 text-base font-bold text-neutral-950 hover:bg-neutral-200 active:scale-[0.98] transition-all cursor-pointer"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
             <span>Save &amp; Done</span>
           </button>
         </div>

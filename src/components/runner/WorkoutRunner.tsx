@@ -232,8 +232,8 @@ export function WorkoutRunner({
 
   return (
     <div className="fixed inset-0 h-dvh z-50 flex flex-col justify-between bg-black text-white select-none">
-      {/* Top Header: Progress and status bar */}
-      <header className="border-b border-neutral-800 bg-black/95 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur-md">
+      {/* Top Header: Progress and quiet chrome */}
+      <header className="border-b border-neutral-900 bg-black/95 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2.5 backdrop-blur-md">
         <div className="mx-auto max-w-2xl">
           <ProgressBar
             workout={workout}
@@ -241,31 +241,31 @@ export function WorkoutRunner({
             nextStep={workout.steps[currentStepIndex + 1]}
           />
 
-          <div className="mt-2.5 flex items-center justify-between font-mono text-lg text-neutral-300">
+          <div className="mt-2 flex items-center justify-between font-mono text-xs sm:text-sm text-neutral-400">
             <button
               type="button"
               onClick={() => setShowExitModal(true)}
-              className="inline-flex items-center gap-1.5 min-h-11 px-2.5 -ml-2.5 rounded-lg text-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 min-h-9 px-2 -ml-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition-colors cursor-pointer"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
               <span>Exit</span>
             </button>
 
-            <span className="tabular-nums text-white font-semibold tracking-wider">
+            <span className="tabular-nums text-neutral-300 font-medium tracking-wider">
               {formatTime(totalElapsedSeconds)}
             </span>
 
             <button
               type="button"
               onClick={handleToggleMute}
-              className="flex h-11 w-11 -mr-2.5 items-center justify-center rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition-colors cursor-pointer"
+              className="flex h-9 w-9 -mr-2 items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition-colors cursor-pointer"
               title={isMuted ? 'Unmute' : 'Mute'}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
-                <VolumeX className="h-5 w-5" />
+                <VolumeX className="h-4 w-4" />
               ) : (
-                <Volume2 className="h-5 w-5" />
+                <Volume2 className="h-4 w-4" />
               )}
             </button>
           </div>
@@ -275,13 +275,13 @@ export function WorkoutRunner({
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto px-4 py-3 sm:py-5 flex flex-col items-center justify-between gap-2 sm:gap-4 max-w-2xl mx-auto w-full">
         {/* Stage 1: Exercise Visual */}
-        <div className="w-full aspect-3/2 max-h-[25dvh] sm:max-h-[34dvh] relative rounded-lg overflow-hidden bg-neutral-950 border border-neutral-800 flex items-center justify-center shrink-0">
+        <div className="w-full aspect-3/2 max-h-[26dvh] sm:max-h-[36dvh] relative rounded-lg overflow-hidden bg-neutral-950 border border-neutral-900 flex items-center justify-center shrink-0">
           {currentStep.isRest ? (
             <div className="text-center p-6">
-              <span className="font-mono text-lg uppercase tracking-widest text-neutral-400">
+              <span className="font-mono text-xs uppercase tracking-widest text-neutral-500">
                 Active Recovery
               </span>
-              <h2 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight text-white">
+              <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 Rest &amp; Recover
               </h2>
             </div>
@@ -295,36 +295,36 @@ export function WorkoutRunner({
           )}
         </div>
 
-        {/* Stage 2: Exercise Name & Side */}
+        {/* Stage 2: Exercise Name & Side (High-visibility focal title) */}
         <div className="text-center mt-1 shrink-0 px-1 w-full">
-          <h1 className="text-[clamp(1.875rem,7.2vw,3.25rem)] font-bold tracking-[-0.025em] text-white leading-[1.03] text-balance">
+          <h1 className="text-[clamp(1.75rem,6.8vw,3rem)] font-bold tracking-[-0.025em] text-white leading-[1.05] text-balance">
             {currentStep.exercise.name}
           </h1>
           {currentStep.side && (
-            <span className="mt-1.5 inline-block font-mono text-lg sm:text-xl font-bold uppercase tracking-widest text-amber-400">
+            <span className="mt-1 inline-block font-mono text-base sm:text-lg font-bold uppercase tracking-widest text-amber-400">
               {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
             </span>
           )}
         </div>
 
-        {/* Stage 3: Target Metric Display (High-legibility brutalist numerals) */}
+        {/* Stage 3: Primary Metric Display (Floor-distance brutalist numerals) */}
         <div className="my-auto py-1 flex flex-col items-center justify-center w-full shrink-0">
           {isRepBased ? (
             <button
               type="button"
               onClick={advance}
-              className="group w-full max-w-sm flex flex-col items-center justify-center rounded-lg border-2 border-neutral-700 bg-neutral-950 hover:bg-neutral-900 hover:border-white px-6 py-4 sm:py-5 transition-all cursor-pointer active:scale-[0.98]"
+              className="group w-full max-w-xs sm:max-w-sm flex flex-col items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 hover:bg-neutral-900 hover:border-neutral-600 px-6 py-4 sm:py-5 transition-all cursor-pointer active:scale-[0.98]"
               title="Click or press Enter when done"
             >
-              <div className="flex items-baseline justify-center gap-3">
+              <div className="flex items-baseline justify-center gap-2.5">
                 <span className="font-sans text-[clamp(5.75rem,25vw,9rem)] font-bold tabular-nums leading-[0.84] tracking-[-0.045em] text-white">
                   {currentStep.targetReps ?? 10}
                 </span>
-                <span className="font-mono text-xl sm:text-2xl uppercase tracking-widest text-neutral-400 font-bold">
+                <span className="font-mono text-base sm:text-lg uppercase tracking-widest text-neutral-400 font-semibold">
                   Reps
                 </span>
               </div>
-              <span className="mt-3 text-lg font-mono font-semibold uppercase tracking-wider text-neutral-300 group-hover:text-white transition-colors">
+              <span className="mt-3 text-xs sm:text-sm font-mono uppercase tracking-wider text-neutral-400 group-hover:text-white transition-colors">
                 Tap when done
               </span>
             </button>
@@ -334,9 +334,9 @@ export function WorkoutRunner({
               onClick={handleSkipIntro}
               aria-label={`Get into position: ${introSecondsRemaining} seconds remaining. Tap to start now.`}
               title="Tap or press Enter to start now"
-              className="group w-full max-w-sm flex flex-col items-center justify-center rounded-lg border-2 border-amber-400/70 bg-neutral-950 hover:bg-neutral-900 px-6 py-3.5 sm:py-4 transition-all cursor-pointer active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
+              className="group w-full max-w-xs sm:max-w-sm flex flex-col items-center justify-center rounded-lg border border-amber-400/50 bg-neutral-950 hover:bg-neutral-900 px-6 py-3.5 sm:py-4 transition-all cursor-pointer active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
             >
-              <span className="font-mono text-lg sm:text-xl uppercase tracking-widest font-bold text-amber-400">
+              <span className="font-mono text-base sm:text-lg uppercase tracking-widest font-bold text-amber-400">
                 Get into position
               </span>
 
@@ -344,12 +344,12 @@ export function WorkoutRunner({
                 <span className="font-sans text-[clamp(5rem,22vw,7.5rem)] font-bold tabular-nums leading-[0.86] tracking-[-0.045em] text-white">
                   {introSecondsRemaining}
                 </span>
-                <span className="font-mono text-lg sm:text-xl uppercase tracking-widest text-amber-400 font-bold">
+                <span className="font-mono text-base sm:text-lg uppercase tracking-widest text-amber-400 font-semibold">
                   Sec
                 </span>
               </div>
 
-              <div className="mt-3 h-2 w-full overflow-hidden bg-neutral-800">
+              <div className="mt-3 h-1.5 w-full overflow-hidden bg-neutral-800">
                 <div
                   className="h-full bg-amber-400 transition-all duration-1000 ease-linear motion-reduce:transition-none"
                   style={{
@@ -358,13 +358,13 @@ export function WorkoutRunner({
                 />
               </div>
 
-              <span className="mt-2.5 text-lg font-mono font-semibold uppercase tracking-wider text-neutral-300 group-hover:text-white transition-colors">
+              <span className="mt-2.5 text-xs sm:text-sm font-mono uppercase tracking-wider text-neutral-400 group-hover:text-white transition-colors">
                 Tap to start now
               </span>
             </button>
           ) : (
             <div className="flex flex-col items-center justify-center">
-              <div className="flex items-baseline justify-center gap-3">
+              <div className="flex items-baseline justify-center gap-2.5">
                 <span
                   className={`font-sans text-[clamp(6.5rem,28vw,10rem)] font-bold tabular-nums leading-[0.84] tracking-[-0.045em] ${
                     secondsRemaining <= 3 ? 'text-rose-400' : 'text-white'
@@ -372,7 +372,7 @@ export function WorkoutRunner({
                 >
                   {secondsRemaining}
                 </span>
-                <span className="font-mono text-xl sm:text-2xl uppercase tracking-widest text-neutral-400 font-bold">
+                <span className="font-mono text-base sm:text-lg uppercase tracking-widest text-neutral-400 font-semibold">
                   Sec
                 </span>
               </div>
@@ -381,9 +381,9 @@ export function WorkoutRunner({
                 <button
                   type="button"
                   onClick={advance}
-                  className="mt-4 min-h-12 inline-flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900 px-5 py-2.5 font-mono text-lg font-semibold uppercase tracking-wider text-neutral-200 hover:text-white hover:border-white active:scale-95 transition-all cursor-pointer"
+                  className="mt-4 min-h-10 inline-flex items-center gap-1.5 rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-2 font-mono text-xs sm:text-sm uppercase tracking-wider text-neutral-300 hover:text-white hover:border-neutral-600 active:scale-95 transition-all cursor-pointer"
                 >
-                  <SkipForward className="h-5 w-5" />
+                  <SkipForward className="h-3.5 w-3.5" />
                   <span>Skip Rest</span>
                 </button>
               )}
@@ -391,13 +391,13 @@ export function WorkoutRunner({
           )}
         </div>
 
-        {/* Stage 4: Form Cues */}
+        {/* Stage 4: Quiet Form Cues */}
         {!currentStep.isRest && (
-          <div className="w-full max-w-xl mt-1 pt-2 border-t border-neutral-900 px-1 shrink-0">
-            <ul className="space-y-1.5 text-lg text-neutral-300 leading-snug">
+          <div className="w-full max-w-lg mt-1 pt-2 border-t border-neutral-900/80 px-1 shrink-0">
+            <ul className="space-y-1 text-sm sm:text-base text-neutral-400 leading-relaxed">
               {quickSteps.slice(0, 2).map((stepText, idx) => (
-                <li key={idx} className="flex items-baseline gap-2.5">
-                  <span className="text-neutral-500 font-mono text-lg font-bold tabular-nums">
+                <li key={idx} className="flex items-baseline gap-2">
+                  <span className="text-neutral-600 font-mono text-xs font-semibold tabular-nums">
                     0{idx + 1}
                   </span>
                   <span>{stepText}</span>
@@ -405,16 +405,16 @@ export function WorkoutRunner({
               ))}
             </ul>
 
-            <div className="mt-2 text-center">
+            <div className="mt-1.5 text-center">
               <button
                 type="button"
                 onClick={() => {
                   setIsPaused(true);
                   setShowDetailsModal(true);
                 }}
-                className="inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-lg font-mono text-lg uppercase tracking-wider text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 min-h-9 px-3 rounded-lg font-mono text-xs uppercase tracking-wider text-neutral-500 hover:text-neutral-200 hover:bg-neutral-900/50 transition-colors cursor-pointer"
               >
-                <Info className="h-5 w-5" />
+                <Info className="h-3.5 w-3.5" />
                 <span>Instructions</span>
               </button>
             </div>
@@ -423,40 +423,40 @@ export function WorkoutRunner({
       </main>
 
       {/* Bottom Controls Bar */}
-      <footer className="border-t border-neutral-800 bg-black px-6 pt-3 pb-[max(0.85rem,env(safe-area-inset-bottom))]">
+      <footer className="border-t border-neutral-900 bg-black px-6 pt-3 pb-[max(0.85rem,env(safe-area-inset-bottom))]">
         <div className="mx-auto flex max-w-sm items-center justify-between gap-4">
           <button
             type="button"
             onClick={handleSkipBack}
-            className="flex h-13 w-13 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 text-neutral-300 hover:text-white hover:border-neutral-600 active:scale-95 transition-all cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white hover:border-neutral-600 active:scale-95 transition-all cursor-pointer"
             title="Previous (Arrow Left)"
             aria-label="Previous step"
           >
-            <SkipBack className="h-5 w-5" />
+            <SkipBack className="h-4 w-4" />
           </button>
 
           <button
             type="button"
             onClick={() => setIsPaused((p) => !p)}
-            className="flex h-15 w-20 items-center justify-center rounded-lg bg-white text-neutral-950 hover:bg-neutral-200 transition-all active:scale-95 cursor-pointer"
+            className="flex h-14 w-16 items-center justify-center rounded-lg bg-white text-neutral-950 hover:bg-neutral-200 transition-all active:scale-95 cursor-pointer"
             title={isPaused ? 'Resume (Space)' : 'Pause (Space)'}
             aria-label={isPaused ? 'Resume' : 'Pause'}
           >
             {isPaused ? (
-              <Play className="h-7 w-7 fill-current ml-0.5" />
+              <Play className="h-6 w-6 fill-current ml-0.5" />
             ) : (
-              <Pause className="h-7 w-7 fill-current" />
+              <Pause className="h-6 w-6 fill-current" />
             )}
           </button>
 
           <button
             type="button"
             onClick={handleSkipForward}
-            className="flex h-13 w-13 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 text-neutral-300 hover:text-white hover:border-neutral-600 active:scale-95 transition-all cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white hover:border-neutral-600 active:scale-95 transition-all cursor-pointer"
             title="Skip (Arrow Right)"
             aria-label="Skip step"
           >
-            <SkipForward className="h-5 w-5" />
+            <SkipForward className="h-4 w-4" />
           </button>
         </div>
       </footer>
@@ -472,17 +472,17 @@ export function WorkoutRunner({
 
       {/* Exit Confirmation Modal */}
       {showExitModal && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-lg border border-neutral-800 bg-neutral-950 p-6 text-center">
-            <h3 className="text-2xl font-bold tracking-tight text-white">Leave Workout?</h3>
-            <p className="mt-2 text-lg text-neutral-300 leading-snug">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xs rounded-lg border border-neutral-800 bg-neutral-950 p-5 text-center">
+            <h3 className="text-xl font-bold tracking-tight text-white">Leave Workout?</h3>
+            <p className="mt-1.5 text-sm text-neutral-400 leading-relaxed">
               Current progress will not be saved.
             </p>
-            <div className="mt-6 flex gap-3">
+            <div className="mt-5 flex gap-2.5">
               <button
                 type="button"
                 onClick={() => setShowExitModal(false)}
-                className="flex-1 min-h-12 rounded-lg bg-neutral-800 py-3 text-lg font-bold text-white hover:bg-neutral-700 transition-colors cursor-pointer"
+                className="flex-1 min-h-11 rounded-lg bg-neutral-800 py-2.5 text-sm sm:text-base font-semibold text-white hover:bg-neutral-700 transition-colors cursor-pointer"
               >
                 Continue
               </button>
@@ -492,7 +492,7 @@ export function WorkoutRunner({
                   setShowExitModal(false);
                   onExit();
                 }}
-                className="flex-1 min-h-12 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 py-3 text-lg font-bold hover:bg-rose-500/30 transition-colors cursor-pointer"
+                className="flex-1 min-h-11 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/30 py-2.5 text-sm sm:text-base font-semibold hover:bg-rose-500/25 transition-colors cursor-pointer"
               >
                 Leave
               </button>

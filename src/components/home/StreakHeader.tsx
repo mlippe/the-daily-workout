@@ -5,21 +5,21 @@ interface StreakHeaderProps {
 
 export function StreakHeader({ currentStreak, totalCompleted }: StreakHeaderProps) {
   return (
-    <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5 py-4 sm:py-5 border-b border-neutral-800">
-      <div className="flex items-center gap-2.5 min-w-0">
-        <span className="h-2 w-2 shrink-0 bg-white" />
-        <span className="text-lg font-mono uppercase tracking-wider text-white font-bold truncate">
+    <header className="flex items-center justify-between gap-3 py-4 sm:py-5 border-b border-neutral-900">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="h-1.5 w-1.5 shrink-0 bg-neutral-300" />
+        <span className="text-xs sm:text-sm font-mono uppercase tracking-widest text-neutral-300 font-medium truncate">
           The Daily Workout
         </span>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0 font-mono text-lg text-neutral-400 whitespace-nowrap tabular-nums">
+      <div className="flex items-center gap-2 shrink-0 font-mono text-xs sm:text-sm text-neutral-500 whitespace-nowrap tabular-nums">
         {currentStreak > 0 && (
-          <span className="text-neutral-200 font-semibold">
+          <span className="text-neutral-300">
             {currentStreak}d streak
           </span>
         )}
-        {currentStreak > 0 && totalCompleted > 0 && <span className="text-neutral-600">/</span>}
+        {currentStreak > 0 && totalCompleted > 0 && <span className="text-neutral-700">/</span>}
         {totalCompleted > 0 && (
           <span>{totalCompleted} done</span>
         )}
