@@ -9,13 +9,18 @@ import {
   X,
   Info,
 } from 'lucide-react';
-import type { WorkoutPlan } from '../../types/workout';
+import type { WorkoutPlan, WorkoutStep } from '../../types/workout';
 import { soundEngine } from '../../utils/audio';
 import { useWakeLock } from '../../hooks/useWakeLock';
 import { getQuickSteps } from '../../utils/exerciseSteps';
 import { ExerciseVisual } from './ExerciseVisual';
 import { ProgressBar } from './ProgressBar';
 import { ExerciseDetailsModal } from './ExerciseDetailsModal';
+
+const INTRO_DURATION_SECONDS = 7;
+
+const getInitialIntro = (step: WorkoutStep) =>
+  !step.isRest && step.exercise.type === 'time' ? INTRO_DURATION_SECONDS : 0;
 
 const formatTime = (secs: number) => {
   const m = Math.floor(secs / 60);
@@ -48,8 +53,25 @@ export function WorkoutRunner({
   const [secondsRemaining, setSecondsRemaining] = useState<number>(
     () => currentStep.workDurationSeconds,
   );
+  const [introSecondsRemaining, setIntroSecondsRemaining] = useState<number>(
+    () => getInitialIntro(currentStep),
+  );
   const [totalElapsedSeconds, setTotalElapsedSeconds] = useState(0);
   const secondsRemainingRef = useRef(currentStep.workDurationSeconds);
+  const introRemainingRef = useRef(getInitialIntro(currentStep));
+
+  const syncStepTimers = useCallback((step: WorkoutStep) => {
+    const nextIntro = getInitialIntro(step);
+    secondsRemainingRef.current = step.workDurationSeconds;
+    introRemainingRef.current = nextIntro;
+    setSecondsRemaining(step.workDurationSeconds);
+    setIntroSecondsRemaining(nextIntro);
+  }, []);
+
+  const handleSkipIntro = useCallback(() => {
+    introRemainingRef.current = 0;
+    setIntroSecondsRemaining(0);
+  }, []);
 
   // Derive quick action cues for the current exercise
   const quickSteps = useMemo(() => {
@@ -83,8 +105,7 @@ export function WorkoutRunner({
       const nextStep = workout.steps[nextIdx];
 
       setCurrentStepIndex(nextIdx);
-      secondsRemainingRef.current = nextStep.workDurationSeconds;
-      setSecondsRemaining(nextStep.workDurationSeconds);
+      syncStepTimers(nextStep);
       soundEngine.playTransitionChime();
     } else {
       soundEngine.playCompletionFanfare();
@@ -93,7 +114,7 @@ export function WorkoutRunner({
         workout,
       });
     }
-  }, [currentStepIndex, workout, onComplete]);
+  }, [currentStepIndex, workout, onComplete, syncStepTimers]);
 
   // Skip forward
   const handleSkipForward = useCallback(() => {
@@ -102,15 +123,14 @@ export function WorkoutRunner({
       const nextStep = workout.steps[nextIdx];
 
       setCurrentStepIndex(nextIdx);
-      secondsRemainingRef.current = nextStep.workDurationSeconds;
-      setSecondsRemaining(nextStep.workDurationSeconds);
+      syncStepTimers(nextStep);
     } else {
       onComplete({
         totalTimeSeconds: totalElapsedSeconds,
         workout,
       });
     }
-  }, [currentStepIndex, workout, onComplete, totalElapsedSeconds]);
+  }, [currentStepIndex, workout, onComplete, totalElapsedSeconds, syncStepTimers]);
 
   // Skip back
   const handleSkipBack = useCallback(() => {
@@ -119,13 +139,11 @@ export function WorkoutRunner({
       const prevStep = workout.steps[prevIdx];
 
       setCurrentStepIndex(prevIdx);
-      secondsRemainingRef.current = prevStep.workDurationSeconds;
-      setSecondsRemaining(prevStep.workDurationSeconds);
+      syncStepTimers(prevStep);
     } else {
-      secondsRemainingRef.current = currentStep.workDurationSeconds;
-      setSecondsRemaining(currentStep.workDurationSeconds);
+      syncStepTimers(currentStep);
     }
-  }, [currentStepIndex, currentStep, workout.steps]);
+  }, [currentStepIndex, currentStep, workout.steps, syncStepTimers]);
 
   // Timer interval
   const advanceRef = useRef(advance);
@@ -141,6 +159,16 @@ export function WorkoutRunner({
 
       // Rep-based exercises advance manually
       if (currentStep.exercise.type !== 'time') {
+        return;
+      }
+
+      if (introRemainingRef.current > 0) {
+        introRemainingRef.current -= 1;
+        const nextIntro = introRemainingRef.current;
+        setIntroSecondsRemaining(nextIntro);
+        if (nextIntro === 0) {
+          soundEngine.playPip(880, 0.5);
+        }
         return;
       }
 
@@ -176,9 +204,14 @@ export function WorkoutRunner({
       } else if (e.key.toLowerCase() === 'm') {
         e.preventDefault();
         handleToggleMute();
-      } else if (e.code === 'Enter' && currentStep.exercise.type === 'reps') {
-        e.preventDefault();
-        advance();
+      } else if (e.code === 'Enter') {
+        if (introRemainingRef.current > 0) {
+          e.preventDefault();
+          handleSkipIntro();
+        } else if (currentStep.exercise.type === 'reps') {
+          e.preventDefault();
+          advance();
+        }
       }
     };
 
@@ -188,6 +221,7 @@ export function WorkoutRunner({
     handleSkipForward,
     handleSkipBack,
     handleToggleMute,
+    handleSkipIntro,
     advance,
     currentStep,
     showExitModal,
@@ -294,6 +328,40 @@ export function WorkoutRunner({
               </div>
               <span className="mt-1 text-xs font-mono text-neutral-400 group-hover:text-white transition-colors">
                 Tap when done
+              </span>
+            </button>
+          ) : introSecondsRemaining > 0 ? (
+            <button
+              type="button"
+              onClick={handleSkipIntro}
+              aria-label={`Get into position: ${introSecondsRemaining} seconds remaining. Tap to start now.`}
+              title="Tap or press Enter to start now"
+              className="group w-full max-w-[260px] flex flex-col items-center justify-center rounded-2xl border border-amber-500/30 bg-neutral-900/50 hover:bg-neutral-900 px-6 py-3 sm:py-3.5 transition-all cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
+            >
+              <span className="font-mono text-[11px] uppercase tracking-widest font-semibold text-amber-400">
+                Get into position
+              </span>
+
+              <div className="mt-1 flex items-baseline gap-2">
+                <span className="font-mono text-5xl sm:text-6xl font-bold tabular-nums tracking-tight text-white">
+                  {introSecondsRemaining}
+                </span>
+                <span className="font-mono text-sm uppercase tracking-wider text-amber-400 font-semibold">
+                  Sec
+                </span>
+              </div>
+
+              <div className="mt-2.5 h-1.5 w-full max-w-[180px] overflow-hidden rounded-full bg-neutral-800">
+                <div
+                  className="h-full rounded-full bg-amber-400 transition-all duration-1000 ease-linear motion-reduce:transition-none"
+                  style={{
+                    width: `${(introSecondsRemaining / INTRO_DURATION_SECONDS) * 100}%`,
+                  }}
+                />
+              </div>
+
+              <span className="mt-1.5 text-[11px] font-mono text-neutral-400 group-hover:text-white transition-colors">
+                Tap to start now
               </span>
             </button>
           ) : (
