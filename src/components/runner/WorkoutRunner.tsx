@@ -273,42 +273,42 @@ export function WorkoutRunner({
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto px-4 py-3 sm:py-5 flex flex-col items-center justify-between gap-2 sm:gap-4 max-w-2xl mx-auto w-full">
-        {/* Stage 1: Exercise Visual */}
-        <div className="w-full aspect-3/2 max-h-[26dvh] sm:max-h-[36dvh] relative rounded-lg overflow-hidden bg-neutral-950 border border-neutral-900 flex items-center justify-center shrink-0">
+      <main className="flex-1 overflow-y-auto pb-3 sm:pb-5 flex flex-col items-center justify-between gap-2 sm:gap-4 w-full">
+        {/* Stage 1 + 2: Full-width Hero Visual with Gradient Fade & Merged Title */}
+        <div className="w-full sm:max-w-2xl mx-auto aspect-3/2 max-h-[38dvh] sm:max-h-[42dvh] relative overflow-hidden bg-black flex items-center justify-center shrink-0">
           {currentStep.isRest ? (
-            <div className="text-center p-6">
-              <span className="font-mono text-xs uppercase tracking-widest text-neutral-500">
+            <div className="flex h-full w-full flex-col items-center justify-end px-4 pb-4 pt-10 text-center bg-gradient-to-b from-neutral-900/40 via-neutral-950/75 to-black">
+              <span className="font-mono text-xs sm:text-sm uppercase tracking-widest text-neutral-400">
                 Active Recovery
               </span>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              <h1 className="mt-1 text-[clamp(1.75rem,6.8vw,3rem)] font-bold tracking-[-0.025em] text-white leading-[1.04]">
                 Rest &amp; Recover
-              </h2>
+              </h1>
             </div>
           ) : (
             <ExerciseVisual
               key={currentStep.exercise.id}
               exercise={currentStep.exercise}
               isPaused={isPaused}
+              overlayGradient={true}
               className="h-full w-full"
-            />
-          )}
-        </div>
-
-        {/* Stage 2: Exercise Name & Side (High-visibility focal title) */}
-        <div className="text-center mt-1 shrink-0 px-1 w-full">
-          <h1 className="text-[clamp(1.75rem,6.8vw,3rem)] font-bold tracking-[-0.025em] text-white leading-[1.05] text-balance">
-            {currentStep.exercise.name}
-          </h1>
-          {currentStep.side && (
-            <span className="mt-1 inline-block font-mono text-base sm:text-lg font-bold uppercase tracking-widest text-amber-400">
-              {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
-            </span>
+            >
+              <div className="absolute inset-x-0 bottom-0 z-10 px-4 sm:px-6 pb-2 pt-12 text-center flex flex-col items-center justify-end">
+                <h1 className="text-[clamp(1.75rem,6.8vw,3rem)] font-bold tracking-[-0.025em] text-white leading-[1.04] text-balance drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                  {currentStep.exercise.name}
+                </h1>
+                {currentStep.side && (
+                  <span className="mt-1 inline-block font-mono text-base sm:text-lg font-bold uppercase tracking-widest text-amber-400">
+                    {currentStep.side === 'right' ? 'Right Side' : 'Left Side'}
+                  </span>
+                )}
+              </div>
+            </ExerciseVisual>
           )}
         </div>
 
         {/* Stage 3: Primary Metric Display (Floor-distance brutalist numerals) */}
-        <div className="my-auto py-1 flex flex-col items-center justify-center w-full shrink-0">
+        <div className="my-auto px-4 py-1 flex flex-col items-center justify-center w-full max-w-2xl mx-auto shrink-0">
           {isRepBased ? (
             <button
               type="button"
@@ -393,7 +393,7 @@ export function WorkoutRunner({
 
         {/* Stage 4: Quiet Form Cues */}
         {!currentStep.isRest && (
-          <div className="w-full max-w-lg mt-1 pt-2 border-t border-neutral-900/80 px-1 shrink-0">
+          <div className="w-full max-w-lg mx-auto mt-1 pt-2 border-t border-neutral-900/80 px-5 sm:px-4 shrink-0">
             <ul className="space-y-1 text-sm sm:text-base text-neutral-400 leading-relaxed">
               {quickSteps.slice(0, 2).map((stepText, idx) => (
                 <li key={idx} className="flex items-baseline gap-2">

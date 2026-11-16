@@ -37,7 +37,7 @@ export function ExerciseVisual({
       <img
         src={exercise.images[0]}
         alt={`${exercise.name} starting position`}
-        className='absolute inset-0 h-full w-full object-contain select-none'
+        className='absolute inset-0 h-full w-full object-cover object-center select-none'
         loading='eager'
       />
 
@@ -45,19 +45,19 @@ export function ExerciseVisual({
       <img
         src={exercise.images[1]}
         alt={`${exercise.name} active position`}
-        className={`absolute inset-0 h-full w-full object-contain select-none transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${
+        className={`absolute inset-0 h-full w-full object-cover object-center select-none transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${
           frameIndex === 1 ? 'opacity-100' : 'opacity-0'
         }`}
         loading='eager'
       />
 
-      {/* Subtle bottom gradient fade so the photo remains prominently visible */}
+      {/* Smooth bottom gradient fade dissolving the photo into black behind the merged title */}
       {overlayGradient && (
         <div
           className='pointer-events-none absolute inset-0'
           style={{
             background:
-              'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.85) 16%, rgba(0, 0, 0, 0.25) 28%, transparent 40%)',
+              'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.9) 22%, rgba(0, 0, 0, 0.45) 45%, transparent 70%)',
           }}
         />
       )}
